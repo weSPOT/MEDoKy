@@ -1,0 +1,9 @@
+(JavaScript) API to determine the following User Information:
+  * Role (Teacher/Student)
+  * Student:
+    - Courses the student is enrolled
+    - List of courses the student is enrolled in
+  * Teacher:
+    - List of courses the teacher is in charge of
+As soon al global management of learning objects is available:
+A (JavaScript) API for that ;-)

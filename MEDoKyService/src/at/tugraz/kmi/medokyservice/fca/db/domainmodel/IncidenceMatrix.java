@@ -1,0 +1,248 @@
+package at.tugraz.kmi.medokyservice.fca.db.domainmodel;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+import at.tugraz.kmi.medokyservice.fca.db.DataObject;
+import at.tugraz.kmi.medokyservice.fca.lib.colibri.lib.HashRelation;
+import at.tugraz.kmi.medokyservice.fca.lib.colibri.lib.Relation;
+
+/**
+ * An IncidenceMAtrix is a Mapping of Objects to attributes and vice versa. This
+ * is implemented using two {@link LinkedHashMap}s to provide a bidirectional
+ * mapping
+ * 
+ * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * 
+ */
+public class IncidenceMatrix extends DataObject {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 316445789327401260L;
+  private Map<FCAObject, Set<FCAAttribute>> objects;
+  private Map<FCAAttribute, Set<FCAObject>> attributes;
+
+  /**
+   * 
+   * 
+   * @param name
+   * @param description
+   */
+  public IncidenceMatrix(String name, String description) {
+    super(name, description);
+    this.objects = Collections
+        .synchronizedMap(new LinkedHashMap<FCAObject, Set<FCAAttribute>>());
+    this.attributes = Collections
+        .synchronizedMap(new LinkedHashMap<FCAAttribute, Set<FCAObject>>());
+  }
+
+  /**
+   * Maps an {@link FCAObject} to an arbitrary number of {@link FCAAttribute}s
+   * 
+   * @param obj
+   *          the object
+   * @param attributes
+   *          the attributes to be mapped to the object
+   */
+  public void add(FCAObject obj, FCAAttribute... attributes) {
+    synchronized (objects) {
+      synchronized (attributes) {
+
+        if (obj == null) {
+          for (FCAAttribute attr : attributes) {
+            Set<FCAObject> objects = this.attributes.get(attr);
+            if (objects == null)
+              objects = Collections
+                  .synchronizedSet(new LinkedHashSet<FCAObject>());
+            this.attributes.put(attr, objects);
+          }
+          return;
+        }
+
+        if (this.objects.get(obj) == null)
+          this.objects.put(obj,
+              Collections.synchronizedSet(new LinkedHashSet<FCAAttribute>()));
+        Set<FCAAttribute> attribs = this.objects.get(obj);
+        if (attributes.length == 0)
+          return;
+        Set<FCAAttribute> attrs = Collections
+            .synchronizedSet(new LinkedHashSet<FCAAttribute>(Arrays
+                .asList(attributes)));
+        attribs.addAll(attrs);
+        this.objects.put(obj, attribs);
+        for (FCAAttribute attr : attrs) {
+          Set<FCAObject> objects = this.attributes.get(attr);
+          if (objects == null)
+            objects = Collections
+                .synchronizedSet(new LinkedHashSet<FCAObject>());
+          objects.add(obj);
+          this.attributes.put(attr, objects);
+
+        }
+      }
+    }
+  }
+
+  public Set<FCAAttribute> getAttributes(FCAObject obj) {
+    return this.objects.get(obj) == null ? Collections
+        .synchronizedSet(new HashSet<FCAAttribute>()) : this.objects.get(obj);
+  }
+
+  public Set<FCAAttribute> getAttributes(Set<FCAObject> objects) {
+    if (objects.size() == 0)
+      return this.attributes.keySet();
+
+    Set<FCAAttribute> attributes = Collections
+        .synchronizedSet(new HashSet<FCAAttribute>());
+    boolean initial = true;
+    for (FCAObject o : objects) {
+      if (initial) {
+        attributes.addAll(this.objects.get(o));
+        initial = false;
+      } else {
+        attributes.retainAll(this.objects.get(o));
+      }
+    }
+
+    return attributes;
+  }
+
+  public Set<FCAObject> getObjects(FCAAttribute attr) {
+    return this.attributes.get(attr) == null ? Collections
+        .synchronizedSet(new HashSet<FCAObject>()) : this.attributes.get(attr);
+  }
+
+  public Set<FCAObject> getObjects(Set<FCAAttribute> attributes) {
+    if (attributes.size() == 0)
+      return this.objects.keySet();
+
+    Set<FCAObject> objects = Collections
+        .synchronizedSet(new HashSet<FCAObject>());
+    boolean initial = true;
+    for (FCAAttribute a : attributes) {
+      if (initial) {
+        objects.addAll(this.attributes.get(a));
+        initial = false;
+      } else {
+        objects.retainAll(this.attributes.get(a));
+      }
+    }
+
+    return objects;
+  }
+
+  public Map<FCAObject, Set<FCAAttribute>> getObjects() {
+    return this.objects;
+  }
+
+  public Map<FCAAttribute, Set<FCAObject>> getAttributes() {
+    return this.attributes;
+  }
+
+  /**
+   * Returns a {@link HashRelation} required to compute a valid {@link Lattice}
+   * 
+   * @return a {@link HashRelation} required to compute a valid {@link Lattice}
+   */
+  @JsonIgnore
+  synchronized Relation getRelation() {
+    synchronized (objects) {
+      synchronized (attributes) {
+        HashRelation relation = new HashRelation();
+        for (FCAObject o : getObjects().keySet()) {
+          for (FCAAttribute a : getAttributes(o))
+            relation.add(o, a);
+        }
+        return relation;
+      }
+    }
+  }
+
+  /**
+   * Return a String representation of this object. The string value returned is
+   * subject to change and therefore only suitable for debugging purposes.
+   * 
+   * @return a String representation of this object
+   */
+  public String toString() {
+    StringBuffer buf = new StringBuffer(super.toString());
+    buf.append("\n");
+    ArrayList<FCAAttribute> attribs = new ArrayList<FCAAttribute>();
+    attribs.addAll(this.attributes.keySet());
+    for (FCAAttribute a : attribs) {
+      buf.append(a.getName()).append("\t");
+    }
+    buf.append("\n\n");
+
+    for (FCAObject o : getObjects().keySet()) {
+
+      Set<FCAAttribute> currentAttributes = this.objects.get(o);
+      for (FCAAttribute a : attribs) {
+        if (currentAttributes.contains(a))
+          buf.append("1");
+        else
+          buf.append("0");
+        buf.append("\t");
+
+      }
+      buf.append("\n");
+
+    }
+    return buf.toString();
+  }
+
+  /**
+   * @see IncidenceMatrix#add(FCAObject, FCAAttribute...)
+   * @param o
+   *          the object
+   * @param set
+   *          the set of attrivutes to be mapped to the object
+   */
+  public void add(FCAObject o, Collection<FCAAttribute> set) {
+    FCAAttribute[] atts = set.toArray(new FCAAttribute[set.size()]);
+    add(o, atts);
+
+  }
+
+  /**
+   * Populates the matrix's attributes.
+   * 
+   * @param set
+   *          the set of attributes
+   */
+  public void initAttributes(Collection<FCAAttribute> set) {
+    synchronized (attributes) {
+      for (FCAAttribute attr : set) {
+        attributes.put(attr,
+            Collections.synchronizedSet(new LinkedHashSet<FCAObject>()));
+      }
+    }
+  }
+
+  /**
+   * Populates the matrix's objects
+   * 
+   * @param set
+   *          the set of objects
+   */
+  public void initObjects(Collection<FCAObject> set) {
+    synchronized (objects) {
+      for (FCAObject obj : set) {
+        objects.put(obj,
+            Collections.synchronizedSet(new LinkedHashSet<FCAAttribute>()));
+      }
+    }
+  }
+
+}
