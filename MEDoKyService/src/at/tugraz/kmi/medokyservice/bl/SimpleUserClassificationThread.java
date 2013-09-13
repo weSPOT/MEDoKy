@@ -20,7 +20,7 @@ public class SimpleUserClassificationThread extends Thread{
 	
 	
 	
-		SimpleUserClassificationThread(String userId, String courseId, String evironment, String recommendationId){
+		SimpleUserClassificationThread(String userId, String courseId, String environment, String recommendationId){
 			this.userId = userId;
 			this.courseId = courseId;
 			this.environment = environment;
