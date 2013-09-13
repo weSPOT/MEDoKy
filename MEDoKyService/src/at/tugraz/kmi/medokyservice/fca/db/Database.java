@@ -101,7 +101,11 @@ public class Database implements Serializable {
 
     if (instance == null) {
       System.out.println("DB INIT");
-      File in = new File(DBConfig.DB_PATH);
+      File dir = new File(DBConfig.DB_DIR);
+      if (!dir.exists()) {
+        dir.mkdir();
+      }
+      File in = new File(DBConfig.DB_DIR + DBConfig.DB_PATH);
       if (in.exists()) {
         ObjectInputStream objIn = null;
         try {
@@ -133,13 +137,13 @@ public class Database implements Serializable {
           }
           if (instance == null) {
             Logger.getLogger(Database.class).log(Level.INFO,
-                "Creating Empty Database");
+                "Creating Empty Database at "+in.getAbsolutePath());
             instance = new Database();
           }
         }
       } else {
         Logger.getLogger(Database.class).log(Level.INFO,
-            "Creating Empty Database");
+            "Creating Empty Database at "+in.getAbsolutePath());
         instance = new Database();
       }
     }
@@ -158,7 +162,7 @@ public class Database implements Serializable {
   }
 
   /**
-   * retreives an object from the database by ID
+   * retrieves an object from the database by ID
    * 
    * @param id
    *          the ID of the object to get
@@ -173,7 +177,7 @@ public class Database implements Serializable {
   }
 
   /**
-   * retreives all object of the specified type
+   * retrieves all object of the specified type
    * 
    * @param type
    *          the type of objects to retreive
@@ -192,7 +196,7 @@ public class Database implements Serializable {
   }
 
   /**
-   * retreives a user using an external identifier
+   * retrieves a user using an external identifier
    * 
    * @param externalUID
    *          hte external UUID of the user to get

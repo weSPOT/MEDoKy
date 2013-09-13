@@ -470,7 +470,7 @@ public class FCAService {
         hlp.append(")\n");
       }
     }
-    Database.getInstance().print();
+   // Database.getInstance().print();
     return hlp.toString();
   }
 
