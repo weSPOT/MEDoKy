@@ -205,7 +205,7 @@ lattice = {
       if (node.data.active)
         ctx.strokeStyle = "rgba(255,255,255, 1)";
       else
-        ctx.strokeStyle = "rgba(255,255,255, 0.3)";
+        ctx.strokeStyle = "rgba(255,255,255, 0.5)";
       ctx.beginPath();
       ctx.arc((pt.x), (pt.y), w, 0, 2 * Math.PI, true);
       ctx.lineWidth = 4;
@@ -214,33 +214,33 @@ lattice = {
       if (node.data.active)
         ctx.fillStyle = "rgba(255,255,255, 1)";
       else
-        ctx.fillStyle = "rgba(255,255,255, 0.3)";
+        ctx.fillStyle = "rgba(255,255,255, 0.5)";
       ctx.fill();
       if (node.data.isObjectConcept) {
         ctx.closePath();
         ctx.beginPath();
         if (node.data.active)
-          ctx.strokeStyle = "rgba(0,0,255,1)";
+          ctx.strokeStyle = "rgba(" + node.data.color_attr + ",1)";
         else
-          ctx.strokeStyle = "rgba(0,0,255,0.3)";
+          ctx.strokeStyle = "rgba(" + node.data.color_attr + "0.5)";
         ctx.lineWidth = 2;
         ctx.arc((pt.x), (pt.y), w, 0, 2 * Math.PI, true);
         ctx.stroke();
         ctx.closePath();
         ctx.beginPath();
         if (node.data.active)
-          ctx.fillStyle = "rgba(0,0,255,1)";
+          ctx.fillStyle = "rgba(" + node.data.color_obj + ",1)";
         else
-          ctx.fillStyle = "rgba(0,0,255,0.3)";
+          ctx.fillStyle = "rgba(" + node.data.color_obj + ",0.5)";
         ctx.arc((pt.x), (pt.y), w, 1 * Math.PI, 2 * Math.PI, true);
         ctx.fill();
         ctx.closePath();
       } else {
 
         if (node.data.active)
-          ctx.strokeStyle = "rgba(0,0,0,1)";
+          ctx.strokeStyle = "rgba(" + node.data.color_attr + ",1)";
         else
-          ctx.strokeStyle = "rgba(0,0, 0,0.3)";
+          ctx.strokeStyle = "rgba(" + node.data.color_attr + ",0.5)";
 
         ctx.lineWidth = 2;
         ctx.stroke();
@@ -406,14 +406,14 @@ lattice = {
     var concept = state.domain.formalContext.concepts[c];
     var learningObjects = {};
     for ( var os in concept.objects) {
-      var o=JSON.parse(os);
+      var o = JSON.parse(os);
       o.learningObjects = state.backend_objects[o.id].learningObjects;
       for ( var lo in o.learningObjects) {
         learningObjects[o.learningObjects[lo].id] = o.learningObjects[lo];
       }
     }
     for ( var os in concept.attributes) {
-      var o=JSON.parse(os);
+      var o = JSON.parse(os);
       o.learningObjects = state.backend_attributes[o.id].learningObjects;
       for ( var lo in o.learningObjects) {
         learningObjects[o.learningObjects[lo].id] = o.learningObjects[lo];
@@ -454,22 +454,26 @@ lattice = {
     Object.keys(concept.objects).length > 0 ? rowspan = "6" : rowspan = "7";
     // learning object names
     for ( var lo in learningObjects) {
-      tr.create("td", {
-        rowspan : rowspan,
-        class : "td_spacer, td_lo"
-      }).create("input", {
-        type : "button",
-        class : "input lattice_lo col",
-        style : "margin-left: -61px; margin-right: -61px; text-overflow: ellipsis; overflow: hidden;",
-        value : learningObjects[lo].name
-      }).data("url", learningObjects[lo].description).click(function() {
-        window.open($(this).data("url"));
-        // console.debug(learningObjects[lo].description);
-      }).hover(function() {
-        $(this).css("background-color", "rgba(255,255,255,1)");
-      }, function() {
-        $(this).css("background-color", "rgba(255,255,255,0.6)");
-      });
+      tr
+          .create("td", {
+            rowspan : rowspan,
+            class : "td_spacer, td_lo"
+          })
+          .create(
+              "input",
+              {
+                type : "button",
+                class : "input lattice_lo col",
+                style : "margin-left: -61px; margin-right: -61px; text-overflow: ellipsis; overflow: hidden;",
+                value : learningObjects[lo].name
+              }).data("url", learningObjects[lo].description).click(function() {
+            window.open($(this).data("url"));
+            // console.debug(learningObjects[lo].description);
+          }).hover(function() {
+            $(this).css("background-color", "rgba(255,255,255,1)");
+          }, function() {
+            $(this).css("background-color", "rgba(255,255,255,0.6)");
+          });
     }
 
     // spacer
@@ -625,13 +629,13 @@ lattice = {
     //
     //
     // next line
-    var len=0;
+    var len = 0;
     if (Object.keys(concept.objects).length > 0)
       tr = table.create("tr", {
         style : "background-color: inherit"
       });
     for ( var os in concept.objects) {
-      var o=JSON.parse(os);
+      var o = JSON.parse(os);
       var css = "vertical-align: middle; background-color: white; border-left:1px solid black; border-right:1px solid black;";
       if (len == 0)
         css += "; border-top: 1px solid black";
@@ -699,9 +703,9 @@ lattice = {
         style : "background-color: inherit"
       });
 
-    len=0;
+    len = 0;
     for ( var os in concept.attributes) {
-      var o=JSON.parse(os);
+      var o = JSON.parse(os);
       var css = " vertical-align: middle; background-color: white; border-left:1px solid black; border-right:1px solid black;";
       if (len == 0)
         css += "; border-top: 1px solid black";
@@ -815,14 +819,14 @@ lattice = {
     lattice.disable_editing();
   },
 
-  create_node : function(concept, mass, y, x, fixed, color) {
+  create_node : function(concept, mass, y, x, fixed) {
     var sys = lattice.sys;
 
     var pre;
     if (y) {
       if (x) {
         pre = sys.addNode(concept.id, {
-          "color" : color ? color : "grey",
+
           "shape" : "dot",
           "isObjectConcept" : concept.objectConcept,
           "mass" : mass ? mass : 1,
@@ -835,7 +839,7 @@ lattice = {
         });
       } else
         pre = sys.addNode(concept.id, {
-          "color" : color ? color : "grey",
+
           "shape" : "dot",
           "isObjectConcept" : concept.objectConcept,
           "mass" : mass ? mass : 1,
@@ -847,9 +851,8 @@ lattice = {
         });
     } else {
       if (x) {
-
         pre = sys.addNode(concept.id, {
-          "color" : color ? color : "grey",
+
           "shape" : "dot",
           "isObjectConcept" : concept.objectConcept,
           "mass" : mass ? mass : 1,
@@ -861,7 +864,7 @@ lattice = {
         });
       } else
         pre = sys.addNode(concept.id, {
-          "color" : color ? color : "grey",
+
           "shape" : "dot",
           "conceptid" : concept.id,
           "isObjectConcept" : concept.objectConcept,
@@ -883,6 +886,10 @@ lattice = {
     else
       pre = lattice.create_node(concept, 1, y);
     pre.data.isObjectConcept = concept.objectConcept;
+    if (concept.valuations.length) {
+      pre.data.color_obj = lattice.calc_color(concept.valuations[0]);
+      pre.data.color_attr = lattice.calc_color(concept.valuations[1]);
+    }
     pre.data.enabled = concept.partOfTaxonomy;
     pre.data.obj = concept.name;
     pre.data.attr = concept.description;
@@ -928,6 +935,16 @@ lattice = {
 
   },
 
+  calc_color : function(valuation) {
+    if (valuation < 0) {
+      var val = valuation + 1;
+      return "255," + parseInt(200 * val) + ",0";
+    } else {
+      var val = 1 - valuation;
+      return parseInt(255 * val) + ",200,0";
+    }
+  },
+
   draw : function() {
 
     $(lattice.info).css({
@@ -954,10 +971,18 @@ lattice = {
       if (first) {
         var botnode = lattice.create_node(concepts[c], 2, y, 0.5, true);
         botnode.data.fixed = true;
+
+        botnode.data.color_obj = lattice.calc_color(concepts[c].valuations[0]);
+        botnode.data.color_attr = lattice.calc_color(concepts[c].valuations[1]);
+
         lattice.node_bot = botnode;
       } else if (concepts[c].successors.length == 0) {
         var topnode = lattice.create_node(concepts[c], 2, 0, 0.5, true);
         topnode.data.fixed = true;
+
+        topnode.data.color_obj = lattice.calc_color(concepts[c].valuations[0]);
+        topnode.data.color_attr = lattice.calc_color(concepts[c].valuations[1]);
+
         lattice.node_top = topnode;
       }
       lattice.draw_node(concepts[c], y);

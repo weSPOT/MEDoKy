@@ -35,6 +35,8 @@ public class ConceptWrapper extends AbstractWrapper {
   public HashSet<ConceptWrapper> successors;
   public HashSet<ConceptWrapper> taxonomySuccessors;
 
+  public float[] valuations = { 0f, 0f };
+
   public ConceptWrapper() {
   }
 
@@ -68,6 +70,7 @@ public class ConceptWrapper extends AbstractWrapper {
 
     successors = new HashSet<ConceptWrapper>();
     taxonomySuccessors = new HashSet<ConceptWrapper>();
+
   }
 
   @SuppressWarnings("unchecked")
@@ -89,6 +92,7 @@ public class ConceptWrapper extends AbstractWrapper {
 
     successors = new HashSet<ConceptWrapper>();
     taxonomySuccessors = new HashSet<ConceptWrapper>();
+    valuations = concept.getPercentagedValuations();
   }
 
   /**
