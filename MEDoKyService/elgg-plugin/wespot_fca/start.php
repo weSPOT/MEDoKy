@@ -14,7 +14,7 @@ elgg_register_page_handler('fca', 'fcatool_page_handler');
 
  
 function fcatool_page_handler($segments) {
-    $base_dir = elgg_get_plugins_path() . 'fca/pages/fca';
+    $base_dir = elgg_get_plugins_path() . 'wespot_fca/pages/fca';
        include "$base_dir/main.php";
         return true;
  

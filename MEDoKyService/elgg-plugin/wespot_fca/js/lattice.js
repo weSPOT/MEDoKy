@@ -405,16 +405,18 @@ lattice = {
     console.debug(new Date().toString());
     var concept = state.domain.formalContext.concepts[c];
     var learningObjects = {};
-    for ( var o in concept.objects) {
-      concept.objects[o].learningObjects = state.backend_objects[concept.objects[o].id].learningObjects;
-      for ( var lo in concept.objects[o].learningObjects) {
-        learningObjects[concept.objects[o].learningObjects[lo].id] = concept.objects[o].learningObjects[lo];
+    for ( var os in concept.objects) {
+      var o=JSON.parse(os);
+      o.learningObjects = state.backend_objects[o.id].learningObjects;
+      for ( var lo in o.learningObjects) {
+        learningObjects[o.learningObjects[lo].id] = o.learningObjects[lo];
       }
     }
-    for ( var o in concept.attributes) {
-      concept.attributes[o].learningObjects = state.backend_attributes[concept.attributes[o].id].learningObjects;
-      for ( var lo in concept.attributes[o].learningObjects) {
-        learningObjects[concept.attributes[o].learningObjects[lo].id] = concept.attributes[o].learningObjects[lo];
+    for ( var os in concept.attributes) {
+      var o=JSON.parse(os);
+      o.learningObjects = state.backend_attributes[o.id].learningObjects;
+      for ( var lo in o.learningObjects) {
+        learningObjects[o.learningObjects[lo].id] = o.learningObjects[lo];
       }
     }
 
@@ -449,7 +451,7 @@ lattice = {
     });
 
     var rowspan;
-    concept.objects.length > 0 ? rowspan = "6" : rowspan = "7";
+    Object.keys(concept.objects).length > 0 ? rowspan = "6" : rowspan = "7";
     // learning object names
     for ( var lo in learningObjects) {
       tr.create("td", {
@@ -568,10 +570,10 @@ lattice = {
     tr.create("td", {
       style : "background-color: inherit",
       colspan : "2"
-    }).append(concept.objects.length > 0 ? "Objects:" : "(No Objects)");
+    }).append(Object.keys(concept.objects).length > 0 ? "Objects:" : "(No Objects)");
 
     var btn_expand = tr.create("td", {
-      rowspan : concept.objects.length + concept.attributes.length + 2,
+      rowspan : Object.keys(concept.objects).length + Object.keys(concept.attributes).length + 2,
       "class" : "tr_spacer",
       style : "vertical-align:middle"
     }).create("input", {
@@ -623,23 +625,25 @@ lattice = {
     //
     //
     // next line
-    if (concept.objects.length > 0)
+    var len=0;
+    if (Object.keys(concept.objects).length > 0)
       tr = table.create("tr", {
         style : "background-color: inherit"
       });
-    for ( var o = 0; o < concept.objects.length; ++o) {
+    for ( var os in concept.objects) {
+      var o=JSON.parse(os);
       var css = "vertical-align: middle; background-color: white; border-left:1px solid black; border-right:1px solid black;";
-      if (o == 0)
+      if (len == 0)
         css += "; border-top: 1px solid black";
-      if (o == concept.objects.length - 1)
+      if (len == Object.keys(concept.objects).length - 1)
         css += "; border-bottom: 1px solid black";
       tr.create("td", {
-        id : "info_obj_" + concept.objects[o].id,
+        id : "info_obj_" + o.id,
         colspan : "2",
-        title : concept.objects[0].description,
+        title : o.description,
         class : "lattice_o_a",
         style : css
-      }).create("txt", " \u26ab " + concept.objects[o].name);
+      }).create("txt", " \u26ab " + o.name);
       for ( var lo in learningObjects) {
         var tmp = tr
             .create(
@@ -649,18 +653,19 @@ lattice = {
                   style : "vertical-align: middle; border: 1px solid black; text-align: center; background-color: white"
                 });
 
-        for ( var ol in concept.objects[o].learningObjects) {
-          if (concept.objects[o].learningObjects[ol].id == lo) {
+        for ( var ol in o.learningObjects) {
+          if (o.learningObjects[ol].id == lo) {
             tmp.create("txt", "x");
           }
         }
 
       }
-      if (o < concept.objects.length - 1) {
+      if (len < Object.keys(concept.objects).length - 1) {
         tr = table.create("tr", {
           style : "background-color: inherit"
         });
       }
+      ++len;
     }
 
     //
@@ -674,8 +679,8 @@ lattice = {
     tr.create("td", {
       style : "background-color: inherit",
       colspan : "2"
-    }).append(concept.attributes.length > 0 ? "Attributes:" : "(No Attributes)");
-    if (concept.objects.length > 0)
+    }).append(Object.keys(concept.attributes).length > 0 ? "Attributes:" : "(No Attributes)");
+    if (Object.keys(concept.objects).length > 0)
       for ( var lo in learningObjects) {
         tr.create("td", {
           class : "td_spacer, td_lo"
@@ -689,24 +694,26 @@ lattice = {
     //
     //
     // next line
-    if (concept.attributes.length > 0)
+    if (Object.keys(concept.attributes).length > 0)
       tr = table.create("tr", {
         style : "background-color: inherit"
       });
 
-    for ( var o = 0; o < concept.attributes.length; ++o) {
+    len=0;
+    for ( var os in concept.attributes) {
+      var o=JSON.parse(os);
       var css = " vertical-align: middle; background-color: white; border-left:1px solid black; border-right:1px solid black;";
-      if (o == 0)
+      if (len == 0)
         css += "; border-top: 1px solid black";
-      if (o == concept.attributes.length - 1)
+      if (len == Object.keys(concept.attributes).length - 1)
         css += "; border-bottom: 1px solid black";
       tr.create("td", {
-        id : "info_obj_" + concept.attributes[o].id,
+        id : "info_obj_" + o.id,
         colspan : "2",
         class : "lattice_o_a",
-        title : concept.attributes[o].id,
+        title : o.id,
         style : css
-      }).create("txt", " \u26ab " + concept.attributes[o].name);
+      }).create("txt", " \u26ab " + o.name);
 
       for ( var lo in learningObjects) {
         var tmp = tr
@@ -717,17 +724,18 @@ lattice = {
                   style : "vertical-align:middle; border: 1px solid black; text-align: center; background-color:white"
                 });
 
-        for ( var ol in concept.attributes[o].learningObjects) {
-          if (concept.attributes[o].learningObjects[ol].id == lo) {
+        for ( var ol in o.learningObjects) {
+          if (o.learningObjects[ol].id == lo) {
             tmp.create("txt", "x");
           }
         }
       }
-      if (o < concept.attributes.length - 1) {
+      if (len < Object.keys(concept.attributes).length - 1) {
         tr = table.create("tr", {
           style : "background-color: inherit"
         });
       }
+      ++len;
     }
 
     $(".td_lo").hide();

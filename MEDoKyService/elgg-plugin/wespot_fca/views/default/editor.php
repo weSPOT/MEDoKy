@@ -1,5 +1,5 @@
 <?php
-$basedir = $CONFIG->url . "/mod/fca/";
+$basedir = $CONFIG->url . "/mod/wespot_fca/";
 ?>
 <link type="text/css" href="<?php echo $basedir; ?>css/smoothness/jquery-ui.css" rel="Stylesheet" />
 <link type="text/css" href="<?php echo $basedir; ?>css/fca.css" rel="Stylesheet" />
@@ -14,7 +14,7 @@ $basedir = $CONFIG->url . "/mod/fca/";
 <script type="text/javascript" src="<?php echo $basedir; ?>js/jquery.dialogextend.js"></script>
 <script>
 $(function(){
-logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/");
+logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/FCATool/");
 });
 </script>
 <table id="toolbar">

@@ -1,7 +1,3 @@
-body {
-	font-size: 80%;
-}
-
 th,tr,td {
 	/*  border: 1px solid black; */
 	vertical-align: bottom;
@@ -17,6 +13,10 @@ table {
 #main_table {
 	/*border: 1px solid black;*/
 	display: inline-block;
+}
+
+.ui-dialog {
+	font-size: 100%;
 }
 
 .msie_fca {
@@ -263,7 +263,8 @@ input[type=checkbox] {
 	height: 20px;
 	background: #cdcdcd;
 	background-color: #cdcdcd;
-	text-overflow: ellipsis; overflow: hidden;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 .td_attr {

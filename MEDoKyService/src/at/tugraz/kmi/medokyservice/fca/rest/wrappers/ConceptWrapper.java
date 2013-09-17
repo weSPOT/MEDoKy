@@ -2,11 +2,15 @@ package at.tugraz.kmi.medokyservice.fca.rest.wrappers;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
+import at.tugraz.kmi.medokyservice.fca.db.Database;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerConcept;
 
 /**
  * Wrapper class resembling a {@link Concept} but without cyclic or nested
@@ -22,11 +26,11 @@ public class ConceptWrapper extends AbstractWrapper {
   public boolean partOfTaxonomy;
   public boolean objectConcept;
 
-  public HashSet<FCAAttribute> attributes;
-  public HashSet<FCAObject> objects;
+  public LinkedHashMap<FCAAttribute, Float> attributes;
+  public LinkedHashMap<FCAObject, Float> objects;
 
-  public HashSet<FCAObject> uniqueObjects;
-  public HashSet<FCAAttribute> uniqueAttributes;
+  public LinkedHashSet<FCAObject> uniqueObjects;
+  public LinkedHashSet<FCAAttribute> uniqueAttributes;
 
   public HashSet<ConceptWrapper> successors;
   public HashSet<ConceptWrapper> taxonomySuccessors;
@@ -39,7 +43,7 @@ public class ConceptWrapper extends AbstractWrapper {
    * @param concept
    *          the original {@link Concept} to wrap
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   public ConceptWrapper(Concept concept) {
     super.id = concept.getId();
     super.name = concept.getName();
@@ -48,15 +52,40 @@ public class ConceptWrapper extends AbstractWrapper {
     partOfTaxonomy = concept.isPartOfTaxonomy();
     objectConcept = concept.isObjectConcept();
 
-    attributes = new HashSet<FCAAttribute>(
-        (Collection<? extends FCAAttribute>) concept.getAttributes());
-    objects = new HashSet<FCAObject>(
-        (Collection<? extends FCAObject>) concept.getObjects());
+    attributes = new LinkedHashMap<FCAAttribute, Float>();
+    for (Comparable a : concept.getAttributes()) {
+      attributes.put((FCAAttribute) a, 0.0f);
+    }
 
-    uniqueAttributes = new HashSet<FCAAttribute>(
+    objects = new LinkedHashMap<FCAObject, Float>();
+    for (Comparable o : concept.getObjects()) {
+      objects.put((FCAObject) o, 0.0f);
+    }
+    uniqueAttributes = new LinkedHashSet<FCAAttribute>(
         (Collection<? extends FCAAttribute>) concept.getUniqueAttributes());
-    uniqueObjects = new HashSet<FCAObject>(
+    uniqueObjects = new LinkedHashSet<FCAObject>(
         (Collection<? extends FCAObject>) concept.getUniqueAttributes());
+
+    successors = new HashSet<ConceptWrapper>();
+    taxonomySuccessors = new HashSet<ConceptWrapper>();
+  }
+
+  @SuppressWarnings("unchecked")
+  public ConceptWrapper(LearnerConcept concept) {
+    super.id = concept.getId();
+    super.name = concept.getName();
+    super.description = concept.getDescription();
+    Concept c = Database.getInstance().get(concept.getDomainConceptId());
+    partOfTaxonomy = c.isPartOfTaxonomy();
+    objectConcept = c.isObjectConcept();
+
+    attributes = new LinkedHashMap<FCAAttribute, Float>(concept.getAttributes());
+    objects = new LinkedHashMap<FCAObject, Float>(concept.getObjects());
+
+    uniqueAttributes = new LinkedHashSet<FCAAttribute>(
+        (Collection<? extends FCAAttribute>) c.getUniqueAttributes());
+    uniqueObjects = new LinkedHashSet<FCAObject>(
+        (Collection<? extends FCAObject>) c.getUniqueAttributes());
 
     successors = new HashSet<ConceptWrapper>();
     taxonomySuccessors = new HashSet<ConceptWrapper>();
