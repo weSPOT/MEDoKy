@@ -149,7 +149,7 @@ lattice = {
     lattice.done = false;
     lattice.initial = true;
     $(sel_info).empty();
-    $(sel_info).append("Select a node to display information about it.");
+    $(sel_info).append(elgg.echo('wespot_fca:lattice:select_node'));
 
     lattice.init_canvas(sel_canvas, width, height, sel_info);
     if (lattice.renderer == undefined)
@@ -361,9 +361,11 @@ lattice = {
         if (edge.data.taxonomy)
           lattice.sys.pruneEdge(edge);
       });
-      $("#dia_vis").dialog("option", "title", "Lattice for Domain '" + state.domain.name + "'");
+      $("#dia_vis").dialog("option", "title",
+          elgg.echo('wespot_fca:lattice:lattice') + " '" + state.domain.name + "'");
     } else {
-      $("#dia_vis").dialog("option", "title", "Taxonomy of '" + state.domain.name + "'");
+      $("#dia_vis").dialog("option", "title",
+          elgg.echo('wespot_fca:lattice:tax') + " '" + state.domain.name + "'");
 
     }
     // lattice.sys.eachNode(function(node) {
@@ -433,7 +435,7 @@ lattice = {
     // Name txt
     tr.create("td", {
       style : "background-color: inherit; width: 174px"
-    }).append("Name:");
+    }).append(elgg.echo('wespot_fca:name') + ":");
 
     // Edit icon
     var t_edit = tr.create("td", {
@@ -515,7 +517,7 @@ lattice = {
     tr.create("td", {
       style : "background-color: inherit",
       colspan : "2"
-    }).append("Description:");
+    }).append(elgg.echo('wespot_fca:description') + ":");
 
     // spacer
     tr.create("td", {
@@ -574,7 +576,9 @@ lattice = {
     tr.create("td", {
       style : "background-color: inherit",
       colspan : "2"
-    }).append(Object.keys(concept.objects).length > 0 ? "Objects:" : "(No Objects)");
+    }).append(
+        Object.keys(concept.objects).length > 0 ? elgg.echo('wespot_fca:objs') + ":"
+            : "(No Objects)");
 
     var btn_expand = tr.create("td", {
       rowspan : Object.keys(concept.objects).length + Object.keys(concept.attributes).length + 2,
@@ -683,7 +687,9 @@ lattice = {
     tr.create("td", {
       style : "background-color: inherit",
       colspan : "2"
-    }).append(Object.keys(concept.attributes).length > 0 ? "Attributes:" : "(No Attributes)");
+    }).append(
+        Object.keys(concept.attributes).length > 0 ? elgg.echo('wespot_fca:attrs') + ":"
+            : "(No Attributes)");
     if (Object.keys(concept.objects).length > 0)
       for ( var lo in learningObjects) {
         tr.create("td", {
@@ -758,13 +764,13 @@ lattice = {
     }).prop("checked", concept.partOfTaxonomy).prop("disabled", true);
     tr.create("td", {
       style : "background-color: inherit"
-    }).append("Part of Taxonomy");
+    }).append(elgg.echo('wespot_fca:lattice:part_of'));
     $(lattice.info).create("input", {
       id : "btn_concept_save",
       type : "button",
       "class" : "input",
       style : "position: absolute; bottom: 0; left: 0; right: 0; margin-bottom: 10px",
-      value : "Save",
+      value : elgg.echo('wespot_fca:save'),
       onclick : "lattice.update_concept(" + c + ")"
     }).hide();
   },

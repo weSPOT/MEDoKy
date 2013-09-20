@@ -1249,7 +1249,7 @@ ui = {
     btn_cancel.removeProp("onclick");
     btn.unbind("click");
     btn_cancel.unbind("click");
-    btn.val("OK");
+    btn.val(elgg.echo('wespot_fca:ok'));
     btn_cancel.click(function() {
       if (o == 1)
         $('#dia_set_attr').dialog('close');
@@ -1460,7 +1460,8 @@ ui = {
         $(".item_description").create("txt", obj.description);
         if (obj.owner) {
           $(".item_description").create("br");
-          $(".item_description").create("txt", "(created by " + obj.owner.name + ")");
+          $(".item_description").create("txt",
+              "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name + ")");
         }
       }
     }
@@ -1644,7 +1645,7 @@ ui = {
     btn_cancel.removeProp("onclick");
     btn.unbind("click");
     btn_cancel.unbind("click");
-    btn.val("Save");
+    btn.val(elgg.echo('wespot_fca:save'));
     btn.click(function() {
       logic.save_item($("#input_name").val(), select, $(textarea).val(), o);
     });
@@ -1724,7 +1725,8 @@ ui = {
     } catch (error) {
 
     }
-    $("#dia_vis").dialog("option", "title", "Taxonomy of '" + state.domain.name + "'");
+    $("#dia_vis").dialog("option", "title",
+        elgg.echo('wespot_fca:lattice:tax') + " '" + state.domain.name + "'");
     $("#dia_vis").dialog("option", "width", $("#canvas_lattice").prop("width") + 240);
     $("#dia_vis").dialog("option", "height", $("#canvas_lattice").prop("height") + 50);
     try {
