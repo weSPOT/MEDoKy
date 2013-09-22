@@ -17,7 +17,7 @@ public abstract class Updater {
       Map<FCAAttribute, Float> attributeValuationUpdates) throws Exception {
 
     LearnerDomain domain = Database.getInstance().get(learnerDomainId);
-    LearnerLattice lattice = domain.getLattice();
+    LearnerLattice lattice = domain.getFormalContext();
     for (LearnerConcept c : lattice.getConcepts()) {
       HashMap<FCAAttribute, Float> aVal = new HashMap<FCAAttribute, Float>();
       for (FCAAttribute attr : c.getAttributes().keySet()) {

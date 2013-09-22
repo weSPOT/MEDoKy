@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import at.tugraz.kmi.medokyservice.fca.db.DataObject;
 import at.tugraz.kmi.medokyservice.fca.db.Database;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
@@ -40,16 +41,18 @@ public class ConceptWrapper extends AbstractWrapper {
   public ConceptWrapper() {
   }
 
-  /**
-   * 
-   * @param concept
-   *          the original {@link Concept} to wrap
-   */
-  @SuppressWarnings({ "unchecked", "rawtypes" })
-  public ConceptWrapper(Concept concept) {
+  public <E extends DataObject> ConceptWrapper(E concept) {
     super.id = concept.getId();
     super.name = concept.getName();
     super.description = concept.getDescription();
+    if (concept instanceof Concept)
+      init((Concept) concept);
+    else if (concept instanceof LearnerConcept)
+      init((LearnerConcept) concept);
+  }
+
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  private void init(Concept concept) {
 
     partOfTaxonomy = concept.isPartOfTaxonomy();
     objectConcept = concept.isObjectConcept();
@@ -74,10 +77,8 @@ public class ConceptWrapper extends AbstractWrapper {
   }
 
   @SuppressWarnings("unchecked")
-  public ConceptWrapper(LearnerConcept concept) {
-    super.id = concept.getId();
-    super.name = concept.getName();
-    super.description = concept.getDescription();
+  private void init(LearnerConcept concept) {
+
     Concept c = Database.getInstance().get(concept.getDomainConceptId());
     partOfTaxonomy = c.isPartOfTaxonomy();
     objectConcept = c.isObjectConcept();
@@ -98,16 +99,19 @@ public class ConceptWrapper extends AbstractWrapper {
   /**
    * Creates references successor Concepts
    * 
+   * @param <E>
+   * 
    * @param successors
    *          this concept's successors
    * @param taxonomySuccessors
    *          successors also part of the taxonomy
    */
-  void setSucessors(Set<Concept> successors, Set<Concept> taxonomySuccessors) {
-    for (Concept s : successors) {
+  <E extends DataObject> void setSucessors(Set<E> successors,
+      Set<E> taxonomySuccessors) {
+    for (E s : successors) {
       this.successors.add(new ConceptWrapper(s));
     }
-    for (Concept s : taxonomySuccessors) {
+    for (E s : taxonomySuccessors) {
       this.taxonomySuccessors.add(new ConceptWrapper(s));
     }
   }

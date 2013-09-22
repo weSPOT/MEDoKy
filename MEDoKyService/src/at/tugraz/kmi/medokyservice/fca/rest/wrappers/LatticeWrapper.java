@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Lattice;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerConcept;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerLattice;
 
 /**
  * Wrapper used by the REST Interface to transmit a {@link Lattice} without any
@@ -36,6 +38,26 @@ public class LatticeWrapper extends AbstractWrapper {
     concepts = new LinkedList<ConceptWrapper>();
 
     for (Concept c : lattice.getConcepts()) {
+      ConceptWrapper concept = new ConceptWrapper(c);
+      concept.setSucessors(c.getSuccessors(), c.getTaxonomySuccessors());
+      concepts.add(concept);
+      if (c.getPredecessors().isEmpty())
+        bottom = concept;
+      if (c.getSuccessors().isEmpty())
+        top = concept;
+    }
+  }
+  /**
+   * @param lattice
+   *          the original {@link Lattice} to wrap
+   */
+  public LatticeWrapper(LearnerLattice lattice) {
+    super.name = lattice.getName();
+    super.description = lattice.getDescription();
+    super.id = lattice.getId();
+    concepts = new LinkedList<ConceptWrapper>();
+    System.out.println(lattice.toString());
+    for (LearnerConcept c : lattice.getConcepts()) {
       ConceptWrapper concept = new ConceptWrapper(c);
       concept.setSucessors(c.getSuccessors(), c.getTaxonomySuccessors());
       concepts.add(concept);

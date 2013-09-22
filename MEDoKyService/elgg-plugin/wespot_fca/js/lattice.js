@@ -33,7 +33,14 @@ lattice = {
     if (lattice.sys) {
       $(lattice.canvas).prop("width", width);
       $(lattice.canvas).prop("height", height);
-      $(lattice.info).height($(lattice.canvas).prop("height"));
+      if (state.teacher)
+        $(lattice.info).height($(lattice.canvas).prop("height"));
+      else {
+        $(lattice.info).css({
+          "height" : $(lattice.canvas).prop("height") - 5 + "px",
+          "marginBottom" : "5px"
+        });
+      }
       lattice.sys.screenSize(lattice.canvas.width, lattice.canvas.height);
       lattice.renderer.redraw();
     }
@@ -241,7 +248,7 @@ lattice = {
         ctx.arc((pt.x), (pt.y), w, 1 * Math.PI, 2 * Math.PI, true);
         ctx.fill();
         ctx.closePath();
-      } 
+      }
 
       if (node.data.objActive) {
         ctx.lineWidth = 4;
@@ -438,16 +445,18 @@ lattice = {
     var t_edit = tr.create("td", {
       style : "background-color: inherit"
     });
-    t_edit.create("input", {
-      id : "btn_concept_edit",
-      "class" : "input",
-      style : "border-width:0px; padding-left: 3px",
-      type : "image",
-      src : state.basedir + "img/edit.svg",
-      width : "16px",
-      height : "16px",
-      onclick : "lattice.enable_editing()"
-    });
+    if (state.teacher) {
+      t_edit.create("input", {
+        id : "btn_concept_edit",
+        "class" : "input",
+        style : "border-width:0px; padding-left: 3px",
+        type : "image",
+        src : state.basedir + "img/edit.svg",
+        width : "16px",
+        height : "16px",
+        onclick : "lattice.enable_editing()"
+      });
+    }
 
     var rowspan;
     Object.keys(concept.objects).length > 0 ? rowspan = "6" : rowspan = "7";
@@ -466,7 +475,7 @@ lattice = {
                 style : "margin-left: -61px; margin-right: -61px; text-overflow: ellipsis; overflow: hidden;",
                 value : learningObjects[lo].name
               }).data("url", learningObjects[lo].description).click(function() {
-            window.open($(this).data("url"));
+            window.open($(this).data("url"), "Learning Object");
             // console.debug(learningObjects[lo].description);
           }).hover(function() {
             $(this).css("background-color", "rgba(255,255,255,1)");

@@ -1,7 +1,14 @@
 package at.tugraz.kmi.medokyservice.fca.db.domainmodel;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
 import at.tugraz.kmi.medokyservice.fca.db.User;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
 
 /**
  * Class representing a Knowledge Domain. Every Domain has an owner an
@@ -20,6 +27,8 @@ public class Domain extends DataObject {
   private IncidenceMatrix mapping;
   private Lattice formalContext;
   private User owner;
+  @JsonIgnore
+  private Map<Long, LearnerDomain> learnerDomains;
 
   /**
    * Creates a new domain form an {@link IncidenceMatrix} computing a
@@ -40,6 +49,8 @@ public class Domain extends DataObject {
     mapping = matrix;
     formalContext = new Lattice(matrix);
     this.owner = owner;
+    this.learnerDomains = Collections
+        .synchronizedMap(new HashMap<Long, LearnerDomain>());
   }
 
   /**
@@ -66,6 +77,14 @@ public class Domain extends DataObject {
 
   public void setOwner(User owner) {
     this.owner = owner;
+  }
+
+  public Map<Long, LearnerDomain> getLearnerDomains() {
+    return learnerDomains;
+  }
+
+  public void addLearnerDomain(long userID, LearnerDomain domain) {
+    learnerDomains.put(userID, domain);
   }
 
 }

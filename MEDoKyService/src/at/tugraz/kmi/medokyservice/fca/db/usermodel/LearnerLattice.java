@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Lattice;
@@ -18,14 +17,11 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Lattice;
  * 
  */
 public class LearnerLattice extends DataObject {
-
   /**
    * 
    */
   private static final long serialVersionUID = 4677352490936383590L;
-
   private Set<LearnerConcept> concepts;
-
   private LearnerConcept bottom, top;
 
   /**
@@ -35,40 +31,44 @@ public class LearnerLattice extends DataObject {
    * @param lattice
    */
   public LearnerLattice(Lattice lattice) {
-    super("UserLattice for " + lattice.getName(), lattice.getDescription());
-
-    concepts = new LinkedHashSet<LearnerConcept>();
-    bottom = new LearnerConcept(lattice.getBottom());
-    concepts.add(bottom);
-    top = new LearnerConcept(lattice.getTop());
-    concepts.add(top);
-    HashMap<Concept, LearnerConcept> registry = new HashMap<Concept, LearnerConcept>();
-    registry.put(lattice.getBottom(), bottom);
-    registry.put(lattice.getTop(), top);
-    for (Concept c : lattice.getConcepts()) {
-      LearnerConcept concept;
-      if (!registry.containsKey(c)) {
-        concept = new LearnerConcept(c);
-        concepts.add(concept);
-        registry.put(c, concept);
-      } else
-        concept = registry.get(c);
-      for (Concept s : c.getSuccessors()) {
-        LearnerConcept suc;
-        if (!registry.containsKey(s)) {
-          suc = new LearnerConcept(s);
+    super("Learner" + lattice.getName(), lattice.getDescription());
+    concepts = Collections.synchronizedSet(new LinkedHashSet<LearnerConcept>());
+    synchronized (concepts) {
+      HashMap<Long, LearnerConcept> registry = new HashMap<Long, LearnerConcept>();
+      bottom = new LearnerConcept(lattice.getBottom());
+      concepts.add(bottom);
+      top = new LearnerConcept(lattice.getTop());
+      concepts.add(top);
+      registry.put(lattice.getBottom().getId(), bottom);
+      registry.put(lattice.getTop().getId(), top);
+      for (Concept c : lattice.getConcepts()) {
+        LearnerConcept concept;
+        if (!registry.containsKey(c.getId())) {
+          concept = new LearnerConcept(c);
           concepts.add(concept);
-          registry.put(s, concept);
-        } else
-          suc = registry.get(s);
-        LearnerConcept.relate(concept, suc);
-        concept.disallowChanges();
+          registry.put(c.getId(), concept);
+        } else {
+          concept = registry.get(c.getId());
+        }
+        for (Concept s : c.getSuccessors()) {
+          LearnerConcept suc;
+          if (!registry.containsKey(s.getId())) {
+            suc = new LearnerConcept(s);
+            concepts.add(suc);
+            registry.put(s.getId(), suc);
+          } else {
+            suc = registry.get(s.getId());
+          }
+          LearnerConcept.relate(concept, suc);
+        }
       }
+      // order!
+      concepts.remove(top);
+      concepts.add(top);
+      for (LearnerConcept concept : concepts)
+        concept.disallowChanges();
+      concepts = Collections.unmodifiableSet(concepts);
     }
-    // order!
-    concepts.remove(top);
-    concepts.add(top);
-    concepts = Collections.unmodifiableSet(concepts);
   }
 
   public Set<LearnerConcept> getConcepts() {

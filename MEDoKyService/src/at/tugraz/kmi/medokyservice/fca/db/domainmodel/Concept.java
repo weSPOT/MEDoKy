@@ -394,4 +394,8 @@ public class Concept extends DataObject {
       c.setDescription(description);
     }
   }
+
+  public void addLearnerConcept(LearnerConcept c) {
+    learnerConcepts.add(c);
+  }
 }

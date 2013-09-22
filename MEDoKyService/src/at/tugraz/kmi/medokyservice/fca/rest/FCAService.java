@@ -31,6 +31,7 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.IncidenceMatrix;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.Learner;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.Teacher;
 import at.tugraz.kmi.medokyservice.fca.rest.conf.RestConfig;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.ConceptWrapper;
@@ -164,6 +165,38 @@ public class FCAService {
     System.out.println(Database.getInstance().<Domain> get(id)
         .getFormalContext().toString());
     return new DomainWrapper((Domain) Database.getInstance().get(id));
+  }
+
+  /**
+   * retrieves a single {@link LearnerDomain} by id
+   * 
+   * @param id
+   *          the id of the domain to retrieve
+   * @param uid
+   *          the learner id
+   * @return
+   * @throws IOException
+   * @throws FileNotFoundException
+   */
+  @GET
+  @Path(RestConfig.PATH_GETLEARNERDOMAIN)
+  @Produces(MediaType.APPLICATION_JSON)
+  public DomainWrapper getLearnerDomain(@QueryParam(RestConfig.KEY_ID) long id,
+      @QueryParam(RestConfig.KEY_EXTERNALUID) String uid)
+      throws FileNotFoundException, IOException {
+    log("getLearnerDomain");
+    Domain domain = Database.getInstance().<Domain> get(id);
+    Learner learner = (Learner) Database.getInstance()
+        .getUserByExternalUID(uid);
+    System.out.println(domain.getFormalContext().toString());
+    if (domain.getLearnerDomains().containsKey(uid))
+      return new DomainWrapper(domain.getLearnerDomains().get(uid));
+    LearnerDomain dom = new LearnerDomain(Database.getInstance().<Learner> get(
+        learner.getId()), domain);
+    domain.addLearnerDomain(learner.getId(), dom);
+    Database.getInstance().put(dom);
+    Database.getInstance().save();
+    return new DomainWrapper(dom);
   }
 
   /**
@@ -470,7 +503,7 @@ public class FCAService {
         hlp.append(")\n");
       }
     }
-   // Database.getInstance().print();
+    // Database.getInstance().print();
     return hlp.toString();
   }
 

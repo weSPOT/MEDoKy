@@ -240,6 +240,7 @@ backend = {
   path_create_domain : "createDomain",
   path_get_domainheaders : "getDomainHeaders",
   path_get_domain : "getDomain",
+  path_get_learner_domain : "getLearnerDomain",
   path_update_object : "updateObject",
   path_update_attribute : "updateAttribute",
   path_update_concept : "updateConcept",
@@ -440,6 +441,26 @@ backend = {
       data : payload,
       contentType : "text/plain; charset=utf-8",
       url : backend.url + backend.path_get_domain,
+      success : function(obj) {
+        callback(obj);
+      },
+      error : function(obj) {
+        console.error(JSON.stringify(obj));
+      }
+    });
+  },
+
+  get_learner_domain : function(did, uid, callback) {
+    var payload = {
+      "id" : did,
+      "externalUID" : uid
+    };
+    $.ajax({
+      cache : false,
+      type : "GET",
+      data : payload,
+      contentType : "text/plain; charset=utf-8",
+      url : backend.url + backend.path_get_learner_domain,
       success : function(obj) {
         callback(obj);
       },
@@ -990,90 +1011,98 @@ logic = {
     });
   },
 
+  populate_domain : function(domain) {
+
+    state.domain = domain;
+
+    // console.debug(JSON.stringify(domain));
+    var num_attributes = Object.keys(domain.mapping.attributes).length;
+    var num_objects = Object.keys(domain.mapping.objects).length;
+
+    while ($(".td_attr").length < num_attributes) {
+      ui.append_attribute();
+    }
+    while ($(".btn_del_obj").length < num_objects) {
+      ui.append_object();
+    }
+
+    for ( var currentAttribs = $(".td_attr").length; currentAttribs > num_attributes; currentAttribs = $(".td_attr").length) {
+
+      var index = $(".td_attr")[0].childNodes[2].id.split("_")[1];
+
+      logic.rem_attribute(index);
+
+    }
+    while ($(".btn_del_obj").length > num_objects) {
+      logic.rem_object($($(".btn_del_obj")[0]).prop("id").split("_")[3]);
+    }
+    backend.get_objects(backend.get_attributes(function() {
+      setTimeout(function() {
+        var index = 0;
+        for ( var a in domain.mapping.attributes) {
+
+          var id = "#attr_" + $(".td_attr")[index].childNodes[2].id.split("_")[1];
+
+          var attribute = JSON.parse(a);
+          // console.debug(a);
+          // console.debug(attribute);
+          $(id).data(logic.key_attr, attribute);
+          $(id).prop("value", attribute.name);
+          ++index;
+        }
+
+        $(".check").prop("checked", false);
+        var objects = $(".btn_del_obj");
+        index = 0;
+        for ( var o in domain.mapping.objects) {
+          var id = "#obj_" + ($(objects[index]).prop("id").split("_")[3]);
+
+          var object = $.parseJSON(o);
+
+          $(id).data(logic.key_obj, object);
+          $(id).prop("value", object.name);
+          var mapped = domain.mapping.objects[o];
+
+          for ( var m = 0; m < mapped.length; ++m) {
+
+            var currentA = $(".btn_attr");
+            for ( var a = 0; a < currentA.length; ++a) {
+              // console.debug(currentA[a]);
+              // console.debug("#" + currentA[a].id);
+              // console.debug($("#" +
+              // currentA[a].id).data(logic.key_attr));
+              // console.debug(mapped[m]);
+              if ($("#" + currentA[a].id).data(logic.key_attr).id == mapped[m].id) {
+                $(id + "_" + currentA[a].id).prop("checked", true);
+              }
+            }
+          }
+
+          ++index;
+        }
+        if (state.msie) {
+          setTimeout(function() {
+            ui.display_lattice();
+          }, 300);
+        } else
+          ui.display_lattice();
+      }, state.msie ? 1000 : 0);
+    }));
+  },
+
   load : function(domainid) {
     $("#dia_set_dom").dialog("close");
     // state.domain = domain;
     // state.new
-    backend
-        .get_domain(
-            domainid,
-            function(domain) {
-              state.domain = domain;
-
-              // console.debug(JSON.stringify(domain));
-              var num_attributes = Object.keys(domain.mapping.attributes).length;
-              var num_objects = Object.keys(domain.mapping.objects).length;
-
-              while ($(".td_attr").length < num_attributes) {
-                ui.append_attribute();
-              }
-              while ($(".btn_del_obj").length < num_objects) {
-                ui.append_object();
-              }
-
-              for ( var currentAttribs = $(".td_attr").length; currentAttribs > num_attributes; currentAttribs = $(".td_attr").length) {
-
-                var index = $(".td_attr")[0].childNodes[2].id.split("_")[1];
-
-                logic.rem_attribute(index);
-
-              }
-              while ($(".btn_del_obj").length > num_objects) {
-                logic.rem_object($($(".btn_del_obj")[0]).prop("id").split("_")[3]);
-              }
-              backend.get_objects(backend.get_attributes(function() {
-                setTimeout(function() {
-                  var index = 0;
-                  for ( var a in domain.mapping.attributes) {
-
-                    var id = "#attr_" + $(".td_attr")[index].childNodes[2].id.split("_")[1];
-
-                    var attribute = JSON.parse(a);
-                    // console.debug(a);
-                    // console.debug(attribute);
-                    $(id).data(logic.key_attr, attribute);
-                    $(id).prop("value", attribute.name);
-                    ++index;
-                  }
-
-                  $(".check").prop("checked", false);
-                  var objects = $(".btn_del_obj");
-                  index = 0;
-                  for ( var o in domain.mapping.objects) {
-                    var id = "#obj_" + ($(objects[index]).prop("id").split("_")[3]);
-
-                    var object = $.parseJSON(o);
-
-                    $(id).data(logic.key_obj, object);
-                    $(id).prop("value", object.name);
-                    var mapped = domain.mapping.objects[o];
-
-                    for ( var m = 0; m < mapped.length; ++m) {
-
-                      var currentA = $(".btn_attr");
-                      for ( var a = 0; a < currentA.length; ++a) {
-                        // console.debug(currentA[a]);
-                        // console.debug("#" + currentA[a].id);
-                        // console.debug($("#" +
-                        // currentA[a].id).data(logic.key_attr));
-                        // console.debug(mapped[m]);
-                        if ($("#" + currentA[a].id).data(logic.key_attr).id == mapped[m].id) {
-                          $(id + "_" + currentA[a].id).prop("checked", true);
-                        }
-                      }
-                    }
-
-                    ++index;
-                  }
-                  if (state.msie) {
-                    setTimeout(function() {
-                      ui.display_lattice();
-                    }, 300);
-                  } else
-                    ui.display_lattice();
-                }, state.msie ? 1000 : 0);
-              }));
-            });
+    if (state.teacher) {
+      backend.get_domain(domainid, function(domain) {
+        logic.populate_domain(domain);
+      });
+    } else {
+      backend.get_learner_domain(domainid, state.user.guid.toString(), function(domain) {
+        logic.populate_domain(domain);
+      });
+    }
   }
 };
 
@@ -1523,7 +1552,7 @@ ui = {
     var tdiv = div.create("div", {
       "class" : "txt_lo"
     }).click(function() {
-      window.open(lo.description);
+      window.open(lo.description, "Learning Object");
     });
     tdiv.create("txt", lo.name);
     var buttons = div.create("div", {
@@ -1778,8 +1807,8 @@ ui = {
     } else {
       $("#dia_vis").show();
       $("#dia_vis").css("width", "100%");
-      $("#dia_vis").css("height", $(window).height()-150+"px");
-      lattice.init("#canvas_lattice", $("#dia_vis").width()-220, $("#dia_vis").height(),
+      $("#dia_vis").css("height", $(window).height() - 150 + "px");
+      lattice.init("#canvas_lattice", $("#dia_vis").width() - 220, $("#dia_vis").height(),
           "#div_lattice_info", backend);
       lattice.draw();
       $("#vis_loading").show();
@@ -1809,6 +1838,9 @@ ui = {
       if (d_state == "minimized") {
         $("#dia_vis").dialogExtend("minimize");
       }
+    } else {
+      $("#dia_vis").css("height", $(window).height() - 150 + "px");
+      lattice.resize($("#dia_vis").width() - 220, $("#dia_vis").height());
     }
   },
 

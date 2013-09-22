@@ -52,8 +52,7 @@ public class Course extends DataObject {
    */
   public void addDomain(Domain domain) {
     domains.add(domain);
-    for (Learner l : participants)
-      l.getDomains().add(new LearnerDomain(domain));
+    
 
   }
 
@@ -69,7 +68,6 @@ public class Course extends DataObject {
    */
   public void addParticipant(Learner learner) {
     participants.add(learner);
-    learner.addCourse(this);
   }
 
   public long getOwnerId() {

@@ -14,6 +14,7 @@ public interface RestConfig {
   public static final String PATH_GETFORMALCONTEXT = "getFormalContext";
   public static final String PATH_GETDOMAINHEADERS = "getDomainHeaders";
   public static final String PATH_GETDOMAIN = "getDomain";
+  public static final String PATH_GETLEARNERDOMAIN = "getLearnerDomain";
   public static final String PATH_IDENTIFY = "identify";
   public static final String PATH_UPDATECONCEPT = "updateConcept";
   public static final String PATH_UPDATEATTRIBUTE = "updateAttribute";
@@ -29,5 +30,6 @@ public interface RestConfig {
   public static final String KEY_CONCEPT = "concept";
   public static final String KEY_DOMAINID = "domainID";
   public static final String KEY_USER = "user";
+  public static final String KEY_USERID = "uid";
   public static final String KEY_ISTEACHER = "isTeacher";
 }

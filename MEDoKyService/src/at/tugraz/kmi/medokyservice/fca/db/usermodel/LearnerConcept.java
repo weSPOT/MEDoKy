@@ -60,6 +60,7 @@ public class LearnerConcept extends DataObject {
     predecessors = new LinkedHashSet<LearnerConcept>();
     successors = new LinkedHashSet<LearnerConcept>();
     taxonomySuccessors = new LinkedHashSet<LearnerConcept>();
+    c.addLearnerConcept(this);
   }
 
   /**
@@ -72,8 +73,18 @@ public class LearnerConcept extends DataObject {
    *          the successor
    */
   public static void relate(LearnerConcept predecessor, LearnerConcept successor) {
-    predecessor.successors.add(successor);
-    successor.predecessors.add(predecessor);
+    predecessor.addSuccessor(successor);
+    successor.addPredecessor(predecessor);
+  }
+
+  private void addPredecessor(LearnerConcept predecessor) {
+    predecessors.add(predecessor);
+    
+  }
+
+  private void addSuccessor(LearnerConcept successor) {
+    successors.add(successor);
+    
   }
 
   public HashMap<FCAObject, Float> getObjects() {
@@ -134,6 +145,10 @@ public class LearnerConcept extends DataObject {
   public void disallowChanges() {
     successors = Collections.unmodifiableSet(successors);
     predecessors = Collections.unmodifiableSet(predecessors);
+  }
+
+  public String toString() {
+    return Long.toString(getId());
   }
 
 }

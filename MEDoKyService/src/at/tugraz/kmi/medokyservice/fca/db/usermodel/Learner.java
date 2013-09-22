@@ -41,17 +41,6 @@ public class Learner extends User {
     return courseIDs;
   }
 
-  /**
-   * Adds a {@link Course} to the set of this learners courses and also adds
-   * this learner to the course's list of participants
-   * 
-   * @param course
-   */
-  public void addCourse(Course course) {
-    courseIDs.add(course.getId());
-    for (Domain d : course.getDomains()) {
-      domains.add(new LearnerDomain(d));
-    }
-  }
+
 
 }
