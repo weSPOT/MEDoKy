@@ -16,10 +16,42 @@ state = {
   inited_obj : false,
   msie : false,
   editing : false,
-  hover_elem : null
+  hover_elem : null,
+  gid : -1,
+  g_name : "",
+  owner_id : -1,
+  teacher : false
 };
 
 util = {
+
+  parse_params : function() {
+    var params = window.location.search.replace("?", "").split("&");
+    if (params.length < 3)
+      window.alert("Error! Please Launch the FCA from a group!");
+    for ( var i in params) {
+      var param = params[i].split("=");
+      if (param[0] == "gid")
+        state.gid = parseInt(param[1]);
+      else if (param[0] == "name")
+        state.g_name = param[1];
+      else if (param[0] == "uid")
+        state.owner_id = parseInt(param[1]);
+    }
+    if (state.owner_id == state.user.guid)
+      state.teacher = true;
+  },
+
+  switch_student : function() {
+    $("#btn_save").hide();
+    $("#btn_new").hide();
+    $("#main_table").hide();
+    $("#dia_vis").hide();
+    $("#span_latticeview").css({
+      "margin-top" : "75px",
+      "padding-left" : "7px"
+    });
+  },
 
   filter_items : function(o) {
     var objs = {};
@@ -426,6 +458,7 @@ logic = {
   init : function(basedir, backend_url) {
     state.basedir = basedir;
     state.user = elgg.get_logged_in_user_entity();
+    util.parse_params();
 
     backend.url = backend_url;
     $(window).resize(function() {
@@ -436,7 +469,7 @@ logic = {
       "name" : state.user.name,
       "description" : state.user.url,
       "externalUID" : state.user.guid.toString(),
-      "teacher" : true
+      "teacher" : state.teacher
     }));
 
     for ( var i = 0; i < $(".btn_obj").length; ++i) {
@@ -592,20 +625,23 @@ logic = {
       modal : true
     });
 
-    $("#dia_vis").dialog({
-      autoOpen : false,
-      height : 160,
-      resizable : false,
-      modal : false,
-      dialogClass : 'no-close',
-      closeOnEscape : false,
-      beforeclose : function() {
-        return false;
-      }
-    }).dialogExtend({
-      minimize : true,
-      maximize : false
-    });
+    if (state.teacher) {
+
+      $("#dia_vis").dialog({
+        autoOpen : false,
+        height : 160,
+        resizable : false,
+        modal : false,
+        dialogClass : 'no-close',
+        closeOnEscape : false,
+        beforeclose : function() {
+          return false;
+        }
+      }).dialogExtend({
+        minimize : true,
+        maximize : false
+      });
+    }
 
     var tmp_w = $(".btn_attr").width();
     var tmp_h = $(".btn_attr").height();
@@ -620,6 +656,9 @@ logic = {
       backend.get_l_objects();
     }
 
+    if (!state.teacher) {
+      util.switch_student();
+    }
   },
 
   create_object : function(name, description) {
@@ -1706,47 +1745,70 @@ ui = {
   },
 
   display_lattice : function() {
-    lattice.init("#canvas_lattice", $(window).width() - 350, $(window).height() - 100,
-        "#div_lattice_info", backend);
-    lattice.draw();
-    $("#vis_loading").show();
-    $("#canvas_lattice").hide();
-    $("#div_lattice_info").hide();
-    setTimeout(function() {
-      $("#vis_loading").hide();
-      $("#canvas_lattice").show();
-      $("#div_lattice_info").show(100);
-      lattice.switch_view();
-    }, 1500);
-    $("#cb_latticeview").prop("checked", false);
-    // lattice.sys.stop();
-    try {
-      $("#dia_vis").dialogExtend("restore");
-    } catch (error) {
+    if (state.teacher) {
+      lattice.init("#canvas_lattice", $(window).width() - 350, $(window).height() - 100,
+          "#div_lattice_info", backend);
+      lattice.draw();
+      $("#vis_loading").show();
+      $("#canvas_lattice").hide();
+      $("#div_lattice_info").hide();
+      setTimeout(function() {
+        $("#vis_loading").hide();
+        $("#canvas_lattice").show();
+        $("#div_lattice_info").show(100);
+        lattice.switch_view();
+      }, 1500);
+      $("#cb_latticeview").prop("checked", false);
+      // lattice.sys.stop();
+      try {
+        $("#dia_vis").dialogExtend("restore");
+      } catch (error) {
 
-    }
-    $("#dia_vis").dialog("option", "title",
-        elgg.echo('wespot_fca:lattice:tax') + " '" + state.domain.name + "'");
-    $("#dia_vis").dialog("option", "width", $("#canvas_lattice").prop("width") + 240);
-    $("#dia_vis").dialog("option", "height", $("#canvas_lattice").prop("height") + 50);
-    try {
-      $("#dia_vis").dialog("open").dialogExtend("restore");
-    } catch (error) {
-    }
-    $("#dia_vis").fadeTo(0, 0);
-    $("#dia_vis").fadeTo(1000, 1);
+      }
+      $("#dia_vis").dialog("option", "title",
+          elgg.echo('wespot_fca:lattice:tax') + " '" + state.domain.name + "'");
+      $("#dia_vis").dialog("option", "width", $("#canvas_lattice").prop("width") + 240);
+      $("#dia_vis").dialog("option", "height", $("#canvas_lattice").prop("height") + 50);
+      try {
+        $("#dia_vis").dialog("open").dialogExtend("restore");
+      } catch (error) {
+      }
+      $("#dia_vis").fadeTo(0, 0);
+      $("#dia_vis").fadeTo(1000, 1);
+    } else {
+      $("#dia_vis").show();
+      $("#dia_vis").css("width", "100%");
+      $("#dia_vis").css("height", $(window).height()-150+"px");
+      lattice.init("#canvas_lattice", $("#dia_vis").width()-220, $("#dia_vis").height(),
+          "#div_lattice_info", backend);
+      lattice.draw();
+      $("#vis_loading").show();
+      $("#canvas_lattice").hide();
+      $("#div_lattice_info").hide();
+      setTimeout(function() {
+        $("#vis_loading").hide();
+        $("#canvas_lattice").show();
+        $("#div_lattice_info").show(100);
+        lattice.switch_view();
+      }, 1500);
+      $("#cb_latticeview").prop("checked", false);
 
+      $("#dia_vis").fadeTo(0, 0);
+      $("#dia_vis").fadeTo(1000, 1);
+    }
   },
   resize : function() {
     // TODO this is a hack, but sicne elgg ships an ancient version on jQuery we
     // are limited to hacks
-    var state = $("#dia_vis").data("dialog-state");
+    if (state.teacher) {
+      var d_state = $("#dia_vis").data("dialog-state");
 
-    lattice.resize($(window).width() - 350, $(window).height() - 100);
-    $("#dia_vis").dialog("option", "width", $("#canvas_lattice").prop("width") + 240);
-    $("#dia_vis").dialog("option", "height", $("#canvas_lattice").prop("height") + 50);
-    if (state == "minimized") {
-      $("#dia_vis").dialogExtend("minimize");
+      lattice.resize($(window).width() - 350, $(window).height() - 100);
+      $("#dia_vis").dialog("option", "width", $("#canvas_lattice").prop("width") + 240);
+      $("#dia_vis").dialog("option", "height", $("#canvas_lattice").prop("height") + 50);
+      if (d_state == "minimized") {
+        $("#dia_vis").dialogExtend("minimize");
+      }
     }
   },
 

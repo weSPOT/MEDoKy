@@ -16,7 +16,14 @@ lattice = {
   init_canvas : function(canvas, width, height, info, backend) {
     $(canvas).prop("width", width);
     $(canvas).prop("height", height);
-    $(info).height($(canvas).prop("height"));
+    if (state.teacher)
+      $(info).height($(canvas).prop("height"));
+    else {
+      $(info).css({
+        "height" : $(canvas).prop("height") - 5 + "px",
+        "marginBottom" : "5px"
+      });
+    }
     lattice.canvas = $(canvas).get(0);
     lattice.info = $(info).get(0);
     lattice.backend = backend;
@@ -216,16 +223,15 @@ lattice = {
       else
         ctx.fillStyle = "rgba(255,255,255, 0.5)";
       ctx.fill();
+
+      if (node.data.active)
+        ctx.strokeStyle = "rgba(" + node.data.color_attr + ",1)";
+      else
+        ctx.strokeStyle = "rgba(" + node.data.color_attr + ",0.5)";
+
+      ctx.lineWidth = 2;
+      ctx.stroke();
       if (node.data.isObjectConcept) {
-        ctx.closePath();
-        ctx.beginPath();
-        if (node.data.active)
-          ctx.strokeStyle = "rgba(" + node.data.color_attr + ",1)";
-        else
-          ctx.strokeStyle = "rgba(" + node.data.color_attr + "0.5)";
-        ctx.lineWidth = 2;
-        ctx.arc((pt.x), (pt.y), w, 0, 2 * Math.PI, true);
-        ctx.stroke();
         ctx.closePath();
         ctx.beginPath();
         if (node.data.active)
@@ -235,16 +241,7 @@ lattice = {
         ctx.arc((pt.x), (pt.y), w, 1 * Math.PI, 2 * Math.PI, true);
         ctx.fill();
         ctx.closePath();
-      } else {
-
-        if (node.data.active)
-          ctx.strokeStyle = "rgba(" + node.data.color_attr + ",1)";
-        else
-          ctx.strokeStyle = "rgba(" + node.data.color_attr + ",0.5)";
-
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
+      } 
 
       if (node.data.objActive) {
         ctx.lineWidth = 4;

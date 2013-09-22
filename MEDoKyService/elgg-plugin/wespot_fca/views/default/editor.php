@@ -416,7 +416,7 @@ logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/F
  <img src="<?php echo $basedir; ?>img/loading.gif" id="vis_loading" />
  <table>
   <tr>
-   <td><span style="position: absolute; text-align: left; left: 0; top: 0; padding: 3px"> <input
+   <td><span id="span_latticeview" style="position: absolute; text-align: left; left: 0; top: 0; padding: 3px"> <input
      type="checkbox" id="cb_latticeview" style="width: 20px" onclick="lattice.switch_view()" /> <?php echo elgg_echo('wespot_fca:lattice:show_full'); ?>
    </span></td>
    <td>
