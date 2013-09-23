@@ -208,7 +208,7 @@ lattice = {
       if (node.data.obj == "" && node.data.attr == "")
         w = 2;
       if (node.data.selected) {
-        ctx.fillStyle = "rgba(0,200,0,1)";
+        ctx.fillStyle = "rgba(0,60,180,1)";
         ctx.closePath();
         ctx.beginPath();
         ctx.arc((pt.x), (pt.y), w + 5, 0, 2 * Math.PI, true);
@@ -230,22 +230,37 @@ lattice = {
       else
         ctx.fillStyle = "rgba(255,255,255, 0.5)";
       ctx.fill();
-
-      if (node.data.active)
-        ctx.strokeStyle = "rgba(" + node.data.color_attr + ",1)";
+      ctx.closePath();
+      ctx.beginPath();
+      if (node.data.isObjectConcept)
+        ctx.arc((pt.x), (pt.y), w - 1, 0, Math.PI, true);
       else
-        ctx.strokeStyle = "rgba(" + node.data.color_attr + ",0.5)";
-
-      ctx.lineWidth = 2;
+        ctx.arc((pt.x), (pt.y), w - 1, 0, 2 * Math.PI, true);
+      if (node.data.active)
+        if (w == 2)
+          ctx.strokeStyle = "rgba(50,50,50,1)";
+        else
+          ctx.strokeStyle = "rgba(" + node.data.color_attr + ",1)";
+      else {
+        if (w == 2)
+          ctx.strokeStyle = "rgba(50,50,50,0.5)";
+        else
+          ctx.strokeStyle = "rgba(" + node.data.color_attr + ",0.5)";
+      }
+      ctx.lineWidth = 4;
       ctx.stroke();
+
       if (node.data.isObjectConcept) {
         ctx.closePath();
         ctx.beginPath();
-        if (node.data.active)
+        if (node.data.active) {
           ctx.fillStyle = "rgba(" + node.data.color_obj + ",1)";
-        else
+
+        } else {
           ctx.fillStyle = "rgba(" + node.data.color_obj + ",0.5)";
-        ctx.arc((pt.x), (pt.y), w, 1 * Math.PI, 2 * Math.PI, true);
+
+        }
+        ctx.arc((pt.x), (pt.y), w + 1, 1 * Math.PI, 2 * Math.PI, true);
         ctx.fill();
         ctx.closePath();
       }
@@ -486,7 +501,7 @@ lattice = {
               };
               backend.update_valuation(JSON.stringify(postdata), lattice.update_valuation);
             }
-            window.open($(this).data("url"), "Learning Object","width=350,height=250");
+            window.open($(this).data("url"), "Learning Object", "width=350,height=250");
             // console.debug(learningObjects[lo].description);
           }).hover(function() {
             $(this).css("background-color", "rgba(255,255,255,1)");
@@ -681,9 +696,9 @@ lattice = {
         for ( var ol in o.learningObjects) {
           if (o.learningObjects[ol].id == lo) {
             tmp.create("txt", "x");
-            var ov = $("#btn_lo_"+o.learningObjects[ol].id).data("objectValuations");
-            ov[o.id]=1;
-            $("#btn_lo_"+o.learningObjects[ol].id).data("objectValuations",ov);
+            var ov = $("#btn_lo_" + o.learningObjects[ol].id).data("objectValuations");
+            ov[o.id] = 1;
+            $("#btn_lo_" + o.learningObjects[ol].id).data("objectValuations", ov);
           }
         }
 
@@ -757,9 +772,9 @@ lattice = {
         for ( var ol in o.learningObjects) {
           if (o.learningObjects[ol].id == lo) {
             tmp.create("txt", "x");
-            var av = $("#btn_lo_"+o.learningObjects[ol].id).data("attributeValuations");
-            av[o.id]=1;
-            $("#btn_lo_"+o.learningObjects[ol].id).data("attributeValuations",av);
+            var av = $("#btn_lo_" + o.learningObjects[ol].id).data("attributeValuations");
+            av[o.id] = 1;
+            $("#btn_lo_" + o.learningObjects[ol].id).data("attributeValuations", av);
           }
         }
       }
@@ -841,8 +856,8 @@ lattice = {
 
   update_valuation : function(lat) {
     console.debug(lat);
-    for (var i in lat.concepts){
-      var node=lattice.sys.getNode(lat.concepts[i].id);
+    for ( var i in lat.concepts) {
+      var node = lattice.sys.getNode(lat.concepts[i].id);
       node.data.color_obj = lattice.calc_color(lat.concepts[i].valuations[0]);
       node.data.color_attr = lattice.calc_color(lat.concepts[i].valuations[1]);
     }
@@ -977,7 +992,8 @@ lattice = {
   calc_color : function(valuation) {
     if (valuation < 0) {
       var val = valuation + 1;
-      return "255," + parseInt(200 * val) + ",0";
+      var r = 255 - (55 * val);
+      return parseInt(r) + "," + parseInt(200 * val) + ",0";
     } else {
       var val = 1 - valuation;
       return parseInt(255 * val) + ",200,0";
