@@ -30,21 +30,22 @@ public class LearnerLattice extends DataObject {
    * 
    * @param lattice
    */
-  public LearnerLattice(Lattice lattice) {
+  public LearnerLattice(Lattice lattice, Learner learner) {
     super("Learner" + lattice.getName(), lattice.getDescription());
     concepts = Collections.synchronizedSet(new LinkedHashSet<LearnerConcept>());
     synchronized (concepts) {
+      learner.addObjects(lattice.getConcepts());
       HashMap<Long, LearnerConcept> registry = new HashMap<Long, LearnerConcept>();
-      bottom = new LearnerConcept(lattice.getBottom());
+      bottom = new LearnerConcept(lattice.getBottom(),learner);
       concepts.add(bottom);
-      top = new LearnerConcept(lattice.getTop());
+      top = new LearnerConcept(lattice.getTop(),learner);
       concepts.add(top);
       registry.put(lattice.getBottom().getId(), bottom);
       registry.put(lattice.getTop().getId(), top);
       for (Concept c : lattice.getConcepts()) {
         LearnerConcept concept;
         if (!registry.containsKey(c.getId())) {
-          concept = new LearnerConcept(c);
+          concept = new LearnerConcept(c,learner);
           concepts.add(concept);
           registry.put(c.getId(), concept);
         } else {
@@ -53,7 +54,7 @@ public class LearnerLattice extends DataObject {
         for (Concept s : c.getSuccessors()) {
           LearnerConcept suc;
           if (!registry.containsKey(s.getId())) {
-            suc = new LearnerConcept(s);
+            suc = new LearnerConcept(s, learner);
             concepts.add(suc);
             registry.put(s.getId(), suc);
           } else {

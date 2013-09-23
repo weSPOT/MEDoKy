@@ -470,12 +470,23 @@ lattice = {
           .create(
               "input",
               {
+                id : "btn_lo_" + learningObjects[lo].id,
                 type : "button",
                 class : "input lattice_lo col",
                 style : "margin-left: -61px; margin-right: -61px; text-overflow: ellipsis; overflow: hidden;",
                 value : learningObjects[lo].name
-              }).data("url", learningObjects[lo].description).click(function() {
-            window.open($(this).data("url"), "Learning Object");
+              }).data("url", learningObjects[lo].description).data("objectValuations", {}).data(
+              "attributeValuations", {}).click(function() {
+            if (!state.teacher) {
+              var postdata = {
+                "id" : state.domain.id,
+                "externalUID" : state.user.guid.toString(),
+                "objectValuations" : $(this).data("objectValuations"),
+                "attributeValuations" : $(this).data("attributeValuations")
+              };
+              backend.update_valuation(JSON.stringify(postdata), lattice.update_valuation);
+            }
+            window.open($(this).data("url"), "Learning Object","width=350,height=250");
             // console.debug(learningObjects[lo].description);
           }).hover(function() {
             $(this).css("background-color", "rgba(255,255,255,1)");
@@ -670,6 +681,9 @@ lattice = {
         for ( var ol in o.learningObjects) {
           if (o.learningObjects[ol].id == lo) {
             tmp.create("txt", "x");
+            var ov = $("#btn_lo_"+o.learningObjects[ol].id).data("objectValuations");
+            ov[o.id]=1;
+            $("#btn_lo_"+o.learningObjects[ol].id).data("objectValuations",ov);
           }
         }
 
@@ -743,6 +757,9 @@ lattice = {
         for ( var ol in o.learningObjects) {
           if (o.learningObjects[ol].id == lo) {
             tmp.create("txt", "x");
+            var av = $("#btn_lo_"+o.learningObjects[ol].id).data("attributeValuations");
+            av[o.id]=1;
+            $("#btn_lo_"+o.learningObjects[ol].id).data("attributeValuations",av);
           }
         }
       }
@@ -819,6 +836,16 @@ lattice = {
       } else
         lattice.disable_editing();
     });
+    lattice.renderer.redraw();
+  },
+
+  update_valuation : function(lat) {
+    console.debug(lat);
+    for (var i in lat.concepts){
+      var node=lattice.sys.getNode(lat.concepts[i].id);
+      node.data.color_obj = lattice.calc_color(lat.concepts[i].valuations[0]);
+      node.data.color_attr = lattice.calc_color(lat.concepts[i].valuations[1]);
+    }
     lattice.renderer.redraw();
   },
 

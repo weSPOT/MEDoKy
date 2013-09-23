@@ -244,6 +244,7 @@ backend = {
   path_update_object : "updateObject",
   path_update_attribute : "updateAttribute",
   path_update_concept : "updateConcept",
+  path_update_valuation : "updateValuations",
   path_identify : "identify",
 
   identify : function(payload, callback) {
@@ -408,6 +409,20 @@ backend = {
       cache : false,
       type : "POST",
       url : backend.url + backend.path_update_concept,
+      data : payload,
+      dataType : "json",
+      contentType : "application/json; charset=utf-8",
+      success : function(obj) {
+        callback(obj);
+      }
+    });
+  },
+
+  update_valuation : function(payload, callback) {
+    $.ajax({
+      cache : false,
+      type : "POST",
+      url : backend.url + backend.path_update_valuation,
       data : payload,
       dataType : "json",
       contentType : "application/json; charset=utf-8",
@@ -1014,7 +1029,7 @@ logic = {
   populate_domain : function(domain) {
 
     state.domain = domain;
-
+    $("#h_domain_name").empty().create("txt", domain.name);
     // console.debug(JSON.stringify(domain));
     var num_attributes = Object.keys(domain.mapping.attributes).length;
     var num_objects = Object.keys(domain.mapping.objects).length;
@@ -1552,7 +1567,7 @@ ui = {
     var tdiv = div.create("div", {
       "class" : "txt_lo"
     }).click(function() {
-      window.open(lo.description, "Learning Object");
+      window.open(lo.description, "Learning Object", "width=350,height=250");
     });
     tdiv.create("txt", lo.name);
     var buttons = div.create("div", {

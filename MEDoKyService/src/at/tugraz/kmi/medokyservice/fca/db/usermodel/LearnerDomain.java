@@ -34,7 +34,7 @@ public class LearnerDomain extends DataObject {
     this.mapping = domain.getMapping();
     this.owner = owner;
     this.domainID = domain.getId();
-    this.formalContext = new LearnerLattice(domain.getFormalContext());
+    this.formalContext = new LearnerLattice(domain.getFormalContext(), owner);
   }
 
   public LearnerLattice getFormalContext() {

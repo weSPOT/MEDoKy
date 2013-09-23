@@ -19,6 +19,7 @@ public interface RestConfig {
   public static final String PATH_UPDATECONCEPT = "updateConcept";
   public static final String PATH_UPDATEATTRIBUTE = "updateAttribute";
   public static final String PATH_UPDATEOBJECT = "updateObject";
+  public static final String PATH_UPDATEVALUATIONS = "updateValuations";
 
   public static final String KEY_RELATION = "relation";
   public static final String KEY_NAME = "name";

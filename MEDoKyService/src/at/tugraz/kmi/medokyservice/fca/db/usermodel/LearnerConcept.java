@@ -1,7 +1,6 @@
 package at.tugraz.kmi.medokyservice.fca.db.usermodel;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -27,13 +26,15 @@ public class LearnerConcept extends DataObject {
    */
   private static final long serialVersionUID = -1379190857847955644L;
   private long domainConceptId;
-  private LinkedHashMap<FCAObject, Float> objects;
-  private LinkedHashMap<FCAAttribute, Float> attributes;
 
   @JsonIgnore
   private Set<LearnerConcept> predecessors;
   private Set<LearnerConcept> successors;
   private Set<LearnerConcept> taxonomySuccessors;
+  private Set<FCAObject> objects;
+  private Set<FCAAttribute> attributes;
+  @JsonIgnore
+  private Learner learner;
 
   /**
    * Creates a new LearnerConcept based upon a {@link Concept} of the domain
@@ -43,18 +44,20 @@ public class LearnerConcept extends DataObject {
    *          the {@link Concept} this LearnerConcept is based upon
    */
   @SuppressWarnings("rawtypes")
-  public LearnerConcept(Concept c) {
+  public LearnerConcept(Concept c, Learner learner) {
     super(c.getName(), c.getDescription());
     domainConceptId = c.getId();
+    this.learner = learner;
+    objects = new LinkedHashSet<FCAObject>();
+    attributes = new LinkedHashSet<FCAAttribute>();
 
-    objects = new LinkedHashMap<FCAObject, Float>();
     for (Comparable o : c.getObjects()) {
-      objects.put((FCAObject) o, 0f);
+      objects.add((FCAObject) o);
+
     }
 
-    attributes = new LinkedHashMap<FCAAttribute, Float>();
     for (Comparable a : c.getAttributes()) {
-      attributes.put((FCAAttribute) a, 0f);
+      attributes.add((FCAAttribute) a);
     }
 
     predecessors = new LinkedHashSet<LearnerConcept>();
@@ -79,44 +82,42 @@ public class LearnerConcept extends DataObject {
 
   private void addPredecessor(LearnerConcept predecessor) {
     predecessors.add(predecessor);
-    
+
   }
 
   private void addSuccessor(LearnerConcept successor) {
     successors.add(successor);
-    
+
   }
 
-  public HashMap<FCAObject, Float> getObjects() {
-    return objects;
+  public Map<FCAObject, Float> getObjects() {
+    LinkedHashMap<FCAObject, Float> result = new LinkedHashMap<FCAObject, Float>();
+    Map<FCAObject, Float> obj = learner.getLearnerObjects();
+    for (FCAObject o : objects) {
+      result.put(o, obj.get(o));
+    }
+    return result;
   }
 
-  public HashMap<FCAAttribute, Float> getAttributes() {
-    return attributes;
-  }
-
-  public void setAttributeValuations(
-      Map<FCAAttribute, Float> attributeValuations) throws Exception {
-    if (!(this.attributes.keySet().containsAll(attributeValuations.keySet()))
-        || !(attributeValuations.keySet().containsAll(this.attributes.keySet())))
-      throw new Exception("Invalid Valuations!");
-    this.attributes.putAll(attributeValuations);
-  }
-
-  public void setObjectValuations(Map<FCAObject, Float> objectValuations)
-      throws Exception {
-    if (!(this.objects.keySet().containsAll(objectValuations.keySet()))
-        || !(objectValuations.keySet().containsAll(this.objects.keySet())))
-      throw new Exception("Invalid Valuations!");
-    this.objects.putAll(objectValuations);
+  public Map<FCAAttribute, Float> getAttributes() {
+    LinkedHashMap<FCAAttribute, Float> result = new LinkedHashMap<FCAAttribute, Float>();
+    Map<FCAAttribute, Float> attr = learner.getLearnerAttributes();
+    for (FCAAttribute a : attributes) {
+      result.put(a, attr.get(a));
+    }
+    return result;
   }
 
   public float[] getPercentagedValuations() {
+    Map<FCAObject, Float> objects = getObjects();
+    Map<FCAAttribute, Float> attributes = getAttributes();
     float attr = 0f, obj = 0f;
     for (float f : objects.values())
       obj += f;
     for (float f : attributes.values())
       attr += f;
+    obj = objects.isEmpty() ? obj : obj / (float) objects.size();
+    attr = attributes.isEmpty() ? attr : attr / (float) attributes.size();
     float[] result = { obj, attr };
     return result;
   }

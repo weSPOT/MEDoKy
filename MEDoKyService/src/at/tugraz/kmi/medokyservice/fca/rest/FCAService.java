@@ -21,6 +21,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import at.tugraz.kmi.medokyservice.fca.bl.Updater;
 import at.tugraz.kmi.medokyservice.fca.db.Database;
 import at.tugraz.kmi.medokyservice.fca.db.FCAAbstract;
 import at.tugraz.kmi.medokyservice.fca.db.User;
@@ -40,6 +41,7 @@ import at.tugraz.kmi.medokyservice.fca.rest.wrappers.DomainWrapper;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.LatticeWrapper;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.LearningObjectWrapper;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.UserWrapper;
+import at.tugraz.kmi.medokyservice.fca.rest.wrappers.ValuationWrapper;
 import at.tugraz.kmi.medokyservice.fca.util.NameComparator;
 
 import com.sun.istack.logging.Logger;
@@ -189,8 +191,8 @@ public class FCAService {
     Learner learner = (Learner) Database.getInstance()
         .getUserByExternalUID(uid);
     System.out.println(domain.getFormalContext().toString());
-    if (domain.getLearnerDomains().containsKey(uid))
-      return new DomainWrapper(domain.getLearnerDomains().get(uid));
+    if (domain.getLearnerDomains().containsKey(learner.getId()))
+      return new DomainWrapper(domain.getLearnerDomains().get(learner.getId()));
     LearnerDomain dom = new LearnerDomain(Database.getInstance().<Learner> get(
         learner.getId()), domain);
     domain.addLearnerDomain(learner.getId(), dom);
@@ -293,6 +295,33 @@ public class FCAService {
       e.printStackTrace();
     }
     return new DomainWrapper(d).formalContext;
+  }
+
+  @POST
+  @Path(RestConfig.PATH_UPDATEVALUATIONS)
+  @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
+  @Produces(MediaType.APPLICATION_JSON)
+  public LatticeWrapper updateValuations(ValuationWrapper valuations)
+      throws Exception {
+    log("updateConcept");
+    HashMap<FCAObject, Float> objectValuations = new HashMap<FCAObject, Float>();
+    HashMap<FCAAttribute, Float> attributeValuations = new HashMap<FCAAttribute, Float>();
+    for (Long id : valuations.objectValuations.keySet()) {
+      System.out.println("Long O " + id + ", "
+          + valuations.objectValuations.get(id));
+      objectValuations.put(Database.getInstance().<FCAObject> get(id),
+          valuations.objectValuations.get(id));
+    }
+    for (Long id : valuations.attributeValuations.keySet()) {
+      System.out.println("Long A: " + id + ", "
+          + valuations.attributeValuations.get(id));
+      attributeValuations.put(Database.getInstance().<FCAAttribute> get(id),
+          valuations.attributeValuations.get(id));
+    }
+    LearnerDomain domain = Database.getInstance().get(valuations.id);
+    Updater.update(domain, objectValuations, attributeValuations, (Learner) Database
+        .getInstance().getUserByExternalUID(valuations.externalUID));
+    return new DomainWrapper(domain).formalContext;
   }
 
   /**
