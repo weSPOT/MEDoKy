@@ -137,13 +137,13 @@ public class Database implements Serializable {
           }
           if (instance == null) {
             Logger.getLogger(Database.class).log(Level.INFO,
-                "Creating Empty Database at "+in.getAbsolutePath());
+                "Creating Empty Database at " + in.getAbsolutePath());
             instance = new Database();
           }
         }
       } else {
         Logger.getLogger(Database.class).log(Level.INFO,
-            "Creating Empty Database at "+in.getAbsolutePath());
+            "Creating Empty Database at " + in.getAbsolutePath());
         instance = new Database();
       }
     }
@@ -294,11 +294,13 @@ public class Database implements Serializable {
   public synchronized void save() throws FileNotFoundException, IOException {
     if (!testing) {
       ObjectOutputStream outO = new ObjectOutputStream(
-          new BufferedOutputStream(new FileOutputStream(DBConfig.DB_PATH)));
+          new BufferedOutputStream(new FileOutputStream(DBConfig.DB_DIR
+              + DBConfig.DB_PATH)));
       outO.writeObject(this);
       outO.writeLong(IDGenerator.getInstance().lastId);
       outO.close();
-      Logger.getLogger(Database.class).log(Level.INFO, "Database Saved");
+      Logger.getLogger(Database.class).log(Level.INFO,
+          "Database " + DBConfig.DB_DIR + DBConfig.DB_PATH + " Saved");
     } else {
       Logger.getLogger(Database.class).log(Level.WARNING,
           "Test mode, nothing will be written to disk!");

@@ -1628,7 +1628,7 @@ ui = {
 
   display_item_description : function(select, o) {
     // ui.hide_lo_buttons();
-    // console.debug("description " + o);
+     console.debug("description " + o);
     util.underConstruction(".div_lo");
     $(".div_lo").empty();
     $(select).show();

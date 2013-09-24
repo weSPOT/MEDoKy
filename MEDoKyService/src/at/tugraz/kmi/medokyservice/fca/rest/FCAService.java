@@ -319,8 +319,12 @@ public class FCAService {
           valuations.attributeValuations.get(id));
     }
     LearnerDomain domain = Database.getInstance().get(valuations.id);
-    Updater.update(domain, objectValuations, attributeValuations, (Learner) Database
-        .getInstance().getUserByExternalUID(valuations.externalUID));
+    Updater.update(
+        domain,
+        objectValuations,
+        attributeValuations,
+        (Learner) Database.getInstance().getUserByExternalUID(
+            valuations.externalUID));
     return new DomainWrapper(domain).formalContext;
   }
 
@@ -445,7 +449,7 @@ public class FCAService {
   @Path(RestConfig.PATH_CREATEDOMAIN)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
   @Produces(MediaType.APPLICATION_JSON)
-  public Domain createDomain(DomainBlueprint relation) {
+  public DomainWrapper createDomain(DomainBlueprint relation) {
 
     log("createDomain");
     IncidenceMatrix matrix = new IncidenceMatrix(relation.name,
@@ -464,7 +468,16 @@ public class FCAService {
         Database.getInstance().getUserByExternalUID(relation.externalUID));
     Database.getInstance().put(domain);
     Database.getInstance().putAll(domain.getFormalContext().getConcepts());
-    return domain;
+    try {
+      Database.getInstance().save();
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return new DomainWrapper(domain);
 
   }
 

@@ -69,7 +69,7 @@ logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/F
     class="input fullheight btn_attr col"
     value="<?php echo elgg_echo('wespot_fca:attr:dummy'); ?> 1" onclick="ui.set_item(0,1)" /></td>
    <td class="td_attr td_attr_1"><input type="image" src="<?php echo $basedir; ?>img/left.svg"
-    id="btn_move_left_1" width="16px" height="40px" alt="&lt;" title="Move Left"
+    id="btn_move_left_1" width="16px" height="40px" alt="&lt;" title="<?php echo elgg_echo('wespot_fca:move_left'); ?>"
     class="input btn_move_left" onclick="ui.move_left(1)" /><input type="image"
     src="<?php echo $basedir; ?>img/right.svg" id="btn_move_right_1" width="16px" height="40px"
     alt="&gt;" title="<?php echo elgg_echo('wespot_fca:move_right'); ?>"
@@ -77,7 +77,7 @@ logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/F
     class="input fullheight btn_attr col"
     value="<?php echo elgg_echo('wespot_fca:attr:dummy'); ?> 2" onclick="ui.set_item(1,1)" /></td>
    <td class="td_attr td_attr_2"><input type="image" src="<?php echo $basedir; ?>img/left.svg"
-    id="btn_move_left_2" width="16px" height="40px" alt="&lt;" title="Move Left"
+    id="btn_move_left_2" width="16px" height="40px" alt="&lt;" title="<?php echo elgg_echo('wespot_fca:move_left'); ?>"
     class="input btn_move_left" onclick="ui.move_left(2)" /><input type="image"
     src="<?php echo $basedir; ?>img/right.svg" id="btn_move_right_2" width="16px" height="40px"
     alt="&gt;" title="<?php echo elgg_echo('wespot_fca:move_right'); ?>"
@@ -85,7 +85,7 @@ logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/F
     class="input fullheight btn_attr col"
     value="<?php echo elgg_echo('wespot_fca:attr:dummy'); ?> 3" onclick="ui.set_item(2,1)" /></td>
    <td class="td_attr td_attr_3"><input type="image" src="<?php echo $basedir; ?>img/left.svg"
-    id="btn_move_left_3" width="16px" height="40px" alt="&lt;" title="Move Left"
+    id="btn_move_left_3" width="16px" height="40px" alt="&lt;" title="<?php echo elgg_echo('wespot_fca:move_left'); ?>"
     class="input btn_move_left" onclick="ui.move_left(3)" /><input type="image"
     src="<?php echo $basedir; ?>img/right.svg" id="btn_move_right_3" width="16px" height="40px"
     alt="&gt;" title="<?php echo elgg_echo('wespot_fca:move_right'); ?>"
@@ -215,8 +215,7 @@ logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/F
    </tr>
    <tr class="descr_detail">
     <td class="layout_select"><?php echo elgg_echo('wespot_fca:description'); ?></td>
-    <td><textarea id="text_descr_obj" rows="5" cols="35" class="text_description"
-      readonly="readonly"></textarea></td>
+    <td><textarea id="text_descr_obj" rows="5" cols="35" class="text_description"></textarea></td>
     <td></td>
    </tr>
    <tr class="descr_detail">
@@ -251,7 +250,7 @@ logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/F
    </tr>
    <tr class="descr_detail">
     <td class="layout_select"><?php echo elgg_echo('wespot_fca:description'); ?></td>
-    <td><textarea id="descr_attr" rows="5" cols="35" class="text_description" readonly="readonly"></textarea></td>
+    <td><textarea id="text_descr_attr" rows="5" cols="35" class="text_description"></textarea></td>
     <td></td>
    </tr>
    <tr class="descr_detail">
