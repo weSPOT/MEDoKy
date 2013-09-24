@@ -29,7 +29,7 @@ public class LearnerDomain extends DataObject {
    * @param domain
    *          the {@link Domain} it is based upon
    */
-  public LearnerDomain(Learner owner, Domain domain) {
+  public LearnerDomain(User owner, Domain domain) {
     super(domain.getName(), domain.getDescription());
     this.mapping = domain.getMapping();
     this.owner = owner;

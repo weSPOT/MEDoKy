@@ -4,7 +4,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
+import at.tugraz.kmi.medokyservice.fca.db.User;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Lattice;
 
@@ -30,7 +32,7 @@ public class LearnerLattice extends DataObject {
    * 
    * @param lattice
    */
-  public LearnerLattice(Lattice lattice, Learner learner) {
+  public LearnerLattice(Lattice lattice, User learner) {
     super("Learner" + lattice.getName(), lattice.getDescription());
     concepts = Collections.synchronizedSet(new LinkedHashSet<LearnerConcept>());
     synchronized (concepts) {

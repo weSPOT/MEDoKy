@@ -839,10 +839,10 @@ lattice = {
     concept.partOfTaxonomy = $("#cb_concept_taxonomy").prop("checked");
     concept.index = c;
     concept.domainId = state.domain.id;
-    concept.objects={};
-    concept.attributes={};
-    concept.successors=[];
-    concept.taxonomyuccessors=[];
+    concept.objects = {};
+    concept.attributes = {};
+    concept.successors = [];
+    concept.taxonomyuccessors = [];
     // console.debug($("#cb_concept_taxonomy").prop("checked"));
     // domainconcept.name = concept.name;
     // domainconcept.description = concept.description;

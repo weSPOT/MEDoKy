@@ -9,6 +9,7 @@ import java.util.Set;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
+import at.tugraz.kmi.medokyservice.fca.db.User;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
@@ -34,7 +35,7 @@ public class LearnerConcept extends DataObject {
   private Set<FCAObject> objects;
   private Set<FCAAttribute> attributes;
   @JsonIgnore
-  private Learner learner;
+  private User learner;
 
   /**
    * Creates a new LearnerConcept based upon a {@link Concept} of the domain
@@ -44,7 +45,7 @@ public class LearnerConcept extends DataObject {
    *          the {@link Concept} this LearnerConcept is based upon
    */
   @SuppressWarnings("rawtypes")
-  public LearnerConcept(Concept c, Learner learner) {
+  public LearnerConcept(Concept c, User learner) {
     super(c.getName(), c.getDescription());
     domainConceptId = c.getId();
     this.learner = learner;

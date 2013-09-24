@@ -1,7 +1,7 @@
 package at.tugraz.kmi.medokyservice.fca.db.usermodel;
 
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,8 +26,7 @@ public class Learner extends User {
   private static final long serialVersionUID = 6932447589319635751L;
   private Set<Long> courseIDs;
   private Set<LearnerDomain> domains;
-  private LinkedHashMap<FCAObject, Float> objects;
-  private LinkedHashMap<FCAAttribute, Float> attributes;
+ 
 
   /**
    * @see User
@@ -37,8 +36,7 @@ public class Learner extends User {
 
     courseIDs = new HashSet<Long>();
     domains = new HashSet<LearnerDomain>();
-    objects = new LinkedHashMap<FCAObject, Float>();
-    attributes = new LinkedHashMap<FCAAttribute, Float>();
+  
 
   }
 
@@ -50,35 +48,7 @@ public class Learner extends User {
     return courseIDs;
   }
 
-  public void addObjects(Set<Concept> concepts) {
-    for (Concept c : concepts) {
-      for (Comparable o : c.getObjects()) {
-        if (!objects.containsKey(o))
-          objects.put((FCAObject) o, 0f);
-      }
-
-      for (Comparable a : c.getAttributes()) {
-        if (!attributes.containsKey(a))
-          attributes.put((FCAAttribute) a, 0f);
-      }
-    }
-  }
-
-  public Map<FCAObject, Float> getLearnerObjects() {
-    return objects;
-  }
-
-  public Map<FCAAttribute, Float> getLearnerAttributes() {
-    return attributes;
-  }
-
-  public void setObjectValuations(Map<FCAObject, Float> valuations) {
-    objects.putAll(valuations);
-  }
-
-  public void setAttributeValuations(Map<FCAAttribute, Float> valuations) {
-    attributes.putAll(valuations);
-  }
+ 
 
   public void AddAttributes(Set<Concept> concepts) {
 

@@ -188,7 +188,7 @@ public class FCAService {
       throws FileNotFoundException, IOException {
     log("getLearnerDomain");
     Domain domain = Database.getInstance().<Domain> get(id);
-    Learner learner = (Learner) Database.getInstance()
+    User learner =  Database.getInstance()
         .getUserByExternalUID(uid);
     System.out.println(domain.getFormalContext().toString());
     if (domain.getLearnerDomains().containsKey(learner.getId()))
