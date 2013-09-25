@@ -1,0 +1,12 @@
+from 385387c to  69dd217:
+ * persistent storage of data when using Tomcat
+ * FCA group support
+ * distinguish between teacher/student based on group ownership
+    - student: only view lattice
+    - student: implement proof-of-concept updates by clicking on learning objects
+    - teacher: no indicators
+ * store valuations of nodes based on objects/attributes
+ * student: colourise nodes based on valuations
+ * remove FCA from main menu
+ * i18n support
+ * German and English i18n
