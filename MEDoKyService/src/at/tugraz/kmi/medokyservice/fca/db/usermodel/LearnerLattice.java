@@ -38,16 +38,19 @@ public class LearnerLattice extends DataObject {
     synchronized (concepts) {
       learner.addObjects(lattice.getConcepts());
       HashMap<Long, LearnerConcept> registry = new HashMap<Long, LearnerConcept>();
-      bottom = new LearnerConcept(lattice.getBottom(),learner);
+      bottom = new LearnerConcept(lattice.getBottom(), learner);
       concepts.add(bottom);
-      top = new LearnerConcept(lattice.getTop(),learner);
-      concepts.add(top);
+      if (lattice.getTop() != null) {
+        top = new LearnerConcept(lattice.getTop(), learner);
+        concepts.add(top);
+      }
       registry.put(lattice.getBottom().getId(), bottom);
-      registry.put(lattice.getTop().getId(), top);
+      if (top != null)
+        registry.put(lattice.getTop().getId(), top);
       for (Concept c : lattice.getConcepts()) {
         LearnerConcept concept;
         if (!registry.containsKey(c.getId())) {
-          concept = new LearnerConcept(c,learner);
+          concept = new LearnerConcept(c, learner);
           concepts.add(concept);
           registry.put(c.getId(), concept);
         } else {
@@ -66,8 +69,10 @@ public class LearnerLattice extends DataObject {
         }
       }
       // order!
-      concepts.remove(top);
-      concepts.add(top);
+      if (top != null) {
+        concepts.remove(top);
+        concepts.add(top);
+      }
       for (LearnerConcept concept : concepts)
         concept.disallowChanges();
       concepts = Collections.unmodifiableSet(concepts);
