@@ -1,3 +1,8 @@
+from 69dd217 to  07ad98b:
+ * implement widget view for FCA plugin
+ * fix start.php
+ * add owner block support
+
 from 385387c to  69dd217:
  * persistent storage of data when using Tomcat
  * FCA group support
