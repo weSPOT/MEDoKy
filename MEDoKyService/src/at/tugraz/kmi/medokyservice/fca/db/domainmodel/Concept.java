@@ -27,9 +27,7 @@ import at.tugraz.kmi.medokyservice.fca.lib.colibri.lib.ComparableSet;
 
 public class Concept extends DataObject {
 
-  /**
-   * 
-   */
+
   private static final long serialVersionUID = -1074009257495237124L;
   private ComparableSet objects = null;
   private ComparableSet attributes = null;

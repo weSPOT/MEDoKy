@@ -10,7 +10,7 @@ import javax.ws.rs.ext.Provider;
  * 
  * @author Bernd Prünster <bernd.pruenster@gmail.com>
  * 
- * @param <E>
+ * @param <Exception>
  */
 @Provider
 public class GenericExceptionMapper implements ExceptionMapper<Exception> {

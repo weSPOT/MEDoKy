@@ -9,7 +9,7 @@ import at.tugraz.kmi.medokyservice.fca.db.DataObject;
  * 
  * @author Bernd Prünster <bernd.pruenster@gmail.com>
  * 
- * @param <E>
+ * @param <DataObject>
  */
 public class NameComparator implements Comparator<DataObject> {
 

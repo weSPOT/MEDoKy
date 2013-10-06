@@ -14,28 +14,62 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerConcept;
 
 /**
- * Wrapper class resembling a {@link Concept} but without cyclic or nested
- * references used by {@link LatticeWrapper}.
+ * Wrapper class resembling a {@link Concept} or a {@link LearnerConcept} but
+ * without cyclic or nested references used by {@link LatticeWrapper}.
  * 
  * @author Bernd Prünster <bernd.pruenster@gmail.com>
  * @see LatticeWrapper
  * @see Concept
  */
 public class ConceptWrapper extends AbstractWrapper {
+  /**
+   * ID of the domain the concept belongs to
+   */
   public long domainId;
 
+  /**
+   * flag indicatin whether the concept is part of the taxonomy
+   */
   public boolean partOfTaxonomy;
+  
+  /**
+   * flag indicating whether the concept is an object concept
+   */
   public boolean objectConcept;
 
+  /**
+   * attributes with valuations mapped to them
+   */
   public LinkedHashMap<FCAAttribute, Float> attributes;
+  
+  /**
+   * objects with valuations mapped to them
+   */
   public LinkedHashMap<FCAObject, Float> objects;
 
+  /**
+   * @see Concept
+   */
   public LinkedHashSet<FCAObject> uniqueObjects;
+  
+  /**
+   * @see Concept
+   */
   public LinkedHashSet<FCAAttribute> uniqueAttributes;
 
+  /**
+   * @see Concept
+   */
   public HashSet<ConceptWrapper> successors;
+  
+  /**
+   * @see Concept
+   */
   public HashSet<ConceptWrapper> taxonomySuccessors;
 
+  /**
+   * @see LearnerConcept
+   */
   public float[] valuations = { 0f, 0f };
 
   public ConceptWrapper() {
@@ -94,7 +128,7 @@ public class ConceptWrapper extends AbstractWrapper {
     successors = new HashSet<ConceptWrapper>();
     taxonomySuccessors = new HashSet<ConceptWrapper>();
     valuations = concept.getPercentagedValuations();
-    System.out.println(valuations[0]+", "+valuations[1]);
+    System.out.println(valuations[0] + ", " + valuations[1]);
   }
 
   /**

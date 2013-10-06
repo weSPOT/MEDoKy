@@ -1,7 +1,6 @@
 package at.tugraz.kmi.medokyservice.fca.db.usermodel;
 
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
-import at.tugraz.kmi.medokyservice.fca.db.User;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Domain;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.IncidenceMatrix;
 
@@ -14,9 +13,6 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.IncidenceMatrix;
  */
 public class LearnerDomain extends DataObject {
 
-  /**
-   * 
-   */
   private static final long serialVersionUID = -5008174895395567756L;
   private IncidenceMatrix mapping;
   private User owner;
@@ -25,6 +21,9 @@ public class LearnerDomain extends DataObject {
 
   /**
    * Creates a new LearnerDomain based upona {@link Domain}
+   * 
+   * @param owner
+   *          the user this domain belongs to
    * 
    * @param domain
    *          the {@link Domain} it is based upon

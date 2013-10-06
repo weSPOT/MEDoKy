@@ -7,8 +7,8 @@ import java.util.Map;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
-import at.tugraz.kmi.medokyservice.fca.db.User;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 
 /**
  * Class representing a Knowledge Domain. Every Domain has an owner an

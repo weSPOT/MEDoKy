@@ -1,4 +1,4 @@
-package tests;
+package at.tugraz.kmi.medokyservice.fca.tests;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,7 +18,7 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.IncidenceMatrix;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
-import at.tugraz.kmi.medokyservice.fca.db.usermodel.Teacher;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 
 public class TestFCA {
 
@@ -89,7 +89,7 @@ public class TestFCA {
     final LearningObject[] lobjs = new LearningObject[part * part];
     for (int i = 0; i < (part * part); ++i) {
       lobjs[i] = new LearningObject("LearningObject " + i, "http://" + i * i
-          + " test", "", new Teacher("", "", ""));
+          + " test", "", new User("", "", ""));
       Database.getInstance().put(lobjs[i]);
 
     }
@@ -130,8 +130,8 @@ public class TestFCA {
               }
               mat.add(objs[((int) (Math.random() * (part)))], a);
             }
-            domains[val] = (new Domain("dom" + val, "", mat, new Teacher(" ",
-                " ", " ")));
+            domains[val] = (new Domain("dom" + val, "", mat, new User(" ", " ",
+                " ")));
             Database.getInstance().put(domains[val]);
             Database.getInstance().putAll(
                 domains[val].getFormalContext().getConcepts());

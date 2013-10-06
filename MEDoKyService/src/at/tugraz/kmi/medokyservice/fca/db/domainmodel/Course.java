@@ -4,13 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
-import at.tugraz.kmi.medokyservice.fca.db.usermodel.Learner;
-import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
-import at.tugraz.kmi.medokyservice.fca.db.usermodel.Teacher;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 
 /**
- * Class representing a course. A Course must have an owner ({@link Teacher})
- * id, a (possibly empty) set of {@link Learner}s and a(possibly empty) set of
+ * Class representing a course. A Course must have an owner ({@link User})
+ * id, a (possibly empty) set of {@link User}s and a(possibly empty) set of
  * {@link Domain}s. Only the teacher may add/remove domains and learners.
  * 
  * @author Bernd Prünster <bernd.pruenster@gmail.com>
@@ -22,21 +20,22 @@ public class Course extends DataObject {
    */
   private static final long serialVersionUID = 4916381247554634834L;
   private Set<Domain> domains;
-  private Set<Learner> participants;
+  private Set<User> participants;
   private long ownerId;
+  
 
   /**
    * @param name
    *          the curse name
    * @param description
    *          the description of the course
-   * @param owner
-   *          The teacher responsible for this course
+   * @param ownerId
+   *          The id of the user (teacher) responsible for this course
    */
   public Course(String name, String description, long ownerId) {
     super(name, description);
     domains = new HashSet<Domain>();
-    participants = new HashSet<Learner>();
+    participants = new HashSet<User>();
     this.ownerId = ownerId;
   }
 
@@ -56,18 +55,18 @@ public class Course extends DataObject {
 
   }
 
-  public Set<Learner> getParticipants() {
+  public Set<User> getParticipants() {
     return participants;
   }
 
   /**
    * adds a learner to the course
    * 
-   * @param learner
+   * @param participant
    *          the learner to add
    */
-  public void addParticipant(Learner learner) {
-    participants.add(learner);
+  public void addParticipant(User participant) {
+    participants.add(participant);
   }
 
   public long getOwnerId() {

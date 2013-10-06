@@ -3,9 +3,9 @@ package at.tugraz.kmi.medokyservice.fca.rest.wrappers;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
-import at.tugraz.kmi.medokyservice.fca.db.User;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 
 /**
  * Wrapper used for serving domain metadata (name, description id) and for

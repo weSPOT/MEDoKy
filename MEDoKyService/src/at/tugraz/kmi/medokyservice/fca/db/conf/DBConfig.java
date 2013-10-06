@@ -10,9 +10,11 @@ import at.tugraz.kmi.medokyservice.fca.db.Database;
  */
 public interface DBConfig {
   /**
-   * The path to the persistent database file
+   * The name of the persistent database file
    */
   public static final String DB_PATH = "at.tugraz.kmi.medoky.fca.db";
-  
+  /**
+   * The path to the persistent database file
+   */
   public static final String DB_DIR = "webapps/";
 }

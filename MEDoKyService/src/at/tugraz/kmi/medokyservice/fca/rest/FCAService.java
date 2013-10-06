@@ -24,16 +24,14 @@ import javax.ws.rs.core.MediaType;
 import at.tugraz.kmi.medokyservice.fca.bl.Updater;
 import at.tugraz.kmi.medokyservice.fca.db.Database;
 import at.tugraz.kmi.medokyservice.fca.db.FCAAbstract;
-import at.tugraz.kmi.medokyservice.fca.db.User;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Domain;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.IncidenceMatrix;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
-import at.tugraz.kmi.medokyservice.fca.db.usermodel.Learner;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
-import at.tugraz.kmi.medokyservice.fca.db.usermodel.Teacher;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 import at.tugraz.kmi.medokyservice.fca.rest.conf.RestConfig;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.ConceptWrapper;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.DomainBlueprint;
@@ -157,7 +155,7 @@ public class FCAService {
    * 
    * @param id
    *          the id of the domain to retrieve
-   * @return
+   * @return the requested Domain (wrapped)
    */
   @GET
   @Path(RestConfig.PATH_GETDOMAIN)
@@ -176,7 +174,7 @@ public class FCAService {
    *          the id of the domain to retrieve
    * @param uid
    *          the learner id
-   * @return
+   * @return the requested LearnerDomain (wrapped)
    * @throws IOException
    * @throws FileNotFoundException
    */
@@ -188,12 +186,11 @@ public class FCAService {
       throws FileNotFoundException, IOException {
     log("getLearnerDomain");
     Domain domain = Database.getInstance().<Domain> get(id);
-    User learner =  Database.getInstance()
-        .getUserByExternalUID(uid);
+    User learner = Database.getInstance().getUserByExternalUID(uid);
     System.out.println(domain.getFormalContext().toString());
     if (domain.getLearnerDomains().containsKey(learner.getId()))
       return new DomainWrapper(domain.getLearnerDomains().get(learner.getId()));
-    LearnerDomain dom = new LearnerDomain(Database.getInstance().<Learner> get(
+    LearnerDomain dom = new LearnerDomain(Database.getInstance().<User> get(
         learner.getId()), domain);
     domain.addLearnerDomain(learner.getId(), dom);
     Database.getInstance().put(dom);
@@ -297,6 +294,12 @@ public class FCAService {
     return new DomainWrapper(d).formalContext;
   }
 
+  /**
+   * Triggers a valuation update based on the indicators provided
+   * @param valuations the valuatson/updates
+   * @return an updates version of the affected Domain's lattice
+   * @throws Exception
+   */
   @POST
   @Path(RestConfig.PATH_UPDATEVALUATIONS)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
@@ -319,12 +322,8 @@ public class FCAService {
           valuations.attributeValuations.get(id));
     }
     LearnerDomain domain = Database.getInstance().get(valuations.id);
-    Updater.update(
-        domain,
-        objectValuations,
-        attributeValuations,
-        (Learner) Database.getInstance().getUserByExternalUID(
-            valuations.externalUID));
+    Updater.update(domain, objectValuations, attributeValuations, Database
+        .getInstance().getUserByExternalUID(valuations.externalUID));
     return new DomainWrapper(domain).formalContext;
   }
 
@@ -343,11 +342,7 @@ public class FCAService {
     log("identify");
     if (Database.getInstance().getUserByExternalUID(user.externalUID) != null)
       return;
-    User u;
-    if (user.teacher)
-      u = new Teacher(user.externalUID, user.name, user.description);
-    else
-      u = new Learner(user.externalUID, user.name, user.description);
+    User u = new User(user.externalUID, user.name, user.description);
     log("New User " + u.getId() + ", " + u.getExternalUid() + ", "
         + u.getName() + ", " + u.getDescription());
     Database.getInstance().put(u);

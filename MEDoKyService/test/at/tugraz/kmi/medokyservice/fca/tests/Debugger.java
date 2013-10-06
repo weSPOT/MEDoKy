@@ -1,4 +1,4 @@
-package tests;
+package at.tugraz.kmi.medokyservice.fca.tests;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

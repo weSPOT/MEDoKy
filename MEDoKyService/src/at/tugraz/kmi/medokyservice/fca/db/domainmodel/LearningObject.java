@@ -1,10 +1,10 @@
 package at.tugraz.kmi.medokyservice.fca.db.domainmodel;
 
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
-import at.tugraz.kmi.medokyservice.fca.db.User;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 
 /**
- * A Learnign object referencing an external resource
+ * A Learning object referencing an external resource
  * 
  * @author Bernd Prünster <bernd.pruenster@gmail.com>
  * 

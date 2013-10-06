@@ -6,7 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
-import at.tugraz.kmi.medokyservice.fca.db.User;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Lattice;
 
@@ -31,17 +30,20 @@ public class LearnerLattice extends DataObject {
    * model.
    * 
    * @param lattice
+   *          the base for this LearnerLattice
+   * @param user
+   *          the user it belongs to
    */
-  public LearnerLattice(Lattice lattice, User learner) {
+  public LearnerLattice(Lattice lattice, User user) {
     super("Learner" + lattice.getName(), lattice.getDescription());
     concepts = Collections.synchronizedSet(new LinkedHashSet<LearnerConcept>());
     synchronized (concepts) {
-      learner.addObjects(lattice.getConcepts());
+      user.addItems(lattice.getConcepts());
       HashMap<Long, LearnerConcept> registry = new HashMap<Long, LearnerConcept>();
-      bottom = new LearnerConcept(lattice.getBottom(), learner);
+      bottom = new LearnerConcept(lattice.getBottom(), user);
       concepts.add(bottom);
       if (lattice.getTop() != null) {
-        top = new LearnerConcept(lattice.getTop(), learner);
+        top = new LearnerConcept(lattice.getTop(), user);
         concepts.add(top);
       }
       registry.put(lattice.getBottom().getId(), bottom);
@@ -50,7 +52,7 @@ public class LearnerLattice extends DataObject {
       for (Concept c : lattice.getConcepts()) {
         LearnerConcept concept;
         if (!registry.containsKey(c.getId())) {
-          concept = new LearnerConcept(c, learner);
+          concept = new LearnerConcept(c, user);
           concepts.add(concept);
           registry.put(c.getId(), concept);
         } else {
@@ -59,7 +61,7 @@ public class LearnerLattice extends DataObject {
         for (Concept s : c.getSuccessors()) {
           LearnerConcept suc;
           if (!registry.containsKey(s.getId())) {
-            suc = new LearnerConcept(s, learner);
+            suc = new LearnerConcept(s, user);
             concepts.add(suc);
             registry.put(s.getId(), suc);
           } else {

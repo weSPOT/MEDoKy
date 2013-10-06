@@ -27,6 +27,7 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 
 import com.sun.istack.logging.Logger;
 

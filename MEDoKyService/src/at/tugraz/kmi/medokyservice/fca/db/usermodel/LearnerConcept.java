@@ -9,22 +9,18 @@ import java.util.Set;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
-import at.tugraz.kmi.medokyservice.fca.db.User;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
 
 /**
- * A LearnerConcept linked to a {@link Concept} of the domain model. TODO:
- * probability
+ * A LearnerConcept linked to a {@link Concept} of the domain model.
  * 
  * @author Bernd Prünster <bernd.pruenster@gmail.com>
  * 
  */
 public class LearnerConcept extends DataObject {
-  /**
-   * 
-   */
+
   private static final long serialVersionUID = -1379190857847955644L;
   private long domainConceptId;
 
@@ -43,12 +39,14 @@ public class LearnerConcept extends DataObject {
    * 
    * @param c
    *          the {@link Concept} this LearnerConcept is based upon
+   * @param user
+   *          the user this concept belongs to
    */
   @SuppressWarnings("rawtypes")
-  public LearnerConcept(Concept c, User learner) {
+  public LearnerConcept(Concept c, User user) {
     super(c.getName(), c.getDescription());
     domainConceptId = c.getId();
-    this.learner = learner;
+    this.learner = user;
     objects = new LinkedHashSet<FCAObject>();
     attributes = new LinkedHashSet<FCAAttribute>();
 
@@ -91,6 +89,11 @@ public class LearnerConcept extends DataObject {
 
   }
 
+  /**
+   * advanced getter
+   * 
+   * @return the objects of this concept with valuations mapped to them
+   */
   public Map<FCAObject, Float> getObjects() {
     LinkedHashMap<FCAObject, Float> result = new LinkedHashMap<FCAObject, Float>();
     Map<FCAObject, Float> obj = learner.getLearnerObjects();
@@ -100,6 +103,11 @@ public class LearnerConcept extends DataObject {
     return result;
   }
 
+  /**
+   * advanced getter
+   * 
+   * @return the attributes of this concept with valuations mapped to them
+   */
   public Map<FCAAttribute, Float> getAttributes() {
     LinkedHashMap<FCAAttribute, Float> result = new LinkedHashMap<FCAAttribute, Float>();
     Map<FCAAttribute, Float> attr = learner.getLearnerAttributes();
@@ -109,6 +117,14 @@ public class LearnerConcept extends DataObject {
     return result;
   }
 
+  /**
+   * computes the percentaged valuation of the object- and attribute-set of this
+   * concept
+   * 
+   * @return a float array containing two values ranging from -1 to +1 (-100% to
+   *         +100%) the first values corresponds to the valuation of objects,
+   *         while the second one represents the attribute valuation
+   */
   public float[] getPercentagedValuations() {
     Map<FCAObject, Float> objects = getObjects();
     Map<FCAAttribute, Float> attributes = getAttributes();
