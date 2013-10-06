@@ -8,6 +8,8 @@ $english = array(
 	'wespot_fca' => "FCATool",
 	'wespot_fca:group' => "Formal Concept Analysis",
 	'wespot_fca:launch' => "Launch Formal Concept Analysis",
+	'wespot_fca:owner_block' => "Formal Concept Analysis",
+
 
 	'wespot_fca:dummy' => "Dummy",
 	'wespot_fca:name' => "Name",

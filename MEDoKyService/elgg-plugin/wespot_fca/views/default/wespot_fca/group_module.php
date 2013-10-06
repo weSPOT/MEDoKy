@@ -34,11 +34,11 @@ elgg_pop_context();
 if (!$content) {
 //	$content = '<p>' . elgg_echo('wespot_fca:none') . '</p>';
 	$content = '<p style="text-align:center;"><img src=' . $img . '></p><hr>';//.echo htmlspecialchars(json_encode($group));
-        file_put_contents('php://stderr', print_r($group, TRUE));
+
 }
 
 $new_link = elgg_view('output/url', array(
-	'href' => "fca/main?gid=$group->guid&name=$group->name&uid=$group->owner_guid",
+	'href' => "/fca/main?gid=$group->guid&name=$group->name&uid=$group->owner_guid",
 	'text' => '<h3 style="text-align:center;">' . elgg_echo('wespot_fca:launch'). '</h3>',
 	'is_trusted' => true,
 ));
