@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="26cm" height="39cm" viewBox="38 39 503 762" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <path style="fill: #bfbfbf" d="M 80 60 C 100,60 480,60 500,60 C 520,60 540,80 540,100 C 540,120 540,720 540,740 C 540,760 520,780 500,780 C 480,780 100,780 80,780 C 60,780 40,760 40,740 C 40,720 40,120 40,100 C 40,80 60,60 80,60z"/>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 80 60 C 100,60 480,60 500,60 C 520,60 540,80 540,100 C 540,120 540,720 540,740 C 540,760 520,780 500,780 C 480,780 100,780 80,780 C 60,780 40,760 40,740 C 40,720 40,120 40,100 C 40,80 60,60 80,60"/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="240" y="40" width="160" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="240" y="40" width="160" height="40"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="320" y="64.45">
+    <tspan x="320" y="64.45">Set Learnign Objects</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="100" y="300" width="121.45" height="52" rx="20" ry="20"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="100" y="300" width="121.45" height="52" rx="20" ry="20"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="160.725" y="321.9">
+      <tspan x="160.725" y="321.9">Remove</tspan>
+      <tspan x="160.725" y="337.9">Learning Object</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="280" y="280" width="121.45" height="52" rx="20" ry="20"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="280" y="280" width="121.45" height="52" rx="20" ry="20"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="340.725" y="301.9">
+      <tspan x="340.725" y="301.9">Add</tspan>
+      <tspan x="340.725" y="317.9">Learning Object</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="200" y="440" width="121.45" height="52" rx="20" ry="20"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="200" y="440" width="121.45" height="52" rx="20" ry="20"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="260.725" y="461.9">
+      <tspan x="260.725" y="461.9">Use Existing</tspan>
+      <tspan x="260.725" y="477.9">Learning Object</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="360" y="440" width="121.45" height="52" rx="20" ry="20"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="360" y="440" width="121.45" height="52" rx="20" ry="20"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="420.725" y="461.9">
+      <tspan x="420.725" y="461.9">Create New</tspan>
+      <tspan x="420.725" y="477.9">Learning Object</tspan>
+    </text>
+  </g>
+  <g>
+    <polygon style="fill: #ffffff" points="300,200 320,180 340,200 320,220 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="300,200 320,180 340,200 320,220 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="320,80 320,90 320,170 320,175.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="315,167.764 320,177.764 325,167.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="300,200 160.725,200 160.725,295.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="155.725,287.764 160.725,297.764 165.725,287.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="320,220 320,250 340.725,250 340.725,275.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="335.725,267.764 340.725,277.764 345.725,267.764 "/>
+  </g>
+  <g>
+    <polygon style="fill: #ffffff" points="320,400 340,380 360,400 340,420 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="320,400 340,380 360,400 340,420 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="340.725,332 340.725,356 340,356 340,375.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="335,367.764 340,377.764 345,367.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="320,400 260.725,400 260.725,435.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="255.725,427.764 260.725,437.764 265.725,427.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="160.725,352 160.725,620 320,620 320,635.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="315,627.764 320,637.764 325,627.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="360,400 420.725,400 420.725,435.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="415.725,427.764 420.725,437.764 425.725,427.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="260.724,492 260.724,540 342.524,540 342.524,555.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="337.524,547.764 342.524,557.764 347.524,547.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="420.724,492 420.724,540 342.524,540 342.524,555.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="337.524,547.764 342.524,557.764 347.524,547.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="340,200 520,200 520,720 320,720 320,755.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="315,747.764 320,757.764 325,747.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="300,660 300,660 60,660 60,140 320,140 320,175.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="315,167.764 320,177.764 325,167.764 "/>
+  </g>
+  <g>
+    <polygon style="fill: #ffffff" points="300,660 320,640 340,660 320,680 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="300,660 320,640 340,660 320,680 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="240" y="760" width="160" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="240" y="760" width="160" height="40"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="320" y="776.45">
+    <tspan x="320" y="776.45">Done Setting</tspan>
+    <tspan x="320" y="792.45">Learnign Objects</tspan>
+  </text>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="320,680 320,740 320,740 320,755.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="315,747.764 320,757.764 325,747.764 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="340" y="692">done</text>
+  </g>
+  <text font-size="16.9333" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:700" x="80" y="105.875">
+    <tspan x="80" y="105.875">Set Learning Objects</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="260" y="560" width="165.05" height="36" rx="20" ry="20"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="260" y="560" width="165.05" height="36" rx="20" ry="20"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="342.525" y="581.9">
+      <tspan x="342.525" y="581.9">Select Learning Object</tspan>
+    </text>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="342.524,596 342.524,620 320,620 320,635.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="315,627.764 320,637.764 325,627.764 "/>
+  </g>
+</svg>

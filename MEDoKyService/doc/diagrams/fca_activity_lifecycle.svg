@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="37cm" height="33cm" viewBox="58 38 723 643" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <path style="fill: #ffffff" d="M 100 40 C 120,40 720,40 740,40 C 760,40 780,60 780,80 C 780,100 780,620 780,640 C 780,660 760,680 740,680 C 720,680 120,680 100,680 C 80,680 60,660 60,640 C 60,620 60,100 60,80 C 60,60 80,40 100,40z"/>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 100 40 C 120,40 720,40 740,40 C 760,40 780,60 780,80 C 780,100 780,620 780,640 C 780,660 760,680 740,680 C 720,680 120,680 100,680 C 80,680 60,660 60,640 C 60,620 60,100 60,80 C 60,60 80,40 100,40"/>
+  </g>
+  <text font-size="16.9333" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:700" x="100" y="85.875">
+    <tspan x="100" y="85.875">FCA Life Cycle</tspan>
+  </text>
+  <ellipse style="fill: #000000" cx="380" cy="70" rx="10" ry="10"/>
+  <g>
+    <rect style="fill: #ffffff" x="80" y="320" width="101.6" height="36" rx="20" ry="20"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="80" y="320" width="101.6" height="36" rx="20" ry="20"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="130.8" y="341.9">
+      <tspan x="130.8" y="341.9">Identify User</tspan>
+    </text>
+  </g>
+  <rect style="fill: #000000" x="70" y="260" width="620" height="8"/>
+  <g>
+    <rect style="fill: #ffffff" x="200" y="320" width="137.45" height="36" rx="20" ry="20"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="200" y="320" width="137.45" height="36" rx="20" ry="20"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="268.725" y="341.9">
+      <tspan x="268.725" y="341.9">Receive Attributes</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="360" y="320" width="122.7" height="36" rx="20" ry="20"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="360" y="320" width="122.7" height="36" rx="20" ry="20"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="421.35" y="341.9">
+      <tspan x="421.35" y="341.9">Receive Objects</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="500" y="320" width="182.4" height="36" rx="20" ry="20"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="500" y="320" width="182.4" height="36" rx="20" ry="20"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="591.2" y="341.9">
+      <tspan x="591.2" y="341.9">Receive Learning Objects</tspan>
+    </text>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="130,268 130,294 130.8,294 130.8,315.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="125.8,307.764 130.8,317.764 135.8,307.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="270,268 270,294 268.725,294 268.725,315.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="263.725,307.764 268.725,317.764 273.725,307.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="422,268 422,294 421.35,294 421.35,315.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="416.35,307.764 421.35,317.764 426.35,307.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="590,268 590,294 591.2,294 591.2,315.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="586.2,307.764 591.2,317.764 596.2,307.764 "/>
+  </g>
+  <rect style="fill: #000000" x="70" y="400" width="620" height="8"/>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="130.8,356 130.8,378 130,378 130,395.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="125,387.764 130,397.764 135,387.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="268.725,356 268.725,378 270,378 270,395.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="265,387.764 270,397.764 275,387.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="421.35,356 421.35,378 420,378 420,395.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="415,387.764 420,397.764 425,387.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="591.2,356 591.2,378 590,378 590,395.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="585,387.764 590,397.764 595,387.764 "/>
+  </g>
+  <g>
+    <rect style="fill: #e5e5e5" x="320" y="460" width="122.65" height="36" rx="20" ry="20"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="320" y="460" width="122.65" height="36" rx="20" ry="20"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="381.325" y="481.9">
+      <tspan x="381.325" y="481.9">User Interaction</tspan>
+    </text>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="379" cy="655" rx="15" ry="15"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="379" cy="655" rx="15" ry="15"/>
+    <ellipse style="fill: #000000" cx="379" cy="655" rx="10" ry="10"/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="380,408 380,427.292 381.326,427.292 381.326,455.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="376.326,447.764 381.326,457.764 386.326,447.764 "/>
+  </g>
+  <g>
+    <polygon style="fill: #ffffff" points="360,160 380,140 400,160 380,180 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="360,160 380,140 400,160 380,180 "/>
+  </g>
+  <g>
+    <polygon style="fill: #ffffff" points="360,560 380,540 400,560 380,580 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="360,560 380,540 400,560 380,580 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="380,580 380,610 379,610 379,635.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="374,627.764 379,637.764 384,627.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="381.325,496 381.325,518 380,518 380,535.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="375,527.764 380,537.764 385,527.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="380,80 380,90 380,130 380,135.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="375,127.764 380,137.764 385,127.764 "/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="400,560 740,560 740,160 404.472,160 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="412.236,155 402.236,160 412.236,165 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="440" y="560">Reset</text>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="380,180 380,190 380,250 380,255.528 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="375,247.764 380,257.764 385,247.764 "/>
+  </g>
+</svg>
