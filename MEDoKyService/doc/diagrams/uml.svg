@@ -413,11 +413,6 @@
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-717" y="-778.8">+getPercentagedValuations(): float[]</text>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-1291,-1245.76 -1291,-1220 -80,-1220 -80,-400 -587,-400 -587,-380 "/>
-    <polygon style="fill: #ffffff" points="-1283,-1245.76 -1291,-1261.76 -1299,-1245.76 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-1283,-1245.76 -1291,-1261.76 -1299,-1245.76 "/>
-  </g>
-  <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #7f7f7f" points="-1417.4,-1360.77 -1417.4,-1160 -300,-1160 -300,-1060 -574.2,-1060 -574.2,-1001.01 "/>
     <polygon style="fill: #ffffff" points="-1409.4,-1360.77 -1417.4,-1376.77 -1425.4,-1360.77 "/>
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #7f7f7f" points="-1409.4,-1360.77 -1417.4,-1376.77 -1425.4,-1360.77 "/>
@@ -478,19 +473,9 @@
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-1171.6" y="-987"/>
   </g>
   <g>
-    <rect style="fill: #ffffff" x="-1360" y="-1320" width="138" height="28"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="-1360" y="-1320" width="138" height="28"/>
-    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="-1291" y="-1301">User</text>
-    <rect style="fill: #ffffff" x="-1360" y="-1292" width="138" height="20"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="-1360" y="-1292" width="138" height="20"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-1357" y="-1278.8">-externalUid: String</text>
-    <rect style="fill: #ffffff" x="-1360" y="-1272" width="138" height="8"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="-1360" y="-1272" width="138" height="8"/>
-  </g>
-  <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #7f7f7f" points="-1417.4,-1360.76 -1417.4,-1340 -1291,-1340 -1291,-1320 "/>
-    <polygon style="fill: #ffffff" points="-1409.4,-1360.76 -1417.4,-1376.76 -1425.4,-1360.76 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #7f7f7f" points="-1409.4,-1360.76 -1417.4,-1376.76 -1425.4,-1360.76 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #7f7f7f" points="-1417.4,-1360.77 -1417.4,-1160 -300,-1160 -300,-600 -80,-600 -80,-420 -587,-420 -587,-380 "/>
+    <polygon style="fill: #ffffff" points="-1409.4,-1360.77 -1417.4,-1376.77 -1425.4,-1360.77 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #7f7f7f" points="-1409.4,-1360.77 -1417.4,-1376.77 -1425.4,-1360.77 "/>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #a52a2a" points="-1166.43,-882 -1040,-882 -1040,-600 -1375.8,-600 -1375.8,-628 "/>
