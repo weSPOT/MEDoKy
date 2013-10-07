@@ -844,7 +844,7 @@ lattice = {
     concept.objects = {};
     concept.attributes = {};
     concept.successors = [];
-    concept.taxonomyuccessors = [];
+    concept.taxonomySuccessors = [];
     // console.debug($("#cb_concept_taxonomy").prop("checked"));
     // domainconcept.name = concept.name;
     // domainconcept.description = concept.description;
