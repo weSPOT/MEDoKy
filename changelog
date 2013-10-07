@@ -1,4 +1,4 @@
-from 07ad98b to 8b8f8e1:
+from 07ad98b to 6e39099:
  * improve rendering of lattice
  * use data field of learning objects
  * fix english i18n typo
