@@ -12,6 +12,8 @@ lattice = {
   node_top : {},
   node_bot : {},
   lo_shown : false,
+  color_bg_active : "rgba(255,255,255,1)",
+  color_bg_inactive : "rgba(230,230,230,0.5)",
 
   init_canvas : function(canvas, width, height, info, backend) {
     $(canvas).prop("width", width);
@@ -217,18 +219,18 @@ lattice = {
       }
       ctx.textAlign = "center";
       if (node.data.active)
-        ctx.strokeStyle = "rgba(255,255,255, 1)";
+        ctx.strokeStyle = lattice.color_bg_active;
       else
-        ctx.strokeStyle = "rgba(255,255,255, 0.5)";
+        ctx.strokeStyle = lattice.color_bg_inactive;
       ctx.beginPath();
       ctx.arc((pt.x), (pt.y), w, 0, 2 * Math.PI, true);
       ctx.lineWidth = 4;
 
       ctx.stroke();
       if (node.data.active)
-        ctx.fillStyle = "rgba(255,255,255, 1)";
+        ctx.fillStyle = lattice.color_bg_active;
       else
-        ctx.fillStyle = "rgba(255,255,255, 0.5)";
+        ctx.fillStyle = lattice.color_bg_inactive;
       ctx.fill();
       ctx.closePath();
       ctx.beginPath();
@@ -267,7 +269,7 @@ lattice = {
 
       if (node.data.objActive) {
         ctx.lineWidth = 4;
-        ctx.strokeStyle = "rgba(255,255,255,1)";
+        ctx.strokeStyle = lattice.color_bg_active;
         ctx.font = "bold 10pt sans-serif";
         ctx.strokeText(node.data.obj, pt.x, pt.y - 1.5 * w - 3);
         ctx.fillStyle = "rgba(0,0,0,1)";
@@ -277,7 +279,7 @@ lattice = {
       }
       if (node.data.attrActive) {
         ctx.lineWidth = 4;
-        ctx.strokeStyle = "rgba(255,255,255,1)";
+        ctx.strokeStyle = lattice.color_bg_active;
         ctx.font = "bold 10pt sans-serif";
         ctx.strokeText(node.data.attr, pt.x, pt.y + 10 + 1.5 * w);
         ctx.fillStyle = "rgba(0,0,0,1)";
@@ -295,11 +297,11 @@ lattice = {
         offset = 5;
       var arrow = 10 + offset;
       if (edge.data.active) {
-        ctx.fillStyle = "rgba(255,255,255, 0.6)";
-        ctx.strokeStyle = "rgba(255,255,255, 0.6)";
+        ctx.fillStyle = lattice.color_bg_active;
+        ctx.strokeStyle = lattice.color_bg_active;
       } else {
-        ctx.fillStyle = "rgba(255,255,255, 0.2)";
-        ctx.strokeStyle = "rgba(255,255,255, 0.2)";
+        ctx.fillStyle = lattice.color_bg_inactive;
+        ctx.strokeStyle = lattice.color_bg_inactive;
       }
       ctx.lineWidth = 4;
       ctx.beginPath();
