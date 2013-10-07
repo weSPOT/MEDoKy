@@ -38,7 +38,7 @@ $english = array(
 	'wespot_fca:obj:set' => "Set Object",
 	'wespot_fca:obj:rem' => "Remove Object",
 	'wespot_fca:obj:rem_sure' => "Are you sure that you want to remove the object",
-	'wespot_fca:obj:seĺ' => "Select an Object",
+	'wespot_fca:obj:sel' => "Select an Object",
 	'wespot_fca:obj:del' => "Delete Object",
 	'wespot_fca:obj:dummy' => "Dummy Object",
 

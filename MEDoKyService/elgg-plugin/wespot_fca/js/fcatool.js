@@ -82,7 +82,7 @@ util = {
 
     if (current)
       current = current.id;
-    for ( var i = 0; i < currentObjects.length; ++i) {
+    for (var i = 0; i < currentObjects.length; ++i) {
       var obj = $(currentObjects[i]);
       if (obj.data(key)) {
         // console.debug(obj.data());
@@ -94,7 +94,7 @@ util = {
     }
     for ( var i in new_objs)
       objs[i] = new_objs[i];
-    for ( var i = 0; i < currentObjects.length; ++i) {
+    for (var i = 0; i < currentObjects.length; ++i) {
       var obj = $(currentObjects[i]);
       if (obj.data(key)) {
         if (obj.data(key).id in new_objs) {
@@ -119,7 +119,7 @@ util = {
         l_objs[i] = state.backend_l_objects[i];
     return l_objs;
   },
-
+  // TODO refactoring -> remove specific methods and onyl use generic one
   replace_objects : function(obj) {
     for ( var o in obj) {
       var object = {
@@ -133,7 +133,7 @@ util = {
         state.active_l_objects[object.learningObjects[i].id] = object.learningObjects[i];
       }
       var currentObjects = $(".btn_obj");
-      for ( var i = 0; i < currentObjects.length; ++i) {
+      for (var i = 0; i < currentObjects.length; ++i) {
         if ($.data(currentObjects[i], logic.key_obj).id == obj[o].id) {
           $(currentObjects[i]).data(logic.key_obj, object);
         }
@@ -155,7 +155,7 @@ util = {
       }
       state.backend_attributes[o] = object;
       var currentObjects = $(".btn_attr");
-      for ( var i = 0; i < currentObjects.length; ++i) {
+      for (var i = 0; i < currentObjects.length; ++i) {
         if ($.data(currentObjects[i], logic.key_attr).id == obj[o].id) {
           $(currentObjects[i]).data(logic.key_attr, object);
         }
@@ -181,7 +181,7 @@ util = {
       var key;
       (o == 1) ? key = logic.key_attr : key = logic.key_obj;
       (o == 1) ? currentObjects = $(".btn_attr") : currentObjects = $(".btn_obj");
-      for ( var i = 0; i < currentObjects.length; ++i) {
+      for (var i = 0; i < currentObjects.length; ++i) {
 
         if ($.data(currentObjects[i], key).id == obj[n].id) {
           $(currentObjects[i]).data(key, object);
@@ -211,8 +211,8 @@ util = {
   // http://stackoverflow.com/questions/1584370/how-to-merge-two-arrays-in-javascript
   unique : function(array) {
     var a = array.concat();
-    for ( var i = 0; i < a.length; ++i) {
-      for ( var j = i + 1; j < a.length; ++j) {
+    for (var i = 0; i < a.length; ++i) {
+      for (var j = i + 1; j < a.length; ++j) {
         if (a[i] === a[j])
           a.splice(j--, 1);
       }
@@ -508,12 +508,12 @@ logic = {
       "teacher" : state.teacher
     }));
 
-    for ( var i = 0; i < $(".btn_obj").length; ++i) {
+    for (var i = 0; i < $(".btn_obj").length; ++i) {
       var btn = $($(".btn_obj").get(i));
       ui.setup_hover_obj(btn);
     }
 
-    for ( var i = 0; i < $(".btn_attr").length; ++i) {
+    for (var i = 0; i < $(".btn_attr").length; ++i) {
       var btn = $($(".btn_attr").get(i));
       ui.setup_hover_attr(btn);
     }
@@ -879,19 +879,19 @@ logic = {
     var orderedObjects = [];
 
     var attributes = $(".btn_attr");
-    for ( var i = 0; i < attributes.length; ++i) {
+    for (var i = 0; i < attributes.length; ++i) {
 
       orderedAttribs.push($("#" + attributes[i].id).data(logic.key_attr).id);
     }
 
     var objects = $(".btn_obj");
-    for ( var i = 0; i < objects.length; ++i) {
+    for (var i = 0; i < objects.length; ++i) {
 
       orderedObjects.push($("#" + objects[i].id).data(logic.key_obj).id);
     }
 
     var checks = $(":checkbox:checked");
-    for ( var c = 0; c < checks.length; ++c) {
+    for (var c = 0; c < checks.length; ++c) {
 
       try {
         var btn = $("#obj_" + (checks[c]).id.split("_")[1]);
@@ -955,16 +955,17 @@ logic = {
       });
     });
   },
-
-  create_lo : function(name, description) {
+ 
+  create_lo : function(name, description, data) {
     // var data =$("#dia_set_lo").data(logic.key_lo);
     var sel = document.getElementById("sel_set_lo");
     // $(sel).empty();
-    if ((description.substring(0, 7) != "http://") && (description.substring(0, 8) != "https://"))
-      description = "http://" + description;
+    if ((data.substring(0, 7) != "http://") && (data.substring(0, 8) != "https://"))
+      data = "http://" + data;
     var lo = {
       "name" : name,
       "description" : description,
+      "data" : data,
       "id" : Date.now(),
       "externalUID" : state.user.guid
     };
@@ -991,7 +992,7 @@ logic = {
 
   save : function(callback) {
     var currentObjects = $(".btn_obj");
-    for ( var i = 0; i < currentObjects.length; ++i) {
+    for (var i = 0; i < currentObjects.length; ++i) {
       if (!$.hasData(currentObjects[i])) {
         alert("Some objects are undefined!");
         return false;
@@ -999,7 +1000,7 @@ logic = {
     }
 
     currentObjects = $(".btn_attr");
-    for ( var i = 0; i < currentObjects.length; ++i) {
+    for (var i = 0; i < currentObjects.length; ++i) {
       if (!$.hasData(currentObjects[i])) {
         alert("Some attributes are undefined!");
         return false;
@@ -1041,7 +1042,7 @@ logic = {
       ui.append_object();
     }
 
-    for ( var currentAttribs = $(".td_attr").length; currentAttribs > num_attributes; currentAttribs = $(".td_attr").length) {
+    for (var currentAttribs = $(".td_attr").length; currentAttribs > num_attributes; currentAttribs = $(".td_attr").length) {
 
       var index = $(".td_attr")[0].childNodes[2].id.split("_")[1];
 
@@ -1078,10 +1079,10 @@ logic = {
           $(id).prop("value", object.name);
           var mapped = domain.mapping.objects[o];
 
-          for ( var m = 0; m < mapped.length; ++m) {
+          for (var m = 0; m < mapped.length; ++m) {
 
             var currentA = $(".btn_attr");
-            for ( var a = 0; a < currentA.length; ++a) {
+            for (var a = 0; a < currentA.length; ++a) {
               // console.debug(currentA[a]);
               // console.debug("#" + currentA[a].id);
               // console.debug($("#" +
@@ -1479,7 +1480,7 @@ ui = {
       "onclick" : "ui.set_item(" + id + ",0)"
     }));
 
-    for ( var a = 0; a < attrs.length; ++a) {
+    for (var a = 0; a < attrs.length; ++a) {
 
       var attr_id = $(attrs[a]).prop("id").split("_")[1];
       tr.append("<td class=\"td_attr_" + attr_id
@@ -1536,6 +1537,14 @@ ui = {
       if (o == 0) {
         ui.create_lo(o);
         select.selectedIndex = -1;
+      }else if (o==2){
+        var obj = JSON.parse(select.options[select.selectedIndex].value);
+        $(".item_description").create("txt", obj.description);
+        if (obj.owner) {
+          $(".item_description").create("br");
+          $(".item_description").create("txt",
+              "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name + ")");
+        }
       }
     } else if (select.selectedIndex != -1) {
       if ((o == 0) || (o == 2)) {
@@ -1567,7 +1576,7 @@ ui = {
     var tdiv = div.create("div", {
       "class" : "txt_lo"
     }).click(function() {
-      window.open(lo.description, "Learning Object", "width=350,height=250");
+      window.open(lo.data, "Learning Object", "width=350,height=250");
     });
     tdiv.create("txt", lo.name);
     var buttons = div.create("div", {
@@ -1628,7 +1637,7 @@ ui = {
 
   display_item_description : function(select, o) {
     // ui.hide_lo_buttons();
-     console.debug("description " + o);
+    console.debug("description " + o);
     util.underConstruction(".div_lo");
     $(".div_lo").empty();
     $(select).show();

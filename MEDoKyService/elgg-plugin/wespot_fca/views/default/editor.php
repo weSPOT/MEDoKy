@@ -406,7 +406,7 @@ logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at:8080/MEDoKyServic
    value="<?php echo elgg_echo('wespot_fca:cancel'); ?>"
    onclick="$('#dia_create_lo').dialog('close')" /> <input id="btn_create_lo_ok" type="button"
    class="input_pad" value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
-   onclick="logic.create_lo($('#input_create_lo_name').prop('value'),$('#input_create_lo_description').prop('value'))" />
+   onclick="logic.create_lo($('#input_create_lo_name').prop('value'),'',$('#input_create_lo_description').prop('value'))" />
  </div>
 </div>
 

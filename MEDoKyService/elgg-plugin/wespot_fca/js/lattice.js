@@ -492,7 +492,7 @@ lattice = {
                 class : "input lattice_lo col",
                 style : "margin-left: -61px; margin-right: -61px; text-overflow: ellipsis; overflow: hidden;",
                 value : learningObjects[lo].name
-              }).data("url", learningObjects[lo].description).data("objectValuations", {}).data(
+              }).data("url", learningObjects[lo].data).data("objectValuations", {}).data(
               "attributeValuations", {}).click(function() {
             if (!state.teacher) {
               var postdata = {
@@ -546,7 +546,7 @@ lattice = {
     tr = table.create("tr", {
       style : "background-color: inherit"
     });
-
+ 
     // Description txt
     tr.create("td", {
       style : "background-color: inherit",
@@ -876,6 +876,14 @@ lattice = {
     state.domain = domain;
     lattice.reset_props();
     lattice.draw();
+    $("#vis_loading").show();
+    $("#canvas_lattice").hide();
+    $("#div_lattice_info").hide();
+    setTimeout(function() {
+      $("#vis_loading").hide();
+      $("#canvas_lattice").show();
+      $("#div_lattice_info").show(100);
+    }, 1500);
     lattice.disable_editing();
   },
 

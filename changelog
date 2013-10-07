@@ -1,9 +1,15 @@
-from 69dd217 to  07ad98b:
+from 07ad98b to 8b8f8e1:
+ * improve rendering of lattice
+ * use data field of learning objects
+ * fix english i18n typo
+ * fix missing domain description when selecting the bottom-most domain to open
+
+from 69dd217 to 07ad98b:
  * implement widget view for FCA plugin
  * fix start.php
  * add owner block support
 
-from 385387c to  69dd217:
+from 385387c to 69dd217:
  * persistent storage of data when using Tomcat
  * FCA group support
  * distinguish between teacher/student based on group ownership
