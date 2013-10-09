@@ -10,7 +10,7 @@
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="240" y="40" width="160" height="40"/>
   </g>
   <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="320" y="64.45">
-    <tspan x="320" y="64.45">Set Learnign Objects</tspan>
+    <tspan x="320" y="64.45">Set Learning Objects</tspan>
   </text>
   <g>
     <rect style="fill: #ffffff" x="100" y="300" width="121.45" height="52" rx="20" ry="20"/>
@@ -106,7 +106,7 @@
   </g>
   <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="320" y="776.45">
     <tspan x="320" y="776.45">Done Setting</tspan>
-    <tspan x="320" y="792.45">Learnign Objects</tspan>
+    <tspan x="320" y="792.45">Learning Objects</tspan>
   </text>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="320,680 320,740 320,740 320,755.528 "/>

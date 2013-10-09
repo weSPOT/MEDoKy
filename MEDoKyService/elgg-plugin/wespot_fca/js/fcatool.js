@@ -1582,7 +1582,7 @@ ui = {
     var buttons = div.create("div", {
       class : "div_lo_buttons"
     });
-    buttons.create("input", {
+   /* buttons.create("input", {
       type : "image",
       "class" : "input btn_lo",
       src : state.basedir + "img/edit.svg",
@@ -1590,7 +1590,7 @@ ui = {
       height : "16px"
     }).click(function() {
 
-    });
+    });*/
     buttons.create("input", {
       type : "image",
       "class" : "input btn_lo",
