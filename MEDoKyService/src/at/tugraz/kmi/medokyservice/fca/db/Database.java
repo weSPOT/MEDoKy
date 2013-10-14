@@ -312,6 +312,13 @@ public class Database implements Serializable {
     return Collections.synchronizedMap(new HashMap<Long, V>());
   }
 
+  public synchronized void clear() {
+    usersByExtrnalUID.clear();
+    registry.clear();
+    for (Map type : typeMap.values())
+      type.clear();
+  }
+
   /**
    * for internal debugging use
    */
