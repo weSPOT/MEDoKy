@@ -1,3 +1,9 @@
+from 6e39099 to b08e366:
+ * fix crash induced by lattice modification
+ * add userguide
+ * fix diagrams
+ * add import/export tool
+
 from 07ad98b to 6e39099:
  * improve rendering of lattice
  * use data field of learning objects
