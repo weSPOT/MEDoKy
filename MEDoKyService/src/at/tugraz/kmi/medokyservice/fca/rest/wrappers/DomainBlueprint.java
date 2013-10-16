@@ -30,6 +30,10 @@ public class DomainBlueprint extends AbstractWrapper {
    */
   public String externalUID;
 
+  public String externalCourseID;
+
+  public String courseName;
+
   /**
    * the set of {@link FCAAttribute} IDs part of this domain
    */

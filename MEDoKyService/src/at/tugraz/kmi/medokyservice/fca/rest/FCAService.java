@@ -4,8 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +27,7 @@ import at.tugraz.kmi.medokyservice.fca.bl.Updater;
 import at.tugraz.kmi.medokyservice.fca.db.Database;
 import at.tugraz.kmi.medokyservice.fca.db.FCAAbstract;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
+import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Course;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Domain;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
@@ -34,6 +37,7 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 import at.tugraz.kmi.medokyservice.fca.rest.conf.RestConfig;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.ConceptWrapper;
+import at.tugraz.kmi.medokyservice.fca.rest.wrappers.CourseWrapper;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.DomainBlueprint;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.DomainWrapper;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.LatticeWrapper;
@@ -130,24 +134,44 @@ public class FCAService {
   }
 
   /**
-   * retrieves a List of {@link DomainBlueprint}s containing only id, name and
-   * description for all {@link Domain}s stored in the Database.
+   * retrieves a Map of Courses containing their Domains as
+   * {@link DomainBlueprint}s containing only id, name and description for all
+   * {@link Domain}s stored in the Database.
    * 
    * @return all {@link DomainBlueprint}s mapped by their id
    */
   @GET
   @Path(RestConfig.PATH_GETDOMAINHEADERS)
   @Produces(MediaType.APPLICATION_JSON)
-  public Map<Long, DomainBlueprint> getDomainHeaders() {
+  public Map<Long, CourseWrapper> getDomainHeaders(
+      @QueryParam(RestConfig.KEY_ID) String externalCourseID) {
     log("getDomainHeaders");
-    HashMap<Long, DomainBlueprint> map = new HashMap<Long, DomainBlueprint>();
-    TreeSet<Domain> domains = new TreeSet<Domain>(new NameComparator());
-    domains.addAll(Database.getInstance().getAll(Domain.class));
-    for (Domain d : domains) {
-      map.put(d.getId(),
-          new DomainBlueprint(d.getName(), d.getDescription(), d.getOwner()));
+    Collection<Course> courses = new HashSet<Course>();
+    LinkedHashMap<Long, CourseWrapper> result = new LinkedHashMap<Long, CourseWrapper>();
+    System.out.println("EXTERNALCourseID: " + externalCourseID);
+    if (externalCourseID.equals("-1")) {
+      System.out.println("ALL");
+      courses = Database.getInstance().getAll(Course.class);
+    } else {
+      System.out.println("ONE");
+      Course c = Database.getInstance().getCourseByExternalID(externalCourseID);
+      if (c != null)
+        courses.add(c);
     }
-    return map;
+    for (Course c : courses) {
+      CourseWrapper wrapper = new CourseWrapper(c.getId(), c.getName(),
+          c.getDescription(), c.getExternalCourseID());
+      HashMap<Long, DomainBlueprint> map = new HashMap<Long, DomainBlueprint>();
+      TreeSet<Domain> domains = new TreeSet<Domain>(new NameComparator());
+      domains.addAll(c.getDomains());
+      for (Domain d : c.getDomains()) {
+        map.put(d.getId(), new DomainBlueprint(d.getName(), d.getDescription(),
+            d.getOwner()));
+      }
+      wrapper.domains = map;
+      result.put(c.getId(), wrapper);
+    }
+    return result;
   }
 
   /**
@@ -296,7 +320,9 @@ public class FCAService {
 
   /**
    * Triggers a valuation update based on the indicators provided
-   * @param valuations the valuatson/updates
+   * 
+   * @param valuations
+   *          the valuatson/updates
    * @return an updates version of the affected Domain's lattice
    * @throws Exception
    */
@@ -463,6 +489,15 @@ public class FCAService {
         Database.getInstance().getUserByExternalUID(relation.externalUID));
     Database.getInstance().put(domain);
     Database.getInstance().putAll(domain.getFormalContext().getConcepts());
+    Course course = Database.getInstance().getCourseByExternalID(
+        relation.externalCourseID);
+    if (course == null) {
+      course = new Course(relation.courseName, "", Database.getInstance()
+          .getUserByExternalUID(relation.externalUID).getId(),
+          relation.externalCourseID);
+    }
+    course.addDomain(domain);
+    Database.getInstance().put(course);
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {

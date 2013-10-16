@@ -54,6 +54,7 @@ public class Database implements Serializable {
 
   private static Database instance = null;
 
+  private Map<String, Course> coursesByExternalID;
   private Map<String, User> usersByExtrnalUID;
   private Map<Long, DataObject> registry;
 
@@ -64,6 +65,8 @@ public class Database implements Serializable {
   private Database() {
     usersByExtrnalUID = Collections
         .synchronizedMap(new HashMap<String, User>());
+    coursesByExternalID = Collections
+        .synchronizedMap(new HashMap<String, Course>());
     registry = Collections.synchronizedMap(new HashMap<Long, DataObject>());
     typeMap = Collections.synchronizedMap(new HashMap<Class, Map>());
     typeMap.put(FCAObject.class,
@@ -209,6 +212,18 @@ public class Database implements Serializable {
   }
 
   /**
+   * retrieves a course using an external identifier
+   * 
+   * @param externalID
+   *          the external ID of the course to get
+   * @return the Course with the specified identifier
+   */
+  public synchronized Course getCourseByExternalID(String externalID) {
+    Course c = coursesByExternalID.get(externalID);
+    return c;
+  }
+
+  /**
    * Retrieves the set of objects machted by the provided IDs
    * 
    * @param ids
@@ -243,6 +258,9 @@ public class Database implements Serializable {
         typeMap.get(obj.getClass()).put(obj.getId(), obj);
         if (obj instanceof User)
           usersByExtrnalUID.put(((User) obj).getExternalUid(), (User) obj);
+        else if (obj instanceof Course)
+          coursesByExternalID.put(((Course) obj).getExternalCourseID(),
+              (Course) obj);
         try {
           save();
         } catch (FileNotFoundException e) {
@@ -272,6 +290,9 @@ public class Database implements Serializable {
           typeMap.get(obj.getClass()).put(obj.getId(), obj);
           if (obj instanceof User)
             usersByExtrnalUID.put(((User) obj).getExternalUid(), (User) obj);
+          else if (obj instanceof Course)
+            coursesByExternalID.put(((Course) obj).getExternalCourseID(),
+                (Course) obj);
         }
       }
       try {

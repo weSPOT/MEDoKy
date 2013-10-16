@@ -10,6 +10,7 @@ $english = array(
 	'wespot_fca:launch' => "Launch Formal Concept Analysis",
 	'wespot_fca:owner_block' => "Formal Concept Analysis",
 
+        'wespot_fca:course' => "Course",
 
 	'wespot_fca:dummy' => "Dummy",
 	'wespot_fca:name' => "Name",

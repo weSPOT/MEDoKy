@@ -32,7 +32,7 @@ util = {
     for ( var i in params) {
       var param = params[i].split("=");
       if (param[0] == "gid")
-        state.gid = parseInt(param[1]);
+        state.gid = param[1];
       else if (param[0] == "name")
         state.g_name = param[1];
       else if (param[0] == "uid")
@@ -43,6 +43,10 @@ util = {
   },
 
   switch_student : function() {
+    $("#btn_open").removeProp("onclick");
+    $("#btn_open").click(function() {
+      backend.get_domains(state.gid, ui.list_domains);
+    });
     $("#btn_save").hide();
     $("#btn_new").hide();
     $("#main_table").hide();
@@ -432,10 +436,14 @@ backend = {
     });
   },
 
-  get_domains : function(callback) {
+  get_domains : function(id, callback) {
+    var payload = {
+      "id" : id
+    };
     $.ajax({
       cache : false,
       type : "GET",
+      data : payload,
       url : backend.url + backend.path_get_domainheaders,
       success : function(obj) {
         callback(obj);
@@ -946,6 +954,8 @@ logic = {
     logic.save(function() {
       var domain = logic.create_mapping(name, description);
       domain.externalUID = state.user.guid.toString();
+      domain.externalCourseID = state.gid;
+      domain.courseName = state.g_name;
       backend.create_domain(JSON.stringify(domain), function(obj) {
 
         $("#dia_create_domain").dialog("close");
@@ -955,7 +965,7 @@ logic = {
       });
     });
   },
- 
+
   create_lo : function(name, description, data) {
     // var data =$("#dia_set_lo").data(logic.key_lo);
     var sel = document.getElementById("sel_set_lo");
@@ -1537,17 +1547,48 @@ ui = {
       if (o == 0) {
         ui.create_lo(o);
         select.selectedIndex = -1;
-      }else if (o==2){
-        var obj = JSON.parse(select.options[select.selectedIndex].value);
-        $(".item_description").create("txt", obj.description);
-        if (obj.owner) {
-          $(".item_description").create("br");
-          $(".item_description").create("txt",
-              "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name + ")");
+      } else if (o == 2) {
+        console.debug("CHANGES");
+        var str_domain = select.options[select.selectedIndex].value;
+        console.debug(typeof str_domain);
+        console.debug(str_domain);
+        console.debug(str_domain.length);
+
+        if (str_domain != "-1") {
+          var obj = JSON.parse(select.options[select.selectedIndex].value);
+          $("#btn_choose_dom_ok").prop("disabled", false);
+          $(".item_description").create("txt", obj.description);
+          if (obj.owner) {
+            $(".item_description").create("br");
+            $(".item_description").create("txt",
+                "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name + ")");
+          }
+        } else {
+          $("#btn_choose_dom_ok").prop("disabled", true);
         }
       }
     } else if (select.selectedIndex != -1) {
-      if ((o == 0) || (o == 2)) {
+
+      if (o == 2) {
+        console.debug("CHANGES");
+        var str_domain = select.options[select.selectedIndex].value;
+        console.debug(typeof str_domain);
+        console.debug(str_domain);
+        console.debug(str_domain.length);
+
+        if (str_domain != "-1") {
+          var obj = JSON.parse(select.options[select.selectedIndex].value);
+          $("#btn_choose_dom_ok").prop("disabled", false);
+          $(".item_description").create("txt", obj.description);
+          if (obj.owner) {
+            $(".item_description").create("br");
+            $(".item_description").create("txt",
+                "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name + ")");
+          }
+        } else {
+          $("#btn_choose_dom_ok").prop("disabled", true);
+        }
+      } else if (o == 0) {
         var obj = JSON.parse(select.options[select.selectedIndex].value);
         $(".item_description").create("txt", obj.description);
         if (obj.owner) {
@@ -1582,15 +1623,13 @@ ui = {
     var buttons = div.create("div", {
       class : "div_lo_buttons"
     });
-   /* buttons.create("input", {
-      type : "image",
-      "class" : "input btn_lo",
-      src : state.basedir + "img/edit.svg",
-      width : "16px",
-      height : "16px"
-    }).click(function() {
-
-    });*/
+    /*
+     * buttons.create("input", { type : "image", "class" : "input btn_lo", src :
+     * state.basedir + "img/edit.svg", width : "16px", height : "16px"
+     * }).click(function() {
+     * 
+     * });
+     */
     buttons.create("input", {
       type : "image",
       "class" : "input btn_lo",
@@ -1787,10 +1826,16 @@ ui = {
   list_domains : function(domains) {
     $("#sel_set_dom").empty();
     for ( var id in domains) {
-      domains[id].id = id;
       $("#sel_set_dom").create("option", {
-        value : JSON.stringify(domains[id])
-      }).append(domains[id].name);
+        value : "-1"
+      }).create("txt", "--- " + elgg.echo("wespot_fca:course") + " " + domains[id].name + " ---");
+      for ( var d in domains[id].domains) {
+        domains[id].domains[d].id = d;
+        $("#sel_set_dom").create("option", {
+          value : JSON.stringify(domains[id].domains[d])
+        }).create("txt", "\u2192 " + domains[id].domains[d].name);
+      }
+
     }
     $("#sel_set_dom").prop("selectedIndex", "-1");
     $("#dia_set_dom").dialog("open");

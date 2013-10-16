@@ -14,7 +14,7 @@ $basedir = $CONFIG->url . "/mod/wespot_fca/";
 <script type="text/javascript" src="<?php echo $basedir; ?>js/jquery.dialogextend.js"></script>
 <script>
 $(function(){
-logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/");
+logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/FCATool/");
 });
 </script>
 <table id="toolbar">
@@ -24,11 +24,12 @@ logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at:8080/MEDoKyServic
    id="btn_new" onclick="document.location.reload(true)" /></td>
   <td class="toolbar"><input type="image" class="input" src="<?php echo $basedir; ?>img/open.svg"
    width="48px" height="48px" alt="Open" title="<?php echo elgg_echo('wespot_fca:domain:open'); ?>"
-   id="btn_open" onclick="backend.get_domains(ui.list_domains)" /></td>
+   id="btn_open" onclick="backend.get_domains('-1', ui.list_domains)" /></td>
   <td class="toolbar"><input type="image" class="input" src="<?php echo $basedir; ?>img/save.svg"
    width="48px" height="48px" alt="Save" title="<?php echo elgg_echo('wespot_fca:domain:save'); ?>"
    id="btn_save" onclick="$('#dia_create_domain').dialog('open')" /></td>
-  <td class="toolbar" style="width: 100%; vertical-align:middle;padding-left:2em"><h1 id="h_domain_name"></h1></td>
+  <td class="toolbar" style="width: 100%; vertical-align: middle; padding-left: 2em"><h1
+    id="h_domain_name"></h1></td>
  </tr>
 </table>
 <hr />
@@ -69,27 +70,30 @@ logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at:8080/MEDoKyServic
     class="input fullheight btn_attr col"
     value="<?php echo elgg_echo('wespot_fca:attr:dummy'); ?> 1" onclick="ui.set_item(0,1)" /></td>
    <td class="td_attr td_attr_1"><input type="image" src="<?php echo $basedir; ?>img/left.svg"
-    id="btn_move_left_1" width="16px" height="40px" alt="&lt;" title="<?php echo elgg_echo('wespot_fca:move_left'); ?>"
-    class="input btn_move_left" onclick="ui.move_left(1)" /><input type="image"
-    src="<?php echo $basedir; ?>img/right.svg" id="btn_move_right_1" width="16px" height="40px"
-    alt="&gt;" title="<?php echo elgg_echo('wespot_fca:move_right'); ?>"
-    class="input btn_move_right" onclick="ui.move_right(1)" /><input type="button" id="attr_1"
+    id="btn_move_left_1" width="16px" height="40px" alt="&lt;"
+    title="<?php echo elgg_echo('wespot_fca:move_left'); ?>" class="input btn_move_left"
+    onclick="ui.move_left(1)" /><input type="image" src="<?php echo $basedir; ?>img/right.svg"
+    id="btn_move_right_1" width="16px" height="40px" alt="&gt;"
+    title="<?php echo elgg_echo('wespot_fca:move_right'); ?>" class="input btn_move_right"
+    onclick="ui.move_right(1)" /><input type="button" id="attr_1"
     class="input fullheight btn_attr col"
     value="<?php echo elgg_echo('wespot_fca:attr:dummy'); ?> 2" onclick="ui.set_item(1,1)" /></td>
    <td class="td_attr td_attr_2"><input type="image" src="<?php echo $basedir; ?>img/left.svg"
-    id="btn_move_left_2" width="16px" height="40px" alt="&lt;" title="<?php echo elgg_echo('wespot_fca:move_left'); ?>"
-    class="input btn_move_left" onclick="ui.move_left(2)" /><input type="image"
-    src="<?php echo $basedir; ?>img/right.svg" id="btn_move_right_2" width="16px" height="40px"
-    alt="&gt;" title="<?php echo elgg_echo('wespot_fca:move_right'); ?>"
-    class="input btn_move_right" onclick="ui.move_right(2)" /><input type="button" id="attr_2"
+    id="btn_move_left_2" width="16px" height="40px" alt="&lt;"
+    title="<?php echo elgg_echo('wespot_fca:move_left'); ?>" class="input btn_move_left"
+    onclick="ui.move_left(2)" /><input type="image" src="<?php echo $basedir; ?>img/right.svg"
+    id="btn_move_right_2" width="16px" height="40px" alt="&gt;"
+    title="<?php echo elgg_echo('wespot_fca:move_right'); ?>" class="input btn_move_right"
+    onclick="ui.move_right(2)" /><input type="button" id="attr_2"
     class="input fullheight btn_attr col"
     value="<?php echo elgg_echo('wespot_fca:attr:dummy'); ?> 3" onclick="ui.set_item(2,1)" /></td>
    <td class="td_attr td_attr_3"><input type="image" src="<?php echo $basedir; ?>img/left.svg"
-    id="btn_move_left_3" width="16px" height="40px" alt="&lt;" title="<?php echo elgg_echo('wespot_fca:move_left'); ?>"
-    class="input btn_move_left" onclick="ui.move_left(3)" /><input type="image"
-    src="<?php echo $basedir; ?>img/right.svg" id="btn_move_right_3" width="16px" height="40px"
-    alt="&gt;" title="<?php echo elgg_echo('wespot_fca:move_right'); ?>"
-    class="input btn_move_right" onclick="ui.move_right(3)" /><input type="button" id="attr_3"
+    id="btn_move_left_3" width="16px" height="40px" alt="&lt;"
+    title="<?php echo elgg_echo('wespot_fca:move_left'); ?>" class="input btn_move_left"
+    onclick="ui.move_left(3)" /><input type="image" src="<?php echo $basedir; ?>img/right.svg"
+    id="btn_move_right_3" width="16px" height="40px" alt="&gt;"
+    title="<?php echo elgg_echo('wespot_fca:move_right'); ?>" class="input btn_move_right"
+    onclick="ui.move_right(3)" /><input type="button" id="attr_3"
     class="input fullheight btn_attr col"
     value="<?php echo elgg_echo('wespot_fca:attr:dummy'); ?> 4" onclick="ui.set_item(3,1)" /></td>
    <td class="tail" style="background-color: #fff; vertical-alignment: middle"><input type="image"
@@ -415,7 +419,8 @@ logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at:8080/MEDoKyServic
  <img src="<?php echo $basedir; ?>img/loading.gif" id="vis_loading" />
  <table>
   <tr>
-   <td><span id="span_latticeview" style="position: absolute; text-align: left; left: 0; top: 0; padding: 3px"> <input
+   <td><span id="span_latticeview"
+    style="position: absolute; text-align: left; left: 0; top: 0; padding: 3px"> <input
      type="checkbox" id="cb_latticeview" style="width: 20px" onclick="lattice.switch_view()" /> <?php echo elgg_echo('wespot_fca:lattice:show_full'); ?>
    </span></td>
    <td>

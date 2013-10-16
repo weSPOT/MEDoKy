@@ -7,8 +7,8 @@ import at.tugraz.kmi.medokyservice.fca.db.DataObject;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 
 /**
- * Class representing a course. A Course must have an owner ({@link User})
- * id, a (possibly empty) set of {@link User}s and a(possibly empty) set of
+ * Class representing a course. A Course must have an owner ({@link User}) id, a
+ * (possibly empty) set of {@link User}s and a(possibly empty) set of
  * {@link Domain}s. Only the teacher may add/remove domains and learners.
  * 
  * @author Bernd Prünster <bernd.pruenster@gmail.com>
@@ -22,7 +22,7 @@ public class Course extends DataObject {
   private Set<Domain> domains;
   private Set<User> participants;
   private long ownerId;
-  
+  private String externalCourseID;
 
   /**
    * @param name
@@ -32,11 +32,13 @@ public class Course extends DataObject {
    * @param ownerId
    *          The id of the user (teacher) responsible for this course
    */
-  public Course(String name, String description, long ownerId) {
+  public Course(String name, String description, long ownerId,
+      String externalCourseID) {
     super(name, description);
     domains = new HashSet<Domain>();
     participants = new HashSet<User>();
     this.ownerId = ownerId;
+    this.externalCourseID = externalCourseID;
   }
 
   public Set<Domain> getDomains() {
@@ -51,7 +53,6 @@ public class Course extends DataObject {
    */
   public void addDomain(Domain domain) {
     domains.add(domain);
-    
 
   }
 
@@ -75,6 +76,10 @@ public class Course extends DataObject {
 
   public void setOwnerId(long owner) {
     this.ownerId = owner;
+  }
+
+  public String getExternalCourseID() {
+    return externalCourseID;
   }
 
 }
