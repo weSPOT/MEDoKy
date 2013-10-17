@@ -43,11 +43,11 @@ $german = array(
 	'wespot_fca:obj:del' => "Gegenstand Löschen",
 	'wespot_fca:obj:dummy' => "Dummy Gegenstand",
 
-	'wespot_fca:l_obj' => "Lernobjekt",
-	'wespot_fca:l_objs' => "Lernobjekte",
-	'wespot_fca:l_obj:add' => "Lernobjekt Hinzufügen",
-	'wespot_fca:l_objs:add' => "Lernobjekte Hinzufügen",
-	'wespot_fca:l_obj:sel' => "Lernobjekt:",
+	'wespot_fca:l_obj' => "Lernressource",
+	'wespot_fca:l_objs' => "Lernressourcen",
+	'wespot_fca:l_obj:add' => "Lernressource Hinzufügen",
+	'wespot_fca:l_objs:add' => "Lernressourcen Hinzufügen",
+	'wespot_fca:l_obj:sel' => "Lernressource:",
 
 
 	'wespot_fca:lattice:tax' => "Taxonomie von",

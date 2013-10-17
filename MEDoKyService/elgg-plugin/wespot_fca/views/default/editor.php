@@ -212,7 +212,8 @@ logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/F
   <table>
    <tr>
     <td class="layout_select_name"><?php echo elgg_echo('wespot_fca:obj:sel'); ?></td>
-    <td><select id="sel_set_obj" class="sel_set" onchange="ui.display_item_description(this, 0)"></select></td>
+    <td><select id="sel_set_obj" class="sel_set" onchange="ui.display_item_description(this, 0)"
+     onmousedown="ui.enable_options(this)" onclick="ui.disable_options(this)"></select></td>
     <td><input type="image" class="btn_edit" src="<?php echo $basedir; ?>img/edit.svg" width="24px"
      height="24px"
      onclick="ui.display_item_edit(document.getElementById('sel_set_obj'),document.getElementById('text_descr_obj'),0)" /></td>
@@ -247,7 +248,8 @@ logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/F
   <table>
    <tr>
     <td class="layout_select_name"><?php echo elgg_echo('wespot_fca:attr:sel'); ?></td>
-    <td><select id="sel_set_attr" class="sel_set" onchange="ui.display_item_description(this, 1)"></select></td>
+    <td><select id="sel_set_attr" class="sel_set" onchange="ui.display_item_description(this, 1)"
+     onmousedown="ui.enable_options(this)" onclick="ui.disable_options(this)"></select></td>
     <td><input type="image" class="btn_edit" src="<?php echo $basedir; ?>img/edit.svg" width="24px"
      height="24px"
      onclick="ui.display_item_edit(document.getElementById('sel_set_attr'),document.getElementById('text_descr_attr'),1)" /></td>
@@ -279,7 +281,8 @@ logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/F
 <div id="dia_set_lo" title="<?php echo elgg_echo('wespot_fca:l_objs:add'); ?>">
  <div id="dia_set_lo_content">
   <?php echo elgg_echo('wespot_fca:l_obj:sel'); ?><select id="sel_set_lo" class="select_basic"
-   onchange="ui.display_description(this, 0)"></select>
+   onchange="ui.display_description(this, 0)" onmousedown="ui.enable_options(this)"
+   onclick="ui.disable_options(this)"></select>
   <p class="item_description"></p>
  </div>
  <hr>

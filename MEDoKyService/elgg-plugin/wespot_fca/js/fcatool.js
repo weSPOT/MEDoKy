@@ -743,17 +743,19 @@ logic = {
   },
 
   set_l_object : function(object, select, o) {
+
     // console.debug("set_LO");
     $(".item_description").empty();
     var l_objs = util.filter_l_lobjects(object);
     var sel = $("#sel_set_lo").empty();
 
+    sel.create("option").prop("disabled", true).create("txt",
+        "<New " + elgg.echo("wespot_fca:l_obj") + ">");
     for ( var i in l_objs) {
       sel.create("option", {
         value : JSON.stringify(l_objs[i])
       }).create("txt", l_objs[i].name);
     }
-    sel.create("option").create("txt", "<New Learning Object>");
     sel.prop("selectedIndex", -1);
     $("#dia_set_lo").dialog("open");
     util.underConstruction("#dia_set_lo");
@@ -992,7 +994,7 @@ logic = {
       var opt = document.createElement("option");
       opt.text = name;
       opt.value = JSON.stringify(lo);
-      $(sel).prepend($(opt));
+      $(sel).append($(opt));
 
       // state.new_l_objects[lo.id] = lo;
       $("#dia_create_lo").dialog("close");
@@ -1134,6 +1136,13 @@ logic = {
 
 ui = {
 
+  enable_options : function(select) {
+    $(select.options[0]).prop("disabled", false);
+  },
+
+  disable_options : function(select) {
+    $(select.options[0]).prop("disabled", true);
+  },
   move_down : function(id) {
     if ($("#tr_obj_" + id).next().prop("id"))
       $("#tr_obj_" + id).next().after($("#tr_obj_" + id));
@@ -1273,6 +1282,11 @@ ui = {
   },
 
   set_item : function(index, o, id) {
+    var select;
+    if (o == 1) {
+      select = document.getElementById("sel_set_attr");
+    } else
+      select = document.getElementById("sel_set_obj");
     ui.prepare_dialog(o);
     (o == 1) ? state.attr_index = index : state.obj_index = index;
     // console.debug("set item");
@@ -1305,6 +1319,10 @@ ui = {
       (o == 1) ? sel = $("#sel_set_attr") : sel = $("#sel_set_obj");
       sel.empty();
       var i = -1;
+      var newitem;
+      (o == 1) ? newitem = "<New " + elgg.echo("wespot_fca:attr") + ">" : newitem = "<New "
+          + elgg.echo("wespot_fca:obj") + ">";
+      sel.create("option").prop("disabled", true).create("txt", newitem);
       for ( var obj in objects) {
         ++i;
         // console.debug(id);
@@ -1315,9 +1333,6 @@ ui = {
           value : obj
         }).create("txt", objects[obj].name);
       }
-      var newitem;
-      (o == 1) ? newitem = "<New Attribute>" : newitem = "<New Object>";
-      sel.create("option").create("txt", newitem);
       sel.prop("selectedIndex", selectedIndex);
       // console.debug("index: " + selectedIndex);
       (o == 1) ? $("#dia_set_attr").dialog("open") : $("#dia_set_obj").dialog("open");
@@ -1543,7 +1558,7 @@ ui = {
 
   display_description : function(select, o) {
     $(".item_description").empty();
-    if (select.selectedIndex == (select.options.length - 1)) {
+    if (select.selectedIndex == 0) {
       if (o == 0) {
         ui.create_lo(o);
         select.selectedIndex = -1;
@@ -1676,6 +1691,7 @@ ui = {
 
   display_item_description : function(select, o) {
     // ui.hide_lo_buttons();
+    $(select.options[0]).prop("disabled", true);
     console.debug("description " + o);
     util.underConstruction(".div_lo");
     $(".div_lo").empty();
@@ -1691,7 +1707,7 @@ ui = {
     $(".text_description").show();
     $(textarea).prop("readonly", true);
 
-    if (select.selectedIndex == (select.options.length - 1)) {
+    if (select.selectedIndex == 0) {
       ui.display_item_edit(select, textarea, o);
     } else if (select.selectedIndex != -1) {
       var obj = (o == 1) ? $("#attr_" + state.attr_index).data(logic.key_attr) : $(
@@ -1797,7 +1813,7 @@ ui = {
   },
 
   display_item_edit : function(select, textarea, o) {
-    var create = select.selectedIndex == (select.options.length - 1);
+    var create = select.selectedIndex == 0;
     state.editing = !state.editing;
     var name;
     if (!create) {
@@ -1828,7 +1844,8 @@ ui = {
     for ( var id in domains) {
       $("#sel_set_dom").create("option", {
         value : "-1"
-      }).create("txt", "--- " + elgg.echo("wespot_fca:course") + " " + domains[id].name + " ---");
+      }).prop("disabled", true).create("txt",
+          "--- " + elgg.echo("wespot_fca:course") + " " + domains[id].name + " ---");
       for ( var d in domains[id].domains) {
         domains[id].domains[d].id = d;
         $("#sel_set_dom").create("option", {
