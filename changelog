@@ -1,3 +1,7 @@
+from b08e366 to XXX:
+ * introduce "Course" to domain model
+ * group Domains by Courses in elgg plug-in
+
 from 6e39099 to b08e366:
  * fix crash induced by lattice modification
  * add userguide
