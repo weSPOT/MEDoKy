@@ -158,6 +158,18 @@ public class FCAService {
       if (c != null)
         courses.add(c);
     }
+    
+    //This is a botch, fixme!
+    Course course = new Course("", "", 0, "-1");
+    for(Domain d: Database.getInstance().getAll(Domain.class)){
+      if(d.isGlobal()){
+        System.out.println(d.getName());
+        course.addDomain(d);
+        break;
+      }
+    }
+    courses.add(course);
+    
     for (Course c : courses) {
       CourseWrapper wrapper = new CourseWrapper(c.getId(), c.getName(),
           c.getDescription(), c.getExternalCourseID());
@@ -486,7 +498,7 @@ public class FCAService {
     }
 
     Domain domain = new Domain(relation.name, relation.description, matrix,
-        Database.getInstance().getUserByExternalUID(relation.externalUID));
+        Database.getInstance().getUserByExternalUID(relation.externalUID),false);
     Database.getInstance().put(domain);
     Database.getInstance().putAll(domain.getFormalContext().getConcepts());
     Course course = Database.getInstance().getCourseByExternalID(

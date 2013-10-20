@@ -27,6 +27,7 @@ public class Domain extends DataObject {
   private IncidenceMatrix mapping;
   private Lattice formalContext;
   private User owner;
+  private boolean global;
   @JsonIgnore
   private Map<Long, LearnerDomain> learnerDomains;
 
@@ -44,11 +45,12 @@ public class Domain extends DataObject {
    *          the domain owner
    */
   public Domain(String name, String description, IncidenceMatrix matrix,
-      User owner) {
+      User owner, boolean global) {
     super(name, description);
     mapping = matrix;
     formalContext = new Lattice(matrix);
     this.owner = owner;
+    this.global=global;
     this.learnerDomains = Collections
         .synchronizedMap(new HashMap<Long, LearnerDomain>());
   }
@@ -85,6 +87,10 @@ public class Domain extends DataObject {
 
   public void addLearnerDomain(long userID, LearnerDomain domain) {
     learnerDomains.put(userID, domain);
+  }
+
+  public boolean isGlobal() {
+    return global;
   }
 
 }

@@ -131,7 +131,7 @@ public class TestFCA {
               mat.add(objs[((int) (Math.random() * (part)))], a);
             }
             domains[val] = (new Domain("dom" + val, "", mat, new User(" ", " ",
-                " ")));
+                " "), false));
             Database.getInstance().put(domains[val]);
             Database.getInstance().putAll(
                 domains[val].getFormalContext().getConcepts());

@@ -1839,20 +1839,28 @@ ui = {
 
   },
 
-  list_domains : function(domains) {
+  list_domains : function(courses) {
     $("#sel_set_dom").empty();
-    for ( var id in domains) {
-      $("#sel_set_dom").create("option", {
-        value : "-1"
-      }).prop("disabled", true).create("txt",
-          "--- " + elgg.echo("wespot_fca:course") + " " + domains[id].name + " ---");
-      for ( var d in domains[id].domains) {
-        domains[id].domains[d].id = d;
+    for ( var id in courses) {
+      if (courses[id].externalCourseID == "-1") {
+        for ( var d in courses[id].domains) {
+          courses[id].domains[d].id = d;
+          $("#sel_set_dom").create("option", {
+            value : JSON.stringify(courses[id].domains[d])
+          }).create("txt", courses[id].domains[d].name);
+        }
+      } else {
         $("#sel_set_dom").create("option", {
-          value : JSON.stringify(domains[id].domains[d])
-        }).create("txt", "\u2192 " + domains[id].domains[d].name);
+          value : "-1"
+        }).prop("disabled", true).create("txt",
+            "--- " + elgg.echo("wespot_fca:course") + " " + courses[id].name + " ---");
+        for ( var d in courses[id].domains) {
+          courses[id].domains[d].id = d;
+          $("#sel_set_dom").create("option", {
+            value : JSON.stringify(courses[id].domains[d])
+          }).create("txt", "\u2192 " + courses[id].domains[d].name);
+        }
       }
-
     }
     $("#sel_set_dom").prop("selectedIndex", "-1");
     $("#dia_set_dom").dialog("open");

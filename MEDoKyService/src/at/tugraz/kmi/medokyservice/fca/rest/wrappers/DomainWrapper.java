@@ -16,6 +16,7 @@ public class DomainWrapper extends AbstractWrapper {
   public User owner;
   public LatticeWrapper formalContext;
   public IncidenceMatrix mapping;
+  public boolean global;
 
   public DomainWrapper() {
   }
@@ -27,6 +28,8 @@ public class DomainWrapper extends AbstractWrapper {
     owner = domain.getOwner();
     formalContext = new LatticeWrapper(domain.getFormalContext());
     mapping = domain.getMapping();
+    global=domain.isGlobal();
+    
   }
 
   public DomainWrapper(LearnerDomain domain) {

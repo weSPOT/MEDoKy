@@ -158,7 +158,7 @@ public class Database implements Serializable {
    * Checks whether the specified object exists in the database
    * 
    * @param obj
-   *          the onbject to check
+   *          the object to check
    * @return true if object is in database, false otherwise
    */
   public synchronized boolean contains(DataObject obj) {
@@ -184,7 +184,7 @@ public class Database implements Serializable {
    * retrieves all object of the specified type
    * 
    * @param type
-   *          the type of objects to retreive
+   *          the type of objects to retrieve
    * @return a BlockingDeque containing all objects of the specified type
    */
   @SuppressWarnings("unchecked")
@@ -203,8 +203,8 @@ public class Database implements Serializable {
    * retrieves a user using an external identifier
    * 
    * @param externalUID
-   *          hte external UUID of the user to get
-   * @return the User wiht hte specified identifier
+   *          the external UUID of the user to get
+   * @return the User with the specified identifier
    */
   public synchronized User getUserByExternalUID(String externalUID) {
     User u = usersByExtrnalUID.get(externalUID);
@@ -224,7 +224,7 @@ public class Database implements Serializable {
   }
 
   /**
-   * Retrieves the set of objects machted by the provided IDs
+   * Retrieves the set of objects matched by the provided IDs
    * 
    * @param ids
    *          the IDs of object to get
@@ -333,6 +333,10 @@ public class Database implements Serializable {
     return Collections.synchronizedMap(new HashMap<Long, V>());
   }
 
+  /**
+   * Removes all data from the database. This is irreversible!
+   */
+  @SuppressWarnings("rawtypes")
   public synchronized void clear() {
     usersByExtrnalUID.clear();
     registry.clear();
