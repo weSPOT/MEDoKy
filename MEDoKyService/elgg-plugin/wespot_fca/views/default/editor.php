@@ -1,5 +1,14 @@
 <?php
 $basedir = $CONFIG->url . "/mod/wespot_fca/";
+
+        $options = array(
+                'type' => 'object',
+                'subtype' => 'file',
+                'owner_guid' => get_entity($inquiryId)->owner_guid,
+                'container_guid' => $inquiryId,
+        );
+
+    file_put_contents('php://stderr', print_r(elgg_get_entities($options), TRUE));
 ?>
 <link type="text/css" href="<?php echo $basedir; ?>css/smoothness/jquery-ui.css" rel="Stylesheet" />
 <link type="text/css" href="<?php echo $basedir; ?>css/fca.css" rel="Stylesheet" />
