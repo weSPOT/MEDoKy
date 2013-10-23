@@ -1159,9 +1159,11 @@ ui = {
 
   enable_options : function(select) {
     $(select.options[0]).prop("disabled", false);
+    console.debug("MOSUEDOWN");
   },
 
   disable_options : function(select) {
+    console.debug("BLUR");
     $(select.options[0]).prop("disabled", true);
   },
   move_down : function(id) {

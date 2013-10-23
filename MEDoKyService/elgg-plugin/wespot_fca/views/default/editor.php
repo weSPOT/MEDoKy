@@ -33,7 +33,7 @@ foreach ($files as $file){
 <script type="text/javascript" src="<?php echo $basedir; ?>js/jquery.dialogextend.js"></script>
 <script>
 $(function(){
-logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
+logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
 });
 </script>
 <table id="toolbar">
@@ -232,7 +232,7 @@ logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/F
    <tr>
     <td class="layout_select_name"><?php echo elgg_echo('wespot_fca:obj:sel'); ?></td>
     <td><select id="sel_set_obj" class="sel_set" onchange="ui.display_item_description(this, 0)"
-     onmousedown="ui.enable_options(this)" onclick="ui.disable_options(this)"></select></td>
+     onmousedown="ui.enable_options(this)" onkeydown="ui.disable_options(this)"></select></td>
     <td><input type="image" class="btn_edit" src="<?php echo $basedir; ?>img/edit.svg" width="24px"
      height="24px"
      onclick="ui.display_item_edit(document.getElementById('sel_set_obj'),document.getElementById('text_descr_obj'),0)" /></td>
@@ -268,7 +268,7 @@ logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/F
    <tr>
     <td class="layout_select_name"><?php echo elgg_echo('wespot_fca:attr:sel'); ?></td>
     <td><select id="sel_set_attr" class="sel_set" onchange="ui.display_item_description(this, 1)"
-     onmousedown="ui.enable_options(this)" onclick="ui.disable_options(this)"></select></td>
+     onmousedown="ui.enable_options(this)" onkeydown="ui.disable_options(this)"></select></td>
     <td><input type="image" class="btn_edit" src="<?php echo $basedir; ?>img/edit.svg" width="24px"
      height="24px"
      onclick="ui.display_item_edit(document.getElementById('sel_set_attr'),document.getElementById('text_descr_attr'),1)" /></td>
