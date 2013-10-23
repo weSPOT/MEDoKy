@@ -13,7 +13,7 @@ public class LearningObject extends DataObject {
 
   /**
    * 
-   */
+   */ 
   private static final long serialVersionUID = -773144330881908191L;
   private User owner;
   private String data;

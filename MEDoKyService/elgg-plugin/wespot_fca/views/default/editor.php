@@ -8,7 +8,17 @@ $basedir = $CONFIG->url . "/mod/wespot_fca/";
                 'container_guid' => $inquiryId,
         );
 
-    file_put_contents('php://stderr', print_r(elgg_get_entities($options), TRUE));
+$files=elgg_get_entities($options);
+$files_json= array();
+foreach ($files as $file){
+  $json_file =  array(
+    'name' => $file->title,
+    'description' => $file->description,
+    'data' => $CONFIG->url . 'file/view/' . $file->guid,
+  );
+  $files_json[] = $json_file;
+}
+
 ?>
 <link type="text/css" href="<?php echo $basedir; ?>css/smoothness/jquery-ui.css" rel="Stylesheet" />
 <link type="text/css" href="<?php echo $basedir; ?>css/fca.css" rel="Stylesheet" />
@@ -23,7 +33,7 @@ $basedir = $CONFIG->url . "/mod/wespot_fca/";
 <script type="text/javascript" src="<?php echo $basedir; ?>js/jquery.dialogextend.js"></script>
 <script>
 $(function(){
-logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/FCATool/");
+logic.init("<?php echo $basedir; ?>","http://localhost:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
 });
 </script>
 <table id="toolbar">

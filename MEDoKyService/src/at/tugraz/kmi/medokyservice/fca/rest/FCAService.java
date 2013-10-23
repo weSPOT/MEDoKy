@@ -309,7 +309,6 @@ public class FCAService {
   public LatticeWrapper updateConcept(ConceptWrapper concept)
       throws NullPointerException {
     log("updateConcept");
-
     Concept c = Database.getInstance().get(concept.id);
     if (c == null)
       throw new NullPointerException();
@@ -431,7 +430,7 @@ public class FCAService {
     HashMap<Long, LearningObjectWrapper> result = new HashMap<Long, LearningObjectWrapper>();
     for (LearningObjectWrapper object : objects) {
       LearningObject fcaObject = new LearningObject(object.name,
-          object.description, "", Database.getInstance().getUserByExternalUID(
+          object.description, object.data, Database.getInstance().getUserByExternalUID(
               object.externalUID));
 
       result.put(fcaObject.getId(), object);

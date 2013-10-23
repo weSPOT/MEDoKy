@@ -13,4 +13,5 @@ public class LearningObjectWrapper extends AbstractWrapper {
    * External UID of the user that created this LearningObject
    */
   public String externalUID;
+  public String data;
 }

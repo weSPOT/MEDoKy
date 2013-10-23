@@ -123,7 +123,7 @@ util = {
         l_objs[i] = state.backend_l_objects[i];
     return l_objs;
   },
-  // TODO refactoring -> remove specific methods and onyl use generic one
+  // TODO refactoring -> remove specific methods and only use generic one
   replace_objects : function(obj) {
     for ( var o in obj) {
       var object = {
@@ -499,8 +499,9 @@ logic = {
   key_attr : "attribute",
   key_lo : "l_object",
 
-  init : function(basedir, backend_url) {
+  init : function(basedir, backend_url, files) {
     state.basedir = basedir;
+    state.files = files;
     state.user = elgg.get_logged_in_user_entity();
     util.parse_params();
 
@@ -697,7 +698,22 @@ logic = {
     } else {
       backend.get_objects();
       backend.get_attributes();
-      backend.get_l_objects();
+      backend.get_l_objects(function() {
+        var uris = [];
+        for ( var lo in state.backend_l_objects) {
+          console.debug(state.backend_l_objects[lo]);
+          if (state.backend_l_objects[lo].owner.externalUid == state.user.guid.toString())
+            uris.push(state.backend_l_objects[lo].data);
+        }
+        console.debug(uris);
+        console.debug(state.files);
+        for ( var f in state.files) {
+          if (uris.indexOf(state.files[f].data) == -1)
+            logic.create_lo(state.files[f].name, state.files[f].description.replace(
+                /(<([^>]+)>)/ig, ""), state.files[f].data);
+        }
+      });
+
     }
 
     if (!state.teacher) {
@@ -758,7 +774,7 @@ logic = {
     }
     sel.prop("selectedIndex", -1);
     $("#dia_set_lo").dialog("open");
-    util.underConstruction("#dia_set_lo");
+    // util.underConstruction("#dia_set_lo");
     $("#dia_set_lo_content").css("background", "rgba(255,255,255,0.6)");
     // $("#dia_set_lo").removeData();
 
@@ -782,11 +798,14 @@ logic = {
     for ( var i in data.object.learningObjects) {
       state.active_l_objects[data.object.learningObjects[i].id] = data.object.learningObjects[i];
     }
+
     $("#dia_set_lo").dialog("close");
     logic.save_item(data.object.name, data.select, data.object.description, data.o);
   },
 
   save_item : function(name, select, description, o) {
+    console.debug(select.selectedIndex);
+    console.debug(select.options[select.selectedIndex]);
     var create = select.selectedIndex == -1;
     if (create) {
       var now = Date.now();
@@ -820,6 +839,8 @@ logic = {
           // delete obj["learningObjects"];
           backend.update_attribute(JSON.stringify(obj), function(resp) {
             // console.debug(resp);
+            console.debug(select.selectedIndex);
+            console.debug(select.options[select.selectedIndex]);
             state.backend_attributes[select.options[select.selectedIndex].value] = resp;
             ui.set_item(state.attr_index, o, select.options[select.selectedIndex].value);
           });
@@ -1278,10 +1299,11 @@ ui = {
     $("#dia_create_lo").dialog("open");
     $("#input_create_lo_name").val("");
     $("#input_create_lo_description").val("");
-    util.underConstruction("#dia_create_lo");
+    // util.underConstruction("#dia_create_lo");
   },
 
   set_item : function(index, o, id) {
+    console.debug(id);
     var select;
     if (o == 1) {
       select = document.getElementById("sel_set_attr");
@@ -1328,12 +1350,17 @@ ui = {
         // console.debug(id);
         // console.debug(objects[obj].id);
         if (id && (objects[obj].id == id))
-          selectedIndex = i;
+          selectedIndex = i; //watch out for disabled attributes!
         sel.create("option", {
           value : obj
         }).create("txt", objects[obj].name);
       }
+      //now here comes teh tricky part: Disabled options mess with the indices
+      //But if none was selected (-1) we want to kkep it that way
+      if(selectedIndex!=-1)
+        selectedIndex++;
       sel.prop("selectedIndex", selectedIndex);
+      console.debug(sel.prop("selectedIndex"));
       // console.debug("index: " + selectedIndex);
       (o == 1) ? $("#dia_set_attr").dialog("open") : $("#dia_set_obj").dialog("open");
       if (selectedIndex != -1) {
@@ -1632,7 +1659,7 @@ ui = {
     var tdiv = div.create("div", {
       "class" : "txt_lo"
     }).click(function() {
-      window.open(lo.data, "Learning Object", "width=350,height=250");
+      window.open(lo.data, "Learning Object", "width=800,height=600");
     });
     tdiv.create("txt", lo.name);
     var buttons = div.create("div", {
@@ -1693,7 +1720,7 @@ ui = {
     // ui.hide_lo_buttons();
     $(select.options[0]).prop("disabled", true);
     console.debug("description " + o);
-    util.underConstruction(".div_lo");
+    // util.underConstruction(".div_lo");
     $(".div_lo").empty();
     $(select).show();
     $(".btn_edit").show();

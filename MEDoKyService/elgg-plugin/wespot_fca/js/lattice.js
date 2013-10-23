@@ -503,7 +503,7 @@ lattice = {
               };
               backend.update_valuation(JSON.stringify(postdata), lattice.update_valuation);
             }
-            window.open($(this).data("url"), "Learning Object", "width=350,height=250");
+            window.open($(this).data("url"), "Learning Object", "width=800,height=600");
             // console.debug(learningObjects[lo].description);
           }).hover(function() {
             $(this).css("background-color", "rgba(255,255,255,1)");
