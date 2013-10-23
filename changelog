@@ -1,6 +1,10 @@
-from b08e366 to XXX:
+from b08e366 to 3c263d7:
  * introduce "Course" to domain model
  * group Domains by Courses in elgg plug-in
+ * remove "Under Construction"
+ * remove edit button from learning objects
+ * implement using files as learning objects
+ * relocate <new object> to top of list
 
 from 6e39099 to b08e366:
  * fix crash induced by lattice modification
