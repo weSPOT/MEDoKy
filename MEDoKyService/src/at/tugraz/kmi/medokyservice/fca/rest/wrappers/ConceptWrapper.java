@@ -114,6 +114,8 @@ public class ConceptWrapper extends AbstractWrapper {
   private void init(LearnerConcept concept) {
 
     Concept c = Database.getInstance().get(concept.getDomainConceptId());
+    System.out.println(concept.getDomainConceptId());
+    System.out.println(c);
     partOfTaxonomy = c.isPartOfTaxonomy();
     objectConcept = c.isObjectConcept();
 

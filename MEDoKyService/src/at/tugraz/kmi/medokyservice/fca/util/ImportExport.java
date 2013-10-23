@@ -350,6 +350,8 @@ public class ImportExport {
     Database.getInstance().putAll(attributes.values());
 
     Map<Long, Domain> domains = json2Domains(json, objects, attributes, users);
+    for (Domain domain : domains.values())
+      Database.getInstance().putAll(domain.getFormalContext().getConcepts());
     Database.getInstance().putAll(domains.values());
 
     Database.getInstance().putAll(json2Courses(json, domains, users));
