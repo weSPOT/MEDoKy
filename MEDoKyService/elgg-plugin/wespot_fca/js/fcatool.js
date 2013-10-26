@@ -718,7 +718,9 @@ logic = {
 
     if (!state.teacher) {
       util.switch_student();
-    }
+      backend.get_domains(state.gid, ui.show_initial_domain);
+    } else
+      backend.get_domains('-1', ui.show_initial_domain);
   },
 
   create_object : function(name, description) {
@@ -836,6 +838,10 @@ logic = {
           var obj = state.backend_attributes[select.options[select.selectedIndex].value];
           obj.name = name;
           obj.description = description;
+          for ( var l in obj.learningObjects) {
+            obj.learningObjects[l].owner.objects = {};
+            obj.learningObjects[l].owner.attributes = {};
+          }
           // delete obj["learningObjects"];
           backend.update_attribute(JSON.stringify(obj), function(resp) {
             // console.debug(resp);
@@ -844,10 +850,16 @@ logic = {
             state.backend_attributes[select.options[select.selectedIndex].value] = resp;
             ui.set_item(state.attr_index, o, select.options[select.selectedIndex].value);
           });
+
+          // FIXME!!! SO MUCH DUPLICATED CODE; REFACTOR ASAP!
         } else {
           var obj = state.backend_objects[select.options[select.selectedIndex].value];
           obj.name = name;
           obj.description = description;
+          for ( var l in obj.learningObjects) {
+            obj.learningObjects[l].owner.objects = {};
+            obj.learningObjects[l].owner.attributes = {};
+          }
           // delete obj["learningObjects"];
           backend.update_object(JSON.stringify(obj), function(resp) {
             // console.debug(resp);
@@ -1060,7 +1072,7 @@ logic = {
     });
   },
 
-  populate_domain : function(domain) {
+  populate_domain : function(domain, teacher) {
 
     state.domain = domain;
     $("#h_domain_name").empty().create("txt", domain.name);
@@ -1129,23 +1141,29 @@ logic = {
 
           ++index;
         }
+        console.debug(teacher);
         if (state.msie) {
           setTimeout(function() {
-            ui.display_lattice();
+              ui.display_lattice();
+              if (teacher)
+                $("#dia_vis").dialogExtend("minimize");
           }, 300);
-        } else
-          ui.display_lattice();
+        } else {
+            ui.display_lattice();
+            if (teacher)
+              $("#dia_vis").dialogExtend("minimize");
+        }
       }, state.msie ? 1000 : 0);
     }));
   },
 
-  load : function(domainid) {
+  load : function(domainid, teacher) {
     $("#dia_set_dom").dialog("close");
     // state.domain = domain;
     // state.new
     if (state.teacher) {
       backend.get_domain(domainid, function(domain) {
-        logic.populate_domain(domain);
+        logic.populate_domain(domain, teacher);
       });
     } else {
       backend.get_learner_domain(domainid, state.user.guid.toString(), function(domain) {
@@ -1352,14 +1370,14 @@ ui = {
         // console.debug(id);
         // console.debug(objects[obj].id);
         if (id && (objects[obj].id == id))
-          selectedIndex = i; //watch out for disabled attributes!
+          selectedIndex = i; // watch out for disabled attributes!
         sel.create("option", {
           value : obj
         }).create("txt", objects[obj].name);
       }
-      //now here comes teh tricky part: Disabled options mess with the indices
-      //But if none was selected (-1) we want to kkep it that way
-      if(selectedIndex!=-1)
+      // now here comes teh tricky part: Disabled options mess with the indices
+      // But if none was selected (-1) we want to kkep it that way
+      if (selectedIndex != -1)
         selectedIndex++;
       sel.prop("selectedIndex", selectedIndex);
       console.debug(sel.prop("selectedIndex"));
@@ -1866,6 +1884,25 @@ ui = {
     }
     ui.prepare_item_edit(select, textarea, o).val(name).focus();
 
+  },
+
+  show_initial_domain : function(courses) {
+    for ( var id in courses) {
+      console.debug(courses[id].externalCourseID);
+      console.debug(state.gid);
+      console.debug(typeof courses[id].externalCourseID);
+      console.debug(typeof state.gid);
+      
+      
+      if (courses[id].externalCourseID == state.gid) {
+        for ( var d in courses[id].domains) {
+          console.debug(d);
+          console.debug(typeof d);
+          logic.load(d, state.teacher);
+          break;
+        }
+      }
+    }
   },
 
   list_domains : function(courses) {
