@@ -1,7 +1,10 @@
-from 3c263d7 to xxx:
+from 3c263d7 to f580387:
  * fix glaring bug when updating objects/attributes
  * fix import: also store concepts in database
  * load corresponding domain when entering an inquiry (if any)
+ * fix creation of learnign resources
+ * fix export courses
+ * prevent creation of multiple instances of the same object/attribute
 
 from b08e366 to 3c263d7:
  * introduce "Course" to domain model
