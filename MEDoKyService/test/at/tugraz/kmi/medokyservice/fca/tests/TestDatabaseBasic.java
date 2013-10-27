@@ -25,7 +25,7 @@ public class TestDatabaseBasic {
   public void clean() {
     new File(DBConfig.DB_PATH).delete();
     System.gc();
-    Database.getInstance().reset();
+    Database.getInstance().clear();
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {

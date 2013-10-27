@@ -15,14 +15,15 @@ public class FCAAttribute extends FCAAbstract {
    */
   private static final long serialVersionUID = -5485480910283112605L;
 
+  
+
   /**
    * @see FCAAbstract
    * @param name
    * @param description
    */
-  public FCAAttribute(String name, String description) {
-    super(name, description);
+  public FCAAttribute(String name, String description, String creationId) {
+    super(name, description, creationId);
 
   }
-
 }

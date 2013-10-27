@@ -1,3 +1,8 @@
+from 3c263d7 to xxx:
+ * fix glaring bug when updating objects/attributes
+ * fix import: also store concepts in database
+ * load corresponding domain when entering an inquiry (if any)
+
 from b08e366 to 3c263d7:
  * introduce "Course" to domain model
  * group Domains by Courses in elgg plug-in

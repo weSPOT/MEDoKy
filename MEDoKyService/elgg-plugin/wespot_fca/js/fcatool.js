@@ -20,7 +20,8 @@ state = {
   gid : -1,
   g_name : "",
   owner_id : -1,
-  teacher : false
+  teacher : false,
+  load_domain : true
 };
 
 util = {
@@ -37,6 +38,8 @@ util = {
         state.g_name = param[1];
       else if (param[0] == "uid")
         state.owner_id = parseInt(param[1]);
+      else if (param[0] == "blank")
+        state.load_domain = false;
     }
     if (state.owner_id == state.user.guid)
       state.teacher = true;
@@ -718,26 +721,23 @@ logic = {
 
     if (!state.teacher) {
       util.switch_student();
-      backend.get_domains(state.gid, ui.show_initial_domain);
-    } else
-      backend.get_domains('-1', ui.show_initial_domain);
+      if (state.load_domain)
+        backend.get_domains(state.gid, ui.show_initial_domain);
+    } else {
+      if (state.load_domain)
+        backend.get_domains('-1', ui.show_initial_domain);
+    }
   },
-
-  create_object : function(name, description) {
-    $("#input_create_obj_name").prop("value", "");
-    $("#input_create_obj_description").prop("value", "");
-    var now = Date.now();
-    var object = {
-      "name" : name,
-      "description" : description,
-      "id" : now
-    };
-
-    state.new_objects[now] = object;
-    $("#dia_create_obj").dialog("close");
-    $("#dia_set_obj").dialog("close");
-    ui.set_item(state.obj_index, 0);
-  },
+  /*
+   * create_object : function(name, description) {
+   * $("#input_create_obj_name").prop("value", "");
+   * $("#input_create_obj_description").prop("value", ""); var now = Date.now();
+   * var object = { "name" : name, "description" : description, "id" : now,
+   * "creationId": state.gid+state.user+new Date().getTime() };
+   * 
+   * state.new_objects[now] = object; $("#dia_create_obj").dialog("close");
+   * $("#dia_set_obj").dialog("close"); ui.set_item(state.obj_index, 0); },
+   */
 
   remove_lo : function(lo, object, select, o) {
     for ( var i in object.learningObjects) {
@@ -796,6 +796,11 @@ logic = {
   set_lo : function() {
     var data = $("#dia_set_lo").data(logic.key_lo);
     var sel = $("#sel_set_lo").get(0);
+    console.debug(sel.selectedIndex);
+    console.debug(sel.options[sel.selectedIndex]);
+    /*
+     * if (selectedIndex != -1) selectedIndex++;
+     */
     data.object.learningObjects.push(JSON.parse(sel.options[sel.selectedIndex].value));
     for ( var i in data.object.learningObjects) {
       state.active_l_objects[data.object.learningObjects[i].id] = data.object.learningObjects[i];
@@ -815,7 +820,8 @@ logic = {
         "name" : name,
         "description" : description,
         "id" : now,
-        "learningObjects" : []
+        "learningObjects" : [],
+        "creationId" : state.gid + state.user + new Date().getTime()
       };
       // ui.cancel_item_edit(select, o);
       if (o == 1) {
@@ -1002,8 +1008,10 @@ logic = {
   },
 
   create_lo : function(name, description, data) {
+
     // var data =$("#dia_set_lo").data(logic.key_lo);
     var sel = document.getElementById("sel_set_lo");
+    $(sel.options[0]).prop("disabled", true);
     // $(sel).empty();
     if ((data.substring(0, 7) != "http://") && (data.substring(0, 8) != "https://"))
       data = "http://" + data;
@@ -1020,6 +1028,7 @@ logic = {
     // are pretty undefined as of now
     backend.create_l_objects(JSON.stringify([ lo ]), function(obj) {
       for ( var i in obj) {
+        lo = obj[i];
         lo.id = i;
       }
       // console.debug(lo);
@@ -1028,7 +1037,7 @@ logic = {
       opt.text = name;
       opt.value = JSON.stringify(lo);
       $(sel).append($(opt));
-
+      sel.selectedIndex = sel.options.length - 1;
       // state.new_l_objects[lo.id] = lo;
       $("#dia_create_lo").dialog("close");
       // sel.selectedIndex = sel.selectedIndex - 1;
@@ -1144,14 +1153,14 @@ logic = {
         console.debug(teacher);
         if (state.msie) {
           setTimeout(function() {
-              ui.display_lattice();
-              if (teacher)
-                $("#dia_vis").dialogExtend("minimize");
-          }, 300);
-        } else {
             ui.display_lattice();
             if (teacher)
               $("#dia_vis").dialogExtend("minimize");
+          }, 300);
+        } else {
+          ui.display_lattice();
+          if (teacher)
+            $("#dia_vis").dialogExtend("minimize");
         }
       }, state.msie ? 1000 : 0);
     }));
@@ -1892,8 +1901,7 @@ ui = {
       console.debug(state.gid);
       console.debug(typeof courses[id].externalCourseID);
       console.debug(typeof state.gid);
-      
-      
+
       if (courses[id].externalCourseID == state.gid) {
         for ( var d in courses[id].domains) {
           console.debug(d);

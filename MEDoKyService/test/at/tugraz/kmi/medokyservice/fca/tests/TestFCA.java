@@ -37,7 +37,7 @@ public class TestFCA {
     if (test) {
 
       System.gc();
-      Database.getInstance().reset();
+      Database.getInstance().clear();
     }
     try {
       Database.getInstance().save();
@@ -96,7 +96,7 @@ public class TestFCA {
 
     final FCAObject[] objs = new FCAObject[(part * part)];
     for (int i = 0; i < part * part; ++i) {
-      objs[i] = (new FCAObject("Object " + i, i * i + " test"));
+      objs[i] = (new FCAObject("Object " + i, i * i + " test",Double.toHexString(1000*Math.random())));
       for (int n = 0; n < Math.random() * (part / 4); ++n) {
         objs[i].getLearningObjects().add(
             lobjs[((int) (Math.random() * (part * part)))]);
@@ -106,7 +106,7 @@ public class TestFCA {
 
     final FCAAttribute[] attrs = new FCAAttribute[(part * part)];
     for (int i = 0; i < part * part; ++i) {
-      attrs[i] = (new FCAAttribute("Attr " + i, i * i + " test"));
+      attrs[i] = (new FCAAttribute("Attr " + i, i * i + " test",Double.toHexString(1000*Math.random())));
       for (int n = 0; n < Math.random() * (part / 4); ++n) {
         attrs[i].getLearningObjects().add(
             lobjs[((int) (Math.random() * (part * part)))]);

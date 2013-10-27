@@ -56,6 +56,7 @@ public class Database implements Serializable {
 
   private Map<String, Course> coursesByExternalID;
   private Map<String, User> usersByExtrnalUID;
+  private Map<String, FCAAbstract> fcaItemsBycreationID;
   private Map<Long, DataObject> registry;
 
   @SuppressWarnings("rawtypes")
@@ -67,6 +68,8 @@ public class Database implements Serializable {
         .synchronizedMap(new HashMap<String, User>());
     coursesByExternalID = Collections
         .synchronizedMap(new HashMap<String, Course>());
+    fcaItemsBycreationID = Collections
+        .synchronizedMap(new HashMap<String, FCAAbstract>());
     registry = Collections.synchronizedMap(new HashMap<Long, DataObject>());
     typeMap = Collections.synchronizedMap(new HashMap<Class, Map>());
     typeMap.put(FCAObject.class,
@@ -86,13 +89,6 @@ public class Database implements Serializable {
     typeMap.put(User.class,
         Collections.synchronizedMap(new HashMap<Long, User>()));
 
-  }
-
-  public synchronized void reset() {
-    synchronized (registry) {
-      registry.clear();
-      usersByExtrnalUID.clear();
-    }
   }
 
   /**
@@ -211,6 +207,12 @@ public class Database implements Serializable {
     return u;
   }
 
+  
+  public synchronized FCAAbstract getFCAItemBycreationId(String creationId) {
+    FCAAbstract  a = fcaItemsBycreationID.get(creationId);
+    return a;
+  }
+
   /**
    * retrieves a course using an external identifier
    * 
@@ -261,6 +263,9 @@ public class Database implements Serializable {
         else if (obj instanceof Course)
           coursesByExternalID.put(((Course) obj).getExternalCourseID(),
               (Course) obj);
+        else if (obj instanceof FCAAbstract)
+          fcaItemsBycreationID.put(((FCAAbstract) obj).getCreationId(),
+              (FCAAbstract) obj);
         try {
           save();
         } catch (FileNotFoundException e) {
@@ -293,6 +298,9 @@ public class Database implements Serializable {
           else if (obj instanceof Course)
             coursesByExternalID.put(((Course) obj).getExternalCourseID(),
                 (Course) obj);
+          else if (obj instanceof FCAAbstract)
+            fcaItemsBycreationID.put(((FCAAbstract) obj).getCreationId(),
+                (FCAAbstract) obj);
         }
       }
       try {
@@ -339,6 +347,8 @@ public class Database implements Serializable {
   @SuppressWarnings("rawtypes")
   public synchronized void clear() {
     usersByExtrnalUID.clear();
+    coursesByExternalID.clear();
+    fcaItemsBycreationID.clear();
     registry.clear();
     for (Map type : typeMap.values())
       type.clear();

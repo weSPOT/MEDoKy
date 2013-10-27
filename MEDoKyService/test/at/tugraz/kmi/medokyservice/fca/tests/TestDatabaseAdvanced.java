@@ -34,7 +34,7 @@ public class TestDatabaseAdvanced {
 
   public void reset(boolean test) {
     System.gc();
-    Database.getInstance().reset();
+    Database.getInstance().clear();
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {
@@ -78,7 +78,8 @@ public class TestDatabaseAdvanced {
     int part = 40;
     final FCAObject[] objs = new FCAObject[part * part];
     for (int i = 0; i < part * part; ++i) {
-      objs[i] = (new FCAObject("Object " + i, i * i + " test"));
+      objs[i] = (new FCAObject("Object " + i, i * i + " test",
+          Double.toHexString(1000 * Math.random())));
     }
     testCreate(objs, part);
     assertTrue(Database.getInstance().getAll(FCAObject.class)
@@ -91,7 +92,8 @@ public class TestDatabaseAdvanced {
     int part = 80;
     final FCAAttribute[] attrs = new FCAAttribute[part * part];
     for (int i = 0; i < part * part; ++i) {
-      attrs[i] = new FCAAttribute("Attribute " + i, i * i + " test");
+      attrs[i] = new FCAAttribute("Attribute " + i, i * i + " test",
+          Double.toHexString(1000 * Math.random()));
     }
     testCreate(attrs, part);
     assertTrue(Database.getInstance().getAll(FCAAttribute.class)

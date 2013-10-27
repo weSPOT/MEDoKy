@@ -23,6 +23,8 @@ public class FCAAbstract extends DataObject {
   private static final long serialVersionUID = -6632084060702601592L;
   private Set<LearningObject> learningObjects;
 
+  private String creationId;
+
   /**
    * @param name
    *          the objects name
@@ -30,8 +32,9 @@ public class FCAAbstract extends DataObject {
    *          the objects description
    * @see DataObject#DataObject(String, String)
    */
-  public FCAAbstract(String name, String description) {
+  public FCAAbstract(String name, String description, String creationId) {
     super(name, description);
+    this.creationId = creationId;
     learningObjects = Collections
         .synchronizedSet(new HashSet<LearningObject>());
   }
@@ -44,5 +47,9 @@ public class FCAAbstract extends DataObject {
 
   public void setLearningObjects(Set<LearningObject> learningObjects) {
     this.learningObjects = Collections.synchronizedSet(learningObjects);
+  }
+
+  public String getCreationId() {
+    return creationId;
   }
 }

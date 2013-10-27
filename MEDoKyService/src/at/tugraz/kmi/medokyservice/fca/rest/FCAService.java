@@ -158,18 +158,18 @@ public class FCAService {
       if (c != null)
         courses.add(c);
     }
-    
-    //This is a botch, fixme!
+
+    // This is a botch, fixme!
     Course course = new Course("", "", 0, "-1");
-    for(Domain d: Database.getInstance().getAll(Domain.class)){
-      if(d.isGlobal()){
+    for (Domain d : Database.getInstance().getAll(Domain.class)) {
+      if (d.isGlobal()) {
         System.out.println(d.getName());
         course.addDomain(d);
         break;
       }
     }
     courses.add(course);
-    
+
     for (Course c : courses) {
       CourseWrapper wrapper = new CourseWrapper(c.getId(), c.getName(),
           c.getDescription(), c.getExternalCourseID());
@@ -402,8 +402,13 @@ public class FCAService {
     log("createObjects");
     HashMap<Long, FCAObject> result = new HashMap<Long, FCAObject>();
     for (FCAObject object : objects) {
-      FCAObject fcaObject = new FCAObject(object.getName(),
-          object.getDescription());
+
+      FCAObject fcaObject = (FCAObject) Database.getInstance()
+          .getFCAItemBycreationId(object.getCreationId());
+      if (fcaObject == null) {
+        fcaObject = new FCAObject(object.getName(), object.getDescription(),
+            object.getCreationId());
+      }
       fcaObject.setLearningObjects(object.getLearningObjects());
       result.put(fcaObject.getId(), object);
       Database.getInstance().put(fcaObject);
@@ -430,9 +435,10 @@ public class FCAService {
     HashMap<Long, LearningObjectWrapper> result = new HashMap<Long, LearningObjectWrapper>();
     for (LearningObjectWrapper object : objects) {
       LearningObject fcaObject = new LearningObject(object.name,
-          object.description, object.data, Database.getInstance().getUserByExternalUID(
-              object.externalUID));
-
+          object.description, object.data, Database.getInstance()
+              .getUserByExternalUID(object.externalUID));
+      object.owner = Database.getInstance().getUserByExternalUID(
+          object.externalUID);
       result.put(fcaObject.getId(), object);
       Database.getInstance().put(fcaObject);
     }
@@ -458,8 +464,13 @@ public class FCAService {
     log("createAttributes");
     HashMap<Long, FCAAttribute> result = new HashMap<Long, FCAAttribute>();
     for (FCAAttribute attribute : attributes) {
-      FCAAttribute fcaAttribute = new FCAAttribute(attribute.getName(),
-          attribute.getDescription());
+      FCAAttribute fcaAttribute = (FCAAttribute) Database.getInstance()
+          .getFCAItemBycreationId(attribute.getCreationId());
+      if (fcaAttribute == null) {
+
+        fcaAttribute = new FCAAttribute(attribute.getName(),
+            attribute.getDescription(), attribute.getCreationId());
+      }
       fcaAttribute.setLearningObjects(attribute.getLearningObjects());
       result.put(fcaAttribute.getId(), attribute);
       Database.getInstance().put(fcaAttribute);
@@ -497,7 +508,8 @@ public class FCAService {
     }
 
     Domain domain = new Domain(relation.name, relation.description, matrix,
-        Database.getInstance().getUserByExternalUID(relation.externalUID),false);
+        Database.getInstance().getUserByExternalUID(relation.externalUID),
+        false);
     Database.getInstance().put(domain);
     Database.getInstance().putAll(domain.getFormalContext().getConcepts());
     Course course = Database.getInstance().getCourseByExternalID(

@@ -40,7 +40,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
  <tr>
   <td class="toolbar"><input type="image" class="input" src="<?php echo $basedir; ?>img/new.svg"
    width="48px" height="48px" alt="New" title="<?php echo elgg_echo('wespot_fca:domain:new'); ?>"
-   id="btn_new" onclick="document.location.reload(true)" /></td>
+   id="btn_new" onclick="window.location=window.location+'&blank=true'" /></td>
   <td class="toolbar"><input type="image" class="input" src="<?php echo $basedir; ?>img/open.svg"
    width="48px" height="48px" alt="Open" title="<?php echo elgg_echo('wespot_fca:domain:open'); ?>"
    id="btn_open" onclick="backend.get_domains('-1', ui.list_domains)" /></td>
@@ -301,7 +301,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
  <div id="dia_set_lo_content">
   <?php echo elgg_echo('wespot_fca:l_obj:sel'); ?><select id="sel_set_lo" class="select_basic"
    onchange="ui.display_description(this, 0)" onmousedown="ui.enable_options(this)"
-   onclick="ui.disable_options(this)"></select>
+   onkeydown="ui.disable_options(this)"></select>
   <p class="item_description"></p>
  </div>
  <hr>

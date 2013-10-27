@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 
@@ -48,6 +49,7 @@ public class ImportExport {
   private static final String ID = "id";
   private static final String E_UID = "externalUid";
   private static final String E_CID = "externalCourseid";
+  private static final String CID = "creationId";
   private static final String NAME = "name";
   private static final String DESCRIPTION = "description";
   private static final String OWNER = "owner";
@@ -61,6 +63,8 @@ public class ImportExport {
 
   private Gson gson;
 
+  private Random rand;
+
   private static JsonObject prepare(DataObject o) {
     JsonObject jso = new JsonObject();
     jso.addProperty(ID, o.getId());
@@ -72,6 +76,7 @@ public class ImportExport {
   public ImportExport(String[] args) throws IllegalArgumentException {
     Params params = new Params();
     JCommander cmd = new JCommander(params, args);
+    rand = new Random(Long.parseLong("Bad5eed", 16));
     if (params.file == null) {
       System.out.println("Import/Export FCA DB from/to JSON");
       cmd.setProgramName("java -jar ImportExport.jar");
@@ -113,6 +118,7 @@ public class ImportExport {
     JsonObject block = new JsonObject();
     for (E o : objects) {
       JsonObject jso = prepare(o);
+      jso.addProperty(CID, o.getCreationId());
       LinkedList<Long> loIds = new LinkedList<Long>();
       for (LearningObject lo : o.getLearningObjects()) {
         loIds.add(lo.getId());
@@ -163,8 +169,11 @@ public class ImportExport {
     for (Course o : courses) {
       JsonObject jso = prepare(o);
       Set<Domain> domains = o.getDomains();
+      LinkedList<Long> dIds = new LinkedList<Long>();
+      for(Domain d: domains)
+        dIds.add(d.getId());
 
-      jso.add(SECTION_D, gson.toJsonTree(domains, new TypeToken<List<Long>>() {
+      jso.add(SECTION_D, gson.toJsonTree(dIds, new TypeToken<List<Long>>() {
       }.getType()));
 
       jso.addProperty(OWNER, o.getOwnerId());
@@ -244,12 +253,19 @@ public class ImportExport {
     for (Entry<String, JsonElement> o : entries) {
       JsonObject jsO = o.getValue().getAsJsonObject();
       E object;
+      String creationId;
+      if (!jsO.has(CID)) {
+        double num = rand.nextDouble() * 10000;
+        int val = (int) num;
+        creationId = Integer.toString(val, 16);
+      } else
+        creationId = jsO.get(CID).getAsString();
       if (type == FCAObject.class)
         object = (E) new FCAObject(jsO.get(NAME).getAsString(), jsO.get(
-            DESCRIPTION).getAsString());
+            DESCRIPTION).getAsString(), creationId);
       else
         object = (E) new FCAAttribute(jsO.get(NAME).getAsString(), jsO.get(
-            DESCRIPTION).getAsString());
+            DESCRIPTION).getAsString(), creationId);
       Iterator<JsonElement> lOs = jsO.getAsJsonArray(SECTION_LO).iterator();
       Set<LearningObject> lObjs = new HashSet<LearningObject>();
       while (lOs.hasNext()) {
@@ -390,6 +406,7 @@ public class ImportExport {
       }
     } catch (Exception e) {
       System.err.println("Error: " + e.getLocalizedMessage());
+      e.printStackTrace();
     }
   }
 }

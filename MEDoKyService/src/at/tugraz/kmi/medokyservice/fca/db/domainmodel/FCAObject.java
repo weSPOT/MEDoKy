@@ -20,8 +20,8 @@ public class FCAObject extends FCAAbstract {
    * @param name
    * @param description
    */
-  public FCAObject(String name, String description) {
-    super(name, description);
+  public FCAObject(String name, String description, String creationId) {
+    super(name, description, creationId);
   }
 
 }
