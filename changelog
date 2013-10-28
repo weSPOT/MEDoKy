@@ -1,3 +1,10 @@
+from f580387 to xxx:
+ * fix glaring lattice bug that can cause system crash
+ * make nodes black for review
+ * selecting top/bottom node in lattice view activates all labels
+ * Public Domains (such as IBL) are displayed first in domain selection
+ * refactor plugin init (fix race condition)
+
 from 3c263d7 to f580387:
  * fix glaring bug when updating objects/attributes
  * fix import: also store concepts in database

@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -146,18 +145,9 @@ public class FCAService {
   public Map<Long, CourseWrapper> getDomainHeaders(
       @QueryParam(RestConfig.KEY_ID) String externalCourseID) {
     log("getDomainHeaders");
-    Collection<Course> courses = new HashSet<Course>();
+    Set<Course> courses = new HashSet<Course>();
     LinkedHashMap<Long, CourseWrapper> result = new LinkedHashMap<Long, CourseWrapper>();
     System.out.println("EXTERNALCourseID: " + externalCourseID);
-    if (externalCourseID.equals("-1")) {
-      System.out.println("ALL");
-      courses = Database.getInstance().getAll(Course.class);
-    } else {
-      System.out.println("ONE");
-      Course c = Database.getInstance().getCourseByExternalID(externalCourseID);
-      if (c != null)
-        courses.add(c);
-    }
 
     // This is a botch, fixme!
     Course course = new Course("", "", 0, "-1");
@@ -167,6 +157,16 @@ public class FCAService {
         course.addDomain(d);
         break;
       }
+    }
+
+    if (externalCourseID.equals("-1")) {
+      System.out.println("ALL");
+      courses.addAll(Database.getInstance().getAll(Course.class));
+    } else {
+      System.out.println("ONE");
+      Course c = Database.getInstance().getCourseByExternalID(externalCourseID);
+      if (c != null)
+        courses.add(c);
     }
     courses.add(course);
 

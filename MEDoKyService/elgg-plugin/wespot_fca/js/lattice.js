@@ -108,7 +108,11 @@ lattice = {
             lattice.sys.eachEdge(function(_e, _pt1, _pt2) {
               _e.data.active = false;
             });
-            lattice.enable_upper(lattice.sys.getEdgesFrom(dragged.node));
+            if (((dragged.node == lattice.node_bot) || (dragged.node == lattice.node_top))
+                && lattice.latticeview)
+              lattice.enable_all();
+            else
+              lattice.enable_upper(lattice.sys.getEdgesFrom(dragged.node));
             // for ( var xyz in lattice.sys.getEdgesTo(dragged.node)) {
             // console.debug(lattice.sys.getEdgesTo(dragged.node)[xyz]);
             // }
@@ -352,6 +356,15 @@ lattice = {
     }
   },
 
+  enable_all : function() {
+    lattice.sys.eachEdge(function(edge, pt) {
+      edge.data.active = true;
+      edge.source.data.active = true;
+      edge.source.data.objActive = true;
+      edge.target.data.attrActive = true;
+    });
+  },
+
   enable_upper : function(edges) {
     for ( var n in edges) {
       lattice.enable_upper(lattice.sys.getEdgesFrom(edges[n].target));
@@ -546,7 +559,7 @@ lattice = {
     tr = table.create("tr", {
       style : "background-color: inherit"
     });
- 
+
     // Description txt
     tr.create("td", {
       style : "background-color: inherit",
@@ -1004,6 +1017,8 @@ lattice = {
   },
 
   calc_color : function(valuation) {
+    // FOR REVIEW:
+    return "50,50,50";
     if (valuation < 0) {
       var val = valuation + 1;
       var r = 255 - (55 * val);
@@ -1038,16 +1053,16 @@ lattice = {
 
       // console.debug("concept " + concepts[c].name + " is part fo taxonomy");
       if (first) {
-        var botnode = lattice.create_node(concepts[c], 2, y, 0.5, concepts.length>2);
-        botnode.data.fixed = concepts.length>2;
+        var botnode = lattice.create_node(concepts[c], 2, y, 0.5, concepts.length > 2);
+        botnode.data.fixed = concepts.length > 2;
 
         botnode.data.color_obj = lattice.calc_color(concepts[c].valuations[0]);
         botnode.data.color_attr = lattice.calc_color(concepts[c].valuations[1]);
 
         lattice.node_bot = botnode;
       } else if (concepts[c].successors.length == 0) {
-        var topnode = lattice.create_node(concepts[c], 2, 0, 0.5, concepts.length>2);
-        topnode.data.fixed = concepts.length>2;
+        var topnode = lattice.create_node(concepts[c], 2, 0, 0.5, concepts.length > 2);
+        topnode.data.fixed = concepts.length > 2;
 
         topnode.data.color_obj = lattice.calc_color(concepts[c].valuations[0]);
         topnode.data.color_attr = lattice.calc_color(concepts[c].valuations[1]);
@@ -1076,7 +1091,7 @@ lattice = {
 
     }, 1500);
 
-    for ( var i = 0; i < 100; ++i) {
+    for (var i = 0; i < 100; ++i) {
       setTimeout(function() {
         if (!lattice.done) {
           lattice.sys.parameters({
