@@ -3,6 +3,10 @@ th,tr,td {
 	vertical-align: bottom;
 }
 
+#minimized-dialog-container {
+	z-index: 110;
+}
+
 table {
 	/*  border: 1px solid black; */
 	border-collapse: collapse;

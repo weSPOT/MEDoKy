@@ -24,218 +24,6 @@ state = {
   load_domain : true
 };
 
-util = {
-
-  parse_params : function() {
-    var params = window.location.search.replace("?", "").split("&");
-    if (params.length < 3)
-      window.alert("Error! Please Launch the FCA from a group!");
-    for ( var i in params) {
-      var param = params[i].split("=");
-      if (param[0] == "gid")
-        state.gid = param[1];
-      else if (param[0] == "name")
-        state.g_name = param[1];
-      else if (param[0] == "uid")
-        state.owner_id = parseInt(param[1]);
-      else if (param[0] == "blank")
-        state.load_domain = false;
-    }
-    if (state.owner_id == state.user.guid)
-      state.teacher = true;
-  },
-
-  switch_student : function() {
-    $("#btn_open").removeProp("onclick");
-    $("#btn_open").click(function() {
-      backend.get_domains(state.gid, ui.list_domains);
-    });
-    $("#btn_save").hide();
-    $("#btn_new").hide();
-    $("#main_table").hide();
-    $("#dia_vis").hide();
-    $("#span_latticeview").css({
-      "margin-top" : "75px",
-      "padding-left" : "7px"
-    });
-  },
-
-  filter_items : function(o) {
-    var objs = {};
-    var currentObjects;
-    var current = undefined;
-    var key;
-    var new_objs;
-    var backend_objs;
-    if (o == 1) {
-      for ( var i in state.backend_attributes)
-        objs[i] = state.backend_attributes[i];
-      currentObjects = $(".btn_attr");
-      key = logic.key_attr;
-      if (state.attr_index != -1)
-        current = $("#attr_" + state.attr_index).data(key);
-      backend_objs = state.backend_attributes;
-      new_objs = state.new_attributes;
-    } else {
-      for ( var i in state.backend_objects)
-        objs[i] = state.backend_objects[i];
-      currentObjects = $(".btn_obj");
-      key = logic.key_obj;
-      if (state.obj_index != -1)
-        current = $("#obj_" + state.obj_index).data(key);
-      backend_objs = state.backend_objects;
-      new_objs = state.new_objects;
-    }
-
-    if (current)
-      current = current.id;
-    for (var i = 0; i < currentObjects.length; ++i) {
-      var obj = $(currentObjects[i]);
-      if (obj.data(key)) {
-        // console.debug(obj.data());
-        if (obj.data(key).id in backend_objs) {
-          if (current != objs[obj.data(key).id].id)
-            delete objs[obj.data(key).id];
-        }
-      }
-    }
-    for ( var i in new_objs)
-      objs[i] = new_objs[i];
-    for (var i = 0; i < currentObjects.length; ++i) {
-      var obj = $(currentObjects[i]);
-      if (obj.data(key)) {
-        if (obj.data(key).id in new_objs) {
-          if (current != objs[obj.data(key).id].id) {
-            delete objs[obj.data(key).id];
-          }
-        }
-      }
-    }
-    // 
-    return objs;
-  },
-
-  filter_l_lobjects : function(object) {
-    var l_objs = {};
-    var obj_los = {};
-    for ( var i in object.learningObjects) {
-      obj_los[object.learningObjects[i].id] = object.learningObjects[i];
-    }
-    for ( var i in state.backend_l_objects)
-      if (!(i in obj_los))
-        l_objs[i] = state.backend_l_objects[i];
-    return l_objs;
-  },
-  // TODO refactoring -> remove specific methods and only use generic one
-  replace_objects : function(obj) {
-    for ( var o in obj) {
-      var object = {
-        "name" : obj[o].name,
-        "description" : obj[o].description,
-        "id" : o,
-        "learningObjects" : obj[o].learningObjects
-      };
-      state.backend_objects[o] = object;
-      for ( var i in object.learningObjects) {
-        state.active_l_objects[object.learningObjects[i].id] = object.learningObjects[i];
-      }
-      var currentObjects = $(".btn_obj");
-      for (var i = 0; i < currentObjects.length; ++i) {
-        if ($.data(currentObjects[i], logic.key_obj).id == obj[o].id) {
-          $(currentObjects[i]).data(logic.key_obj, object);
-        }
-      }
-      delete state.new_objects[obj[o].id];
-    }
-  },
-
-  replace_attributes : function(obj) {
-    for ( var o in obj) {
-      var object = {
-        "name" : obj[o].name,
-        "description" : obj[o].description,
-        "id" : o,
-        "learningObjects" : obj[o].learningObjects
-      };
-      for ( var i in object.learningObjects) {
-        state.active_l_objects[object.learningObjects[i].id] = object.learningObjects[i];
-      }
-      state.backend_attributes[o] = object;
-      var currentObjects = $(".btn_attr");
-      for (var i = 0; i < currentObjects.length; ++i) {
-        if ($.data(currentObjects[i], logic.key_attr).id == obj[o].id) {
-          $(currentObjects[i]).data(logic.key_attr, object);
-        }
-      }
-      delete state.new_attributes[obj[o].id];
-    }
-  },
-
-  replace_items : function(obj, o) {
-    for ( var n in obj) {
-
-      var object = {
-        "name" : obj[n].name,
-        "description" : obj[n].description,
-        "id" : n,
-        "learningObjects" : obj[n].learningObjects
-      };
-      (o == 1) ? state.backend_attributes[n] = object : state.backend_objects[n] = object;
-      for ( var i in object.learningObjects) {
-        state.active_l_objects[object.learningObjects[i].id] = object.learningObjects[i];
-      }
-      var currentObjects;
-      var key;
-      (o == 1) ? key = logic.key_attr : key = logic.key_obj;
-      (o == 1) ? currentObjects = $(".btn_attr") : currentObjects = $(".btn_obj");
-      for (var i = 0; i < currentObjects.length; ++i) {
-
-        if ($.data(currentObjects[i], key).id == obj[n].id) {
-          $(currentObjects[i]).data(key, object);
-        }
-      }
-    }
-    for ( var n in obj)
-      (o == 1) ? delete state.new_attributes[obj[n].id] : delete state.new_objects[obj[n].id];
-  },
-
-  underConstruction : function(selector) {
-    $(selector).css({
-      "background-image" : "url(" + state.basedir + "img/uc.png)",
-      "background-size" : "100% 100%"
-    });
-  },
-
-  getSize : function(obj) {
-    var size = 0;
-    for ( var key in obj) {
-      if (obj.hasOwnProperty(key))
-        size++;
-    }
-    return size;
-  },
-  // taken from
-  // http://stackoverflow.com/questions/1584370/how-to-merge-two-arrays-in-javascript
-  unique : function(array) {
-    var a = array.concat();
-    for (var i = 0; i < a.length; ++i) {
-      for (var j = i + 1; j < a.length; ++j) {
-        if (a[i] === a[j])
-          a.splice(j--, 1);
-      }
-    }
-    return a;
-  },
-
-  containsConcept : function(array, concept) {
-    for (i in array) {
-      if (concept.id == array[i].id)
-        return true;
-    }
-    return false;
-  }
-};
-
 backend = {
   url : "",
   path_get_objects : "getObjects",
@@ -497,38 +285,27 @@ backend = {
   }
 };
 
-logic = {
-  key_obj : "object",
-  key_attr : "attribute",
-  key_lo : "l_object",
-
-  init : function(basedir, backend_url, files) {
-    state.basedir = basedir;
-    state.files = files;
-    state.user = elgg.get_logged_in_user_entity();
-    util.parse_params();
-
-    backend.url = backend_url;
-    $(window).resize(function() {
-      ui.resize();
-    });
-
-    backend.identify(JSON.stringify({
-      "name" : state.user.name,
-      "description" : state.user.url,
-      "externalUID" : state.user.guid.toString(),
-      "teacher" : state.teacher
-    }));
-
-    for (var i = 0; i < $(".btn_obj").length; ++i) {
-      var btn = $($(".btn_obj").get(i));
-      ui.setup_hover_obj(btn);
+util = {
+  parse_params : function() {
+    var params = window.location.search.replace("?", "").split("&");
+    if (params.length < 3)
+      window.alert("Error! Please Launch the FCA from a group!");
+    for ( var i in params) {
+      var param = params[i].split("=");
+      if (param[0] == "gid")
+        state.gid = param[1];
+      else if (param[0] == "name")
+        state.g_name = param[1];
+      else if (param[0] == "uid")
+        state.owner_id = parseInt(param[1]);
+      else if (param[0] == "blank")
+        state.load_domain = false;
     }
+    if (state.owner_id == state.user.guid)
+      state.teacher = true;
+  },
 
-    for (var i = 0; i < $(".btn_attr").length; ++i) {
-      var btn = $($(".btn_attr").get(i));
-      ui.setup_hover_attr(btn);
-    }
+  setup_msie : function() {
     if ($(".msie_fca").length > 0)
       state.msie = true;
     // IE COMPAT
@@ -585,122 +362,233 @@ logic = {
       } catch (error) {
       }
     }
+  },
 
-    $("#dia_set_obj").dialog({
-      autoOpen : false,
-      height : 320,
-      width : 510,
-      resizable : false,
-      modal : true
+  switch_student : function() {
+    $("#btn_open").removeProp("onclick");
+    $("#btn_open").click(function() {
+      backend.get_domains(state.gid, ui.list_domains);
     });
-    $("#dia_set_attr").dialog({
-      autoOpen : false,
-      height : 320,
-      width : 510,
-      resizable : false,
-      modal : true
+    $("#btn_save").hide();
+    $("#btn_new").hide();
+    $("#main_table").hide();
+    $("#dia_vis").hide();
+    $("#span_latticeview").css({
+      "margin-top" : "75px",
+      "padding-left" : "7px"
     });
-    $("#dia_set_dom").dialog({
-      autoOpen : false,
-      height : 200,
-      width : 400,
-      resizable : false,
-      modal : true
-    });
-    $("#dia_set_lo").dialog({
-      autoOpen : false,
-      height : 200,
-      width : 400,
-      resizable : false,
-      modal : true
-    });
-    $("#dia_add_obj").dialog({
-      autoOpen : false,
-      height : 200,
-      width : 400,
-      resizable : false,
-      modal : true
-    });
-    $("#dia_add_attr").dialog({
-      autoOpen : false,
-      height : 200,
-      width : 400,
-      resizable : false,
-      modal : true
-    });
-    $("#dia_rem_attr").dialog({
-      autoOpen : false,
-      height : 200,
-      width : 400,
-      resizable : false,
-      modal : true,
-    });
-    $("#dia_rem_obj").dialog({
-      autoOpen : false,
-      height : 200,
-      width : 400,
-      resizable : false,
-      modal : true,
-    });
-    $("#dia_create_obj").dialog({
-      autoOpen : false,
-      height : 200,
-      width : 400,
-      resizable : false,
-      modal : true
-    });
-    $("#dia_create_attr").dialog({
-      autoOpen : false,
-      height : 200,
-      width : 400,
-      resizable : false,
-      modal : true
-    });
+  },
 
-    $("#dia_create_domain").dialog({
-      autoOpen : false,
-      height : 200,
-      width : 400,
-      resizable : false,
-      modal : true
-    });
-
-    $("#dia_create_lo").dialog({
-      autoOpen : false,
-      height : 200,
-      width : 400,
-      resizable : false,
-      modal : true
-    });
-
-    if (state.teacher) {
-
-      $("#dia_vis").dialog({
-        autoOpen : false,
-        height : 160,
-        resizable : false,
-        modal : false,
-        dialogClass : 'no-close',
-        closeOnEscape : false,
-        beforeclose : function() {
-          return false;
-        }
-      }).dialogExtend({
-        minimize : true,
-        maximize : false
-      });
+  filter_items : function(o) {
+    var objs = {};
+    var currentObjects;
+    var current = undefined;
+    var key;
+    var new_objs;
+    var backend_objs;
+    if (o == 1) {
+      for ( var i in state.backend_attributes)
+        objs[i] = state.backend_attributes[i];
+      currentObjects = $(".btn_attr");
+      key = logic.key_attr;
+      if (state.attr_index != -1)
+        current = $("#attr_" + state.attr_index).data(key);
+      backend_objs = state.backend_attributes;
+      new_objs = state.new_attributes;
+    } else {
+      for ( var i in state.backend_objects)
+        objs[i] = state.backend_objects[i];
+      currentObjects = $(".btn_obj");
+      key = logic.key_obj;
+      if (state.obj_index != -1)
+        current = $("#obj_" + state.obj_index).data(key);
+      backend_objs = state.backend_objects;
+      new_objs = state.new_objects;
     }
+
+    if (current)
+      current = current.id;
+    for (var i = 0; i < currentObjects.length; ++i) {
+      var obj = $(currentObjects[i]);
+      if (obj.data(key)) {
+        // 
+        if (obj.data(key).id in backend_objs) {
+          if (current != objs[obj.data(key).id].id)
+            delete objs[obj.data(key).id];
+        }
+      }
+    }
+    for ( var i in new_objs)
+      objs[i] = new_objs[i];
+    for (var i = 0; i < currentObjects.length; ++i) {
+      var obj = $(currentObjects[i]);
+      if (obj.data(key)) {
+        if (obj.data(key).id in new_objs) {
+          if (current != objs[obj.data(key).id].id) {
+            delete objs[obj.data(key).id];
+          }
+        }
+      }
+    }
+    // 
+    return objs;
+  },
+
+  filter_l_lobjects : function(object) {
+    var l_objs = {};
+    var obj_los = {};
+    for ( var i in object.learningObjects) {
+      obj_los[object.learningObjects[i].id] = object.learningObjects[i];
+    }
+    for ( var i in state.backend_l_objects)
+      if (!(i in obj_los))
+        l_objs[i] = state.backend_l_objects[i];
+    return l_objs;
+  },
+  // TODO refactoring -> remove specific methods and only use generic one
+  replace_objects : function(obj) {
+    for ( var o in obj) {
+      var object = {
+        "name" : obj[o].name,
+        "description" : obj[o].description,
+        "id" : o,
+        "learningObjects" : obj[o].learningObjects
+      };
+      state.backend_objects[o] = object;
+      for ( var i in object.learningObjects) {
+        state.active_l_objects[object.learningObjects[i].id] = object.learningObjects[i];
+      }
+      var currentObjects = $(".btn_obj");
+      for (var i = 0; i < currentObjects.length; ++i) {
+        if ($.data(currentObjects[i], logic.key_obj).id == obj[o].id) {
+          $(currentObjects[i]).data(logic.key_obj, object);
+        }
+      }
+      delete state.new_objects[obj[o].id];
+    }
+  },
+
+  replace_attributes : function(obj) {
+    for ( var o in obj) {
+      var object = {
+        "name" : obj[o].name,
+        "description" : obj[o].description,
+        "id" : o,
+        "learningObjects" : obj[o].learningObjects
+      };
+      for ( var i in object.learningObjects) {
+        state.active_l_objects[object.learningObjects[i].id] = object.learningObjects[i];
+      }
+      state.backend_attributes[o] = object;
+      var currentObjects = $(".btn_attr");
+      for (var i = 0; i < currentObjects.length; ++i) {
+        if ($.data(currentObjects[i], logic.key_attr).id == obj[o].id) {
+          $(currentObjects[i]).data(logic.key_attr, object);
+        }
+      }
+      delete state.new_attributes[obj[o].id];
+    }
+  },
+
+  replace_items : function(obj, o) {
+    for ( var n in obj) {
+
+      var object = {
+        "name" : obj[n].name,
+        "description" : obj[n].description,
+        "id" : n,
+        "learningObjects" : obj[n].learningObjects
+      };
+      (o == 1) ? state.backend_attributes[n] = object : state.backend_objects[n] = object;
+      for ( var i in object.learningObjects) {
+        state.active_l_objects[object.learningObjects[i].id] = object.learningObjects[i];
+      }
+      var currentObjects;
+      var key;
+      (o == 1) ? key = logic.key_attr : key = logic.key_obj;
+      (o == 1) ? currentObjects = $(".btn_attr") : currentObjects = $(".btn_obj");
+      for (var i = 0; i < currentObjects.length; ++i) {
+
+        if ($.data(currentObjects[i], key).id == obj[n].id) {
+          $(currentObjects[i]).data(key, object);
+        }
+      }
+    }
+    for ( var n in obj)
+      (o == 1) ? delete state.new_attributes[obj[n].id] : delete state.new_objects[obj[n].id];
+  },
+
+  underConstruction : function(selector) {
+    $(selector).css({
+      "background-image" : "url(" + state.basedir + "img/uc.png)",
+      "background-size" : "100% 100%"
+    });
+  },
+
+  getSize : function(obj) {
+    var size = 0;
+    for ( var key in obj) {
+      if (obj.hasOwnProperty(key))
+        size++;
+    }
+    return size;
+  },
+  // taken from
+  // http://stackoverflow.com/questions/1584370/how-to-merge-two-arrays-in-javascript
+  unique : function(array) {
+    var a = array.concat();
+    for (var i = 0; i < a.length; ++i) {
+      for (var j = i + 1; j < a.length; ++j) {
+        if (a[i] === a[j])
+          a.splice(j--, 1);
+      }
+    }
+    return a;
+  },
+
+  containsConcept : function(array, concept) {
+    for (i in array) {
+      if (concept.id == array[i].id)
+        return true;
+    }
+    return false;
+  }
+};
+
+logic = {
+  key_obj : "object",
+  key_attr : "attribute",
+  key_lo : "l_object",
+
+  init : function(basedir, backend_url, files) {
+    state.basedir = basedir;
+    state.files = files;
+    state.user = elgg.get_logged_in_user_entity();
+    util.parse_params();
+
+    backend.url = backend_url;
+    $(window).resize(function() {
+      ui.resize();
+    });
+
+    backend.identify(JSON.stringify({
+      "name" : state.user.name,
+      "description" : state.user.url,
+      "externalUID" : state.user.guid.toString(),
+      "teacher" : state.teacher
+    }));
+
+    ui.setup_btn_hover();
+    ui.prepare_dialogs();
+    util.setup_msie();
 
     var tmp_w = $(".btn_attr").width();
     var tmp_h = $(".btn_attr").height();
     $(".td_attr").css("width", tmp_h + 15);
     $(".td_attr").css("height", tmp_w + 15);
+
     if (state.msie) {
       console.debug("OH NO, IE! initilaizing objects and attributes on-demand");
-
-    } else {
-      backend.get_objects();
-      backend.get_attributes();
       backend.get_l_objects(function() {
         var uris = [];
         for ( var lo in state.backend_l_objects) {
@@ -715,17 +603,44 @@ logic = {
             logic.create_lo(state.files[f].name, state.files[f].description.replace(
                 /(<([^>]+)>)/ig, ""), state.files[f].data);
         }
+        if (!state.teacher) {
+          util.switch_student();
+          if (state.load_domain)
+            backend.get_domains(state.gid, ui.show_initial_domain);
+        } else {
+          if (state.load_domain)
+            backend.get_domains('-1', ui.show_initial_domain);
+        }
       });
 
-    }
-
-    if (!state.teacher) {
-      util.switch_student();
-      if (state.load_domain)
-        backend.get_domains(state.gid, ui.show_initial_domain);
     } else {
-      if (state.load_domain)
-        backend.get_domains('-1', ui.show_initial_domain);
+      backend.get_objects(function() {
+        backend.get_attributes(function() {
+          backend.get_l_objects(function() {
+            var uris = [];
+            for ( var lo in state.backend_l_objects) {
+              console.debug(state.backend_l_objects[lo]);
+              if (state.backend_l_objects[lo].owner.externalUid == state.user.guid.toString())
+                uris.push(state.backend_l_objects[lo].data);
+            }
+            console.debug(uris);
+            console.debug(state.files);
+            for ( var f in state.files) {
+              if (uris.indexOf(state.files[f].data) == -1)
+                logic.create_lo(state.files[f].name, state.files[f].description.replace(
+                    /(<([^>]+)>)/ig, ""), state.files[f].data);
+            }
+            if (!state.teacher) {
+              util.switch_student();
+              if (state.load_domain)
+                backend.get_domains(state.gid, ui.show_initial_domain);
+            } else {
+              if (state.load_domain)
+                backend.get_domains('-1', ui.show_initial_domain);
+            }
+          });
+        });
+      });
     }
   },
   /*
@@ -762,7 +677,7 @@ logic = {
 
   set_l_object : function(object, select, o) {
 
-    // console.debug("set_LO");
+    // 
     $(".item_description").empty();
     var l_objs = util.filter_l_lobjects(object);
     var sel = $("#sel_set_lo").empty();
@@ -796,8 +711,7 @@ logic = {
   set_lo : function() {
     var data = $("#dia_set_lo").data(logic.key_lo);
     var sel = $("#sel_set_lo").get(0);
-    console.debug(sel.selectedIndex);
-    console.debug(sel.options[sel.selectedIndex]);
+
     /*
      * if (selectedIndex != -1) selectedIndex++;
      */
@@ -811,8 +725,7 @@ logic = {
   },
 
   save_item : function(name, select, description, o) {
-    console.debug(select.selectedIndex);
-    console.debug(select.options[select.selectedIndex]);
+
     var create = select.selectedIndex == -1;
     if (create) {
       var now = Date.now();
@@ -821,7 +734,7 @@ logic = {
         "description" : description,
         "id" : now,
         "learningObjects" : [],
-        "creationId" : state.gid + state.user + new Date().getTime()
+        "creationId" : state.gid + state.user.guid + new Date().getTime()
       };
       // ui.cancel_item_edit(select, o);
       if (o == 1) {
@@ -850,9 +763,8 @@ logic = {
           }
           // delete obj["learningObjects"];
           backend.update_attribute(JSON.stringify(obj), function(resp) {
-            // console.debug(resp);
-            console.debug(select.selectedIndex);
-            console.debug(select.options[select.selectedIndex]);
+            // 
+
             state.backend_attributes[select.options[select.selectedIndex].value] = resp;
             ui.set_item(state.attr_index, o, select.options[select.selectedIndex].value);
           });
@@ -868,7 +780,7 @@ logic = {
           }
           // delete obj["learningObjects"];
           backend.update_object(JSON.stringify(obj), function(resp) {
-            // console.debug(resp);
+            // 
             state.backend_objects[select.options[select.selectedIndex].value] = resp;
             ui.set_item(state.obj_index, o, select.options[select.selectedIndex].value);
           });
@@ -892,7 +804,7 @@ logic = {
   },
 
   choose_object : function() {
-    // console.debug("choose");
+    // 
     var select = $("#sel_set_obj").get(0);
     var id = select.options[select.selectedIndex].value;
     $("#dia_set_obj").dialog("close");
@@ -907,7 +819,7 @@ logic = {
   },
 
   choose_attribute : function() {
-    // console.debug("choose");
+    // 
     var select = $("#sel_set_attr").get(0);
     var id = select.options[select.selectedIndex].value;
     $("#dia_set_attr").dialog("close");
@@ -1031,7 +943,7 @@ logic = {
         lo = obj[i];
         lo.id = i;
       }
-      // console.debug(lo);
+      // 
       state.backend_l_objects[lo.id] = lo;
       var opt = document.createElement("option");
       opt.text = name;
@@ -1085,7 +997,7 @@ logic = {
 
     state.domain = domain;
     $("#h_domain_name").empty().create("txt", domain.name);
-    // console.debug(JSON.stringify(domain));
+    // 
     var num_attributes = Object.keys(domain.mapping.attributes).length;
     var num_objects = Object.keys(domain.mapping.objects).length;
 
@@ -1097,11 +1009,8 @@ logic = {
     }
 
     for (var currentAttribs = $(".td_attr").length; currentAttribs > num_attributes; currentAttribs = $(".td_attr").length) {
-
       var index = $(".td_attr")[0].childNodes[2].id.split("_")[1];
-
       logic.rem_attribute(index);
-
     }
     while ($(".btn_del_obj").length > num_objects) {
       logic.rem_object($($(".btn_del_obj")[0]).prop("id").split("_")[3]);
@@ -1114,8 +1023,8 @@ logic = {
           var id = "#attr_" + $(".td_attr")[index].childNodes[2].id.split("_")[1];
 
           var attribute = JSON.parse(a);
-          // console.debug(a);
-          // console.debug(attribute);
+          // 
+          // 
           $(id).data(logic.key_attr, attribute);
           $(id).prop("value", attribute.name);
           ++index;
@@ -1126,7 +1035,6 @@ logic = {
         index = 0;
         for ( var o in domain.mapping.objects) {
           var id = "#obj_" + ($(objects[index]).prop("id").split("_")[3]);
-
           var object = $.parseJSON(o);
 
           $(id).data(logic.key_obj, object);
@@ -1134,23 +1042,16 @@ logic = {
           var mapped = domain.mapping.objects[o];
 
           for (var m = 0; m < mapped.length; ++m) {
-
             var currentA = $(".btn_attr");
             for (var a = 0; a < currentA.length; ++a) {
-              // console.debug(currentA[a]);
-              // console.debug("#" + currentA[a].id);
-              // console.debug($("#" +
-              // currentA[a].id).data(logic.key_attr));
-              // console.debug(mapped[m]);
               if ($("#" + currentA[a].id).data(logic.key_attr).id == mapped[m].id) {
                 $(id + "_" + currentA[a].id).prop("checked", true);
               }
             }
           }
-
           ++index;
         }
-        console.debug(teacher);
+
         if (state.msie) {
           setTimeout(function() {
             ui.display_lattice();
@@ -1162,7 +1063,7 @@ logic = {
           if (teacher)
             $("#dia_vis").dialogExtend("minimize");
         }
-      }, state.msie ? 1000 : 0);
+      },1000);
     }));
   },
 
@@ -1170,6 +1071,8 @@ logic = {
     $("#dia_set_dom").dialog("close");
     // state.domain = domain;
     // state.new
+    console.debug(teacher);
+    console.debug(state.load_domain);
     if (state.teacher) {
       backend.get_domain(domainid, function(domain) {
         logic.populate_domain(domain, teacher);
@@ -1184,13 +1087,134 @@ logic = {
 
 ui = {
 
+  prepare_dialogs : function() {
+
+    $("#dia_set_obj").dialog({
+      autoOpen : false,
+      height : 320,
+      width : 510,
+      resizable : false,
+      modal : true
+    });
+    $("#dia_set_attr").dialog({
+      autoOpen : false,
+      height : 320,
+      width : 510,
+      resizable : false,
+      modal : true
+    });
+    $("#dia_set_dom").dialog({
+      autoOpen : false,
+      height : 200,
+      width : 400,
+      resizable : false,
+      modal : true
+    });
+    $("#dia_set_lo").dialog({
+      autoOpen : false,
+      height : 200,
+      width : 400,
+      resizable : false,
+      modal : true
+    });
+    $("#dia_add_obj").dialog({
+      autoOpen : false,
+      height : 200,
+      width : 400,
+      resizable : false,
+      modal : true
+    });
+    $("#dia_add_attr").dialog({
+      autoOpen : false,
+      height : 200,
+      width : 400,
+      resizable : false,
+      modal : true
+    });
+    $("#dia_rem_attr").dialog({
+      autoOpen : false,
+      height : 200,
+      width : 400,
+      resizable : false,
+      modal : true,
+    });
+    $("#dia_rem_obj").dialog({
+      autoOpen : false,
+      height : 200,
+      width : 400,
+      resizable : false,
+      modal : true,
+    });
+    $("#dia_create_obj").dialog({
+      autoOpen : false,
+      height : 200,
+      width : 400,
+      resizable : false,
+      modal : true
+    });
+    $("#dia_create_attr").dialog({
+      autoOpen : false,
+      height : 200,
+      width : 400,
+      resizable : false,
+      modal : true
+    });
+
+    $("#dia_create_domain").dialog({
+      autoOpen : false,
+      height : 200,
+      width : 400,
+      resizable : false,
+      modal : true
+    });
+
+    $("#dia_create_lo").dialog({
+      autoOpen : false,
+      height : 200,
+      width : 400,
+      resizable : false,
+      modal : true
+    });
+
+    if (state.teacher) {
+
+      $("#dia_vis").dialog({
+        autoOpen : false,
+        height : 160,
+        resizable : false,
+        modal : false,
+        dialogClass : 'no-close',
+        closeOnEscape : false,
+        beforeclose : function() {
+          return false;
+        }
+      }).dialogExtend({
+        minimize : true,
+        maximize : false
+      });
+    }
+
+  },
+
+  setup_btn_hover : function() {
+    for (var i = 0; i < $(".btn_obj").length; ++i) {
+      var btn = $($(".btn_obj").get(i));
+      ui.setup_hover_obj(btn);
+    }
+
+    for (var i = 0; i < $(".btn_attr").length; ++i) {
+      var btn = $($(".btn_attr").get(i));
+      ui.setup_hover_attr(btn);
+    }
+  },
+
   enable_options : function(select) {
     $(select.options[0]).prop("disabled", false);
-    console.debug("MOSUEDOWN");
+
   },
 
   disable_options : function(select) {
-    console.debug("BLUR");
+
     $(select.options[0]).prop("disabled", true);
   },
   move_down : function(id) {
@@ -1332,7 +1356,7 @@ ui = {
   },
 
   set_item : function(index, o, id) {
-    console.debug(id);
+
     var select;
     if (o == 1) {
       select = document.getElementById("sel_set_attr");
@@ -1340,15 +1364,15 @@ ui = {
       select = document.getElementById("sel_set_obj");
     ui.prepare_dialog(o);
     (o == 1) ? state.attr_index = index : state.obj_index = index;
-    // console.debug("set item");
+    // 
     var key;
     (o == 1) ? key = logic.key_attr : key = logic.key_obj;
     var data;
     (o == 1) ? data = $("#attr_" + index) : data = $("#obj_" + index);
-    // console.debug(data.data(key));
+    // 
     if (!id && data.data(key))
       id = data.data(key).id;
-    // console.debug(id);
+    // 
     var inited = (o == 1) ? state.inited_attr : state.inited_obj;
     if (state.msie && !(inited)) {
       if (o == 1) {
@@ -1365,7 +1389,7 @@ ui = {
     } else {
       var selectedIndex = -1;
       var objects = util.filter_items(o);
-      // console.debug(objects);
+      // 
       var sel;
       (o == 1) ? sel = $("#sel_set_attr") : sel = $("#sel_set_obj");
       sel.empty();
@@ -1376,8 +1400,8 @@ ui = {
       sel.create("option").prop("disabled", true).create("txt", newitem);
       for ( var obj in objects) {
         ++i;
-        // console.debug(id);
-        // console.debug(objects[obj].id);
+        // 
+        // 
         if (id && (objects[obj].id == id))
           selectedIndex = i; // watch out for disabled attributes!
         sel.create("option", {
@@ -1389,8 +1413,8 @@ ui = {
       if (selectedIndex != -1)
         selectedIndex++;
       sel.prop("selectedIndex", selectedIndex);
-      console.debug(sel.prop("selectedIndex"));
-      // console.debug("index: " + selectedIndex);
+
+      // 
       (o == 1) ? $("#dia_set_attr").dialog("open") : $("#dia_set_obj").dialog("open");
       if (selectedIndex != -1) {
         ui.display_item_description(document.getElementById(sel.prop("id")), o);
@@ -1619,11 +1643,8 @@ ui = {
         ui.create_lo(o);
         select.selectedIndex = -1;
       } else if (o == 2) {
-        console.debug("CHANGES");
+
         var str_domain = select.options[select.selectedIndex].value;
-        console.debug(typeof str_domain);
-        console.debug(str_domain);
-        console.debug(str_domain.length);
 
         if (str_domain != "-1") {
           var obj = JSON.parse(select.options[select.selectedIndex].value);
@@ -1641,11 +1662,8 @@ ui = {
     } else if (select.selectedIndex != -1) {
 
       if (o == 2) {
-        console.debug("CHANGES");
+
         var str_domain = select.options[select.selectedIndex].value;
-        console.debug(typeof str_domain);
-        console.debug(str_domain);
-        console.debug(str_domain.length);
 
         if (str_domain != "-1") {
           var obj = JSON.parse(select.options[select.selectedIndex].value);
@@ -1679,8 +1697,8 @@ ui = {
   },
 
   create_lo_div : function(lo, object, div_lo, select, o) {
-    // console.debug(lo);
-    // console.debug(div_lo.get());
+    // 
+    // 
     var div = div_lo.create("div", {
       id : "lo_" + lo.id,
       "class" : "span_lo"
@@ -1719,8 +1737,8 @@ ui = {
   },
 
   display_learning_objects : function(object, select, o) {
-    // console.debug("lo");
-    // console.debug(o);
+    // 
+    // 
     var div_lo;
     (o == 1) ? div_lo = $("#lo_attr") : div_lo = $("#lo_obj");
     div_lo.empty();
@@ -1748,7 +1766,7 @@ ui = {
   display_item_description : function(select, o) {
     // ui.hide_lo_buttons();
     $(select.options[0]).prop("disabled", true);
-    console.debug("description " + o);
+
     // util.underConstruction(".div_lo");
     $(".div_lo").empty();
     $(select).show();
@@ -1768,7 +1786,7 @@ ui = {
     } else if (select.selectedIndex != -1) {
       var obj = (o == 1) ? $("#attr_" + state.attr_index).data(logic.key_attr) : $(
           "#obj_" + state.obj_index).data(logic.key_obj);
-      // console.debug(obj);
+      // 
 
       if (obj) {
         for ( var index in select.options) {
@@ -1897,15 +1915,10 @@ ui = {
 
   show_initial_domain : function(courses) {
     for ( var id in courses) {
-      console.debug(courses[id].externalCourseID);
-      console.debug(state.gid);
-      console.debug(typeof courses[id].externalCourseID);
-      console.debug(typeof state.gid);
 
       if (courses[id].externalCourseID == state.gid) {
         for ( var d in courses[id].domains) {
-          console.debug(d);
-          console.debug(typeof d);
+
           logic.load(d, state.teacher);
           break;
         }

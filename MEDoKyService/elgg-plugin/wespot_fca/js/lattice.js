@@ -947,7 +947,7 @@ lattice = {
 
   draw_node : function(concept, y) {
     var sys = lattice.sys;
-
+    console.debug(".");
     var pre;
     if (sys.getNode(concept.id))
       pre = sys.getNode(concept.id);
@@ -1038,16 +1038,16 @@ lattice = {
 
       // console.debug("concept " + concepts[c].name + " is part fo taxonomy");
       if (first) {
-        var botnode = lattice.create_node(concepts[c], 2, y, 0.5, true);
-        botnode.data.fixed = true;
+        var botnode = lattice.create_node(concepts[c], 2, y, 0.5, concepts.length>2);
+        botnode.data.fixed = concepts.length>2;
 
         botnode.data.color_obj = lattice.calc_color(concepts[c].valuations[0]);
         botnode.data.color_attr = lattice.calc_color(concepts[c].valuations[1]);
 
         lattice.node_bot = botnode;
       } else if (concepts[c].successors.length == 0) {
-        var topnode = lattice.create_node(concepts[c], 2, 0, 0.5, true);
-        topnode.data.fixed = true;
+        var topnode = lattice.create_node(concepts[c], 2, 0, 0.5, concepts.length>2);
+        topnode.data.fixed = concepts.length>2;
 
         topnode.data.color_obj = lattice.calc_color(concepts[c].valuations[0]);
         topnode.data.color_attr = lattice.calc_color(concepts[c].valuations[1]);
