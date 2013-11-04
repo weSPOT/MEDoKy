@@ -1,4 +1,4 @@
-from f580387 to xxx:
+from f580387 to edd9a2d:
  * fix glaring lattice bug that can cause system crash
  * recolour nodes
  * selecting top/bottom node in lattice view activates all labels
