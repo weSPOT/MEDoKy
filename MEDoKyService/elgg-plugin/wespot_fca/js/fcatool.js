@@ -593,8 +593,9 @@ logic = {
         var uris = [];
         for ( var lo in state.backend_l_objects) {
           console.debug(state.backend_l_objects[lo]);
-          if (state.backend_l_objects[lo].owner.externalUid == state.user.guid.toString())
-            uris.push(state.backend_l_objects[lo].data);
+          // if (state.backend_l_objects[lo].owner.externalUid ==
+          // state.user.guid.toString())
+          uris.push(state.backend_l_objects[lo].data);
         }
         console.debug(uris);
         console.debug(state.files);
@@ -1063,7 +1064,7 @@ logic = {
           if (teacher)
             $("#dia_vis").dialogExtend("minimize");
         }
-      },1000);
+      }, 1000);
     }));
   },
 
@@ -1113,7 +1114,7 @@ ui = {
     $("#dia_set_lo").dialog({
       autoOpen : false,
       height : 200,
-      width : 400,
+      width : 450,
       resizable : false,
       modal : true
     });
@@ -1940,7 +1941,7 @@ ui = {
         $("#sel_set_dom").create("option", {
           value : "-1"
         }).prop("disabled", true).create("txt",
-            "--- " + elgg.echo("wespot_fca:course") + " " + courses[id].name + " ---");
+            "--- " + elgg.echo("wespot_fca:course") + " " + decodeURIComponent(courses[id].name) + " ---");
         for ( var d in courses[id].domains) {
           courses[id].domains[d].id = d;
           $("#sel_set_dom").create("option", {

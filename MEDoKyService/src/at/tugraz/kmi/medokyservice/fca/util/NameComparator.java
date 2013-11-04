@@ -18,6 +18,10 @@ public class NameComparator implements Comparator<DataObject> {
    */
   @Override
   public int compare(DataObject o1, DataObject o2) {
+    if (o1.getName().equals(""))
+      return -1;
+    else if (o1.getName().equals(""))
+      return 1;
     int val = o1.getName().compareTo(o2.getName());
     if (val == 0)
       return o1.compareTo(o2);

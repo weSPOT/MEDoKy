@@ -6,8 +6,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -145,7 +145,7 @@ public class FCAService {
   public Map<Long, CourseWrapper> getDomainHeaders(
       @QueryParam(RestConfig.KEY_ID) String externalCourseID) {
     log("getDomainHeaders");
-    Set<Course> courses = new HashSet<Course>();
+    Set<Course> courses = new LinkedHashSet<Course>();
     LinkedHashMap<Long, CourseWrapper> result = new LinkedHashMap<Long, CourseWrapper>();
     System.out.println("EXTERNALCourseID: " + externalCourseID);
 
@@ -158,6 +158,7 @@ public class FCAService {
         break;
       }
     }
+    courses.add(course);
 
     if (externalCourseID.equals("-1")) {
       System.out.println("ALL");
@@ -168,12 +169,11 @@ public class FCAService {
       if (c != null)
         courses.add(c);
     }
-    courses.add(course);
 
     for (Course c : courses) {
       CourseWrapper wrapper = new CourseWrapper(c.getId(), c.getName(),
           c.getDescription(), c.getExternalCourseID());
-      HashMap<Long, DomainBlueprint> map = new HashMap<Long, DomainBlueprint>();
+      LinkedHashMap<Long, DomainBlueprint> map = new LinkedHashMap<Long, DomainBlueprint>();
       TreeSet<Domain> domains = new TreeSet<Domain>(new NameComparator());
       domains.addAll(c.getDomains());
       for (Domain d : c.getDomains()) {

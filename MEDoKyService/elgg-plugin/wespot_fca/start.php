@@ -14,7 +14,7 @@ elgg_register_page_handler('fca', 'fcatool_page_handler');
 // add_group_tool_option('wespot_fca', 'FCA', true);
 elgg_extend_view('groups/tool_latest', 'wespot_fca/group_module');
 //elgg_register_widget_type('wespot_fca', elgg_echo('wespot_fca'), elgg_echo('wespot_fca'));
-elgg_register_widget_type('wespot_fca', elgg_echo('wespot_fca'), elgg_echo('wespot_fca'), "groups");
+elgg_register_widget_type('wespot_fca', elgg_echo('wespot_fca:group'), elgg_echo('wespot_fca:launch'), "groups");
 
 // add a file link to owner blocks
 elgg_register_plugin_hook_handler('register', 'menu:owner_block', 'wespot_fca_sidebar');

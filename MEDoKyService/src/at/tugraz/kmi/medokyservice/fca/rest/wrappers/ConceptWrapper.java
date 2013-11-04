@@ -31,7 +31,7 @@ public class ConceptWrapper extends AbstractWrapper {
    * flag indicatin whether the concept is part of the taxonomy
    */
   public boolean partOfTaxonomy;
-  
+
   /**
    * flag indicating whether the concept is an object concept
    */
@@ -41,7 +41,7 @@ public class ConceptWrapper extends AbstractWrapper {
    * attributes with valuations mapped to them
    */
   public LinkedHashMap<FCAAttribute, Float> attributes;
-  
+
   /**
    * objects with valuations mapped to them
    */
@@ -51,7 +51,7 @@ public class ConceptWrapper extends AbstractWrapper {
    * @see Concept
    */
   public LinkedHashSet<FCAObject> uniqueObjects;
-  
+
   /**
    * @see Concept
    */
@@ -61,7 +61,7 @@ public class ConceptWrapper extends AbstractWrapper {
    * @see Concept
    */
   public HashSet<ConceptWrapper> successors;
-  
+
   /**
    * @see Concept
    */
@@ -100,10 +100,13 @@ public class ConceptWrapper extends AbstractWrapper {
     for (Comparable o : concept.getObjects()) {
       objects.put((FCAObject) o, 0.0f);
     }
-    uniqueAttributes = new LinkedHashSet<FCAAttribute>(
-        (Collection<? extends FCAAttribute>) concept.getUniqueAttributes());
-    uniqueObjects = new LinkedHashSet<FCAObject>(
-        (Collection<? extends FCAObject>) concept.getUniqueAttributes());
+    uniqueAttributes = new LinkedHashSet<FCAAttribute>();
+    uniqueAttributes.addAll((Collection<? extends FCAAttribute>) concept
+        .getUniqueAttributes());
+
+    uniqueObjects = new LinkedHashSet<FCAObject>();
+    uniqueObjects.addAll((Collection<? extends FCAObject>) concept
+        .getUniqueObjects());
 
     successors = new HashSet<ConceptWrapper>();
     taxonomySuccessors = new HashSet<ConceptWrapper>();
@@ -120,10 +123,13 @@ public class ConceptWrapper extends AbstractWrapper {
     attributes = new LinkedHashMap<FCAAttribute, Float>(concept.getAttributes());
     objects = new LinkedHashMap<FCAObject, Float>(concept.getObjects());
 
-    uniqueAttributes = new LinkedHashSet<FCAAttribute>(
-        (Collection<? extends FCAAttribute>) c.getUniqueAttributes());
-    uniqueObjects = new LinkedHashSet<FCAObject>(
-        (Collection<? extends FCAObject>) c.getUniqueAttributes());
+    uniqueAttributes = new LinkedHashSet<FCAAttribute>();
+    uniqueAttributes.addAll((Collection<? extends FCAAttribute>) c
+        .getUniqueAttributes());
+
+    uniqueObjects = new LinkedHashSet<FCAObject>();
+    uniqueObjects
+        .addAll((Collection<? extends FCAObject>) c.getUniqueObjects());
 
     successors = new HashSet<ConceptWrapper>();
     taxonomySuccessors = new HashSet<ConceptWrapper>();
