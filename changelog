@@ -1,3 +1,10 @@
+from edd9a2d to e02bf17:
+ * properly handle Attribute Concepts
+ * recolour nodes
+ * server-side checking for duplicate learning objects
+ * refactor plugin initialisation
+ * refactor lattice node creation
+
 from f580387 to edd9a2d:
  * fix glaring lattice bug that can cause system crash
  * recolour nodes
