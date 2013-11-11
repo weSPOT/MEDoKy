@@ -27,7 +27,6 @@ import at.tugraz.kmi.medokyservice.fca.lib.colibri.lib.ComparableSet;
 
 public class Concept extends DataObject {
 
-
   private static final long serialVersionUID = -1074009257495237124L;
   private ComparableSet objects = null;
   private ComparableSet attributes = null;
@@ -35,6 +34,7 @@ public class Concept extends DataObject {
   private ComparableSet uniqueObjects = null;
   private ComparableSet uniqueAttributes = null;
   private boolean objectConcept;
+  private boolean attributeConcept;
   private boolean partOfTaxonomy;
   @JsonIgnore
   private Set<Concept> predecessors;
@@ -208,10 +208,19 @@ public class Concept extends DataObject {
   /**
    * Indicates whether this concept has any objects associated with it
    * 
-   * @return {@literal true} iff the concept has any objects asssociated with it
+   * @return {@literal true} if the concept has any objects associated with it
    */
   public boolean isObjectConcept() {
     return objectConcept;
+  }
+
+  /**
+   * Indicates whether this concept has any attributes associated with it
+   * 
+   * @return {@literal true} if the concept has any attributes associated with it
+   */
+  public boolean isAttributeConcept() {
+    return attributeConcept;
   }
 
   /**
@@ -225,8 +234,12 @@ public class Concept extends DataObject {
     }
     uniqueAttributes.clear();
     uniqueAttributes.addAll(attributes);
-
     uniqueAttributes.removeAll(sucAttribs);
+
+    if (uniqueAttributes.isEmpty())
+      attributeConcept = false;
+    else
+      attributeConcept = true;
 
     ComparableSet preObjects = new ComparableHashSet();
     for (Concept s : predecessors) {
@@ -396,4 +409,7 @@ public class Concept extends DataObject {
   public void addLearnerConcept(LearnerConcept c) {
     learnerConcepts.add(c);
   }
+
+ 
+
 }

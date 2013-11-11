@@ -57,6 +57,7 @@ public class Database implements Serializable {
   private Map<String, Course> coursesByExternalID;
   private Map<String, User> usersByExtrnalUID;
   private Map<String, FCAAbstract> fcaItemsBycreationID;
+  private Map<String, LearningObject> learningObjectsByURL;
   private Map<Long, DataObject> registry;
 
   @SuppressWarnings("rawtypes")
@@ -70,6 +71,8 @@ public class Database implements Serializable {
         .synchronizedMap(new HashMap<String, Course>());
     fcaItemsBycreationID = Collections
         .synchronizedMap(new HashMap<String, FCAAbstract>());
+    learningObjectsByURL = Collections
+        .synchronizedMap(new HashMap<String, LearningObject>());
     registry = Collections.synchronizedMap(new HashMap<Long, DataObject>());
     typeMap = Collections.synchronizedMap(new HashMap<Class, Map>());
     typeMap.put(FCAObject.class,
@@ -207,10 +210,18 @@ public class Database implements Serializable {
     return u;
   }
 
-  
   public synchronized FCAAbstract getFCAItemBycreationId(String creationId) {
-    FCAAbstract  a = fcaItemsBycreationID.get(creationId);
+    FCAAbstract a = fcaItemsBycreationID.get(creationId);
     return a;
+  }
+
+  public synchronized LearningObject getLearningObjectsByURL(String url) {
+    System.out.println(url);
+    System.out.println(learningObjectsByURL);
+    if (!learningObjectsByURL.containsKey(url))
+      return null;
+    LearningObject lo = learningObjectsByURL.get(url);
+    return lo;
   }
 
   /**
@@ -266,6 +277,9 @@ public class Database implements Serializable {
         else if (obj instanceof FCAAbstract)
           fcaItemsBycreationID.put(((FCAAbstract) obj).getCreationId(),
               (FCAAbstract) obj);
+        else if (obj instanceof LearningObject)
+          learningObjectsByURL.put(((LearningObject) obj).getData(),
+              (LearningObject) obj);
         try {
           save();
         } catch (FileNotFoundException e) {
@@ -301,6 +315,9 @@ public class Database implements Serializable {
           else if (obj instanceof FCAAbstract)
             fcaItemsBycreationID.put(((FCAAbstract) obj).getCreationId(),
                 (FCAAbstract) obj);
+          else if (obj instanceof LearningObject)
+            learningObjectsByURL.put(((LearningObject) obj).getData(),
+                (LearningObject) obj);
         }
       }
       try {
@@ -349,6 +366,7 @@ public class Database implements Serializable {
     usersByExtrnalUID.clear();
     coursesByExternalID.clear();
     fcaItemsBycreationID.clear();
+    learningObjectsByURL.clear();
     registry.clear();
     for (Map type : typeMap.values())
       type.clear();

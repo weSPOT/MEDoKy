@@ -432,15 +432,19 @@ public class FCAService {
   public Map<Long, LearningObjectWrapper> createLearningObjects(
       Set<LearningObjectWrapper> objects) {
     log("createLearningObjects");
+
     HashMap<Long, LearningObjectWrapper> result = new HashMap<Long, LearningObjectWrapper>();
     for (LearningObjectWrapper object : objects) {
-      LearningObject fcaObject = new LearningObject(object.name,
-          object.description, object.data, Database.getInstance()
-              .getUserByExternalUID(object.externalUID));
-      object.owner = Database.getInstance().getUserByExternalUID(
-          object.externalUID);
-      result.put(fcaObject.getId(), object);
-      Database.getInstance().put(fcaObject);
+      System.out.println("URL: "+object.data);
+      if (Database.getInstance().getLearningObjectsByURL(object.data) == null) {
+        LearningObject fcaObject = new LearningObject(object.name,
+            object.description, object.data, Database.getInstance()
+                .getUserByExternalUID(object.externalUID));
+        object.owner = Database.getInstance().getUserByExternalUID(
+            object.externalUID);
+        result.put(fcaObject.getId(), object);
+        Database.getInstance().put(fcaObject);
+      }
     }
     return result;
 

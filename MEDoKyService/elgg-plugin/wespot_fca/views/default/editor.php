@@ -33,7 +33,7 @@ foreach ($files as $file){
 <script type="text/javascript" src="<?php echo $basedir; ?>js/jquery.dialogextend.js"></script>
 <script>
 $(function(){
-logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
+logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
 });
 </script>
 <table id="toolbar">

@@ -28,7 +28,7 @@ public class ConceptWrapper extends AbstractWrapper {
   public long domainId;
 
   /**
-   * flag indicatin whether the concept is part of the taxonomy
+   * flag indicating whether the concept is part of the taxonomy
    */
   public boolean partOfTaxonomy;
 
@@ -36,6 +36,11 @@ public class ConceptWrapper extends AbstractWrapper {
    * flag indicating whether the concept is an object concept
    */
   public boolean objectConcept;
+
+  /**
+   * flag indicating whether the concept is an attribute concept
+   */
+  public boolean attributeConcept;
 
   /**
    * attributes with valuations mapped to them
@@ -90,6 +95,7 @@ public class ConceptWrapper extends AbstractWrapper {
 
     partOfTaxonomy = concept.isPartOfTaxonomy();
     objectConcept = concept.isObjectConcept();
+    attributeConcept = concept.isAttributeConcept();
 
     attributes = new LinkedHashMap<FCAAttribute, Float>();
     for (Comparable a : concept.getAttributes()) {
@@ -119,6 +125,7 @@ public class ConceptWrapper extends AbstractWrapper {
     Concept c = Database.getInstance().get(concept.getDomainConceptId());
     partOfTaxonomy = c.isPartOfTaxonomy();
     objectConcept = c.isObjectConcept();
+    attributeConcept = c.isAttributeConcept();
 
     attributes = new LinkedHashMap<FCAAttribute, Float>(concept.getAttributes());
     objects = new LinkedHashMap<FCAObject, Float>(concept.getObjects());

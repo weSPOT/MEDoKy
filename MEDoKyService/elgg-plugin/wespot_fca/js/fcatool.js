@@ -55,49 +55,51 @@ backend = {
   },
 
   get_objects : function(callback) {
-    $.ajax({
-      cache : false,
-      type : "GET",
-      url : backend.url + backend.path_get_objects,
-      success : function(obj) {
-        for ( var id in obj) {
-          obj[id].id = id;
-          state.backend_objects[id] = obj[id];
-          for ( var i in obj[id].learningObjects) {
-            state.active_l_objects[obj[id].learningObjects[i].id] = obj[id].learningObjects[i];
+    $
+        .ajax({
+          cache : false,
+          type : "GET",
+          url : backend.url + backend.path_get_objects,
+          success : function(obj) {
+            for ( var id in obj) {
+              obj[id].id = id;
+              state.backend_objects[id] = obj[id];
+              for ( var i in obj[id].learningObjects) {
+                state.active_l_objects[obj[id].learningObjects[i].id] = obj[id].learningObjects[i];
+              }
+            }
+            if (callback)
+              callback();
+            // 
+            // state.backend_objects = obj;
+          },
+          error : function(obj) {
+            console.error(JSON.stringify(obj));
           }
-        }
-        if (callback)
-          callback();
-        // 
-        // state.backend_objects = obj;
-      },
-      error : function(obj) {
-        console.error(JSON.stringify(obj));
-      }
-    });
+        });
   },
 
   get_attributes : function(callback) {
-    $.ajax({
-      cache : false,
-      type : "GET",
-      url : backend.url + backend.path_get_attributes,
-      success : function(obj) {
-        for ( var id in obj) {
-          obj[id].id = id;
-          state.backend_attributes[id] = obj[id];
-          for ( var i in obj[id].learningObjects) {
-            state.active_l_objects[obj[id].learningObjects[i].id] = obj[id].learningObjects[i];
+    $
+        .ajax({
+          cache : false,
+          type : "GET",
+          url : backend.url + backend.path_get_attributes,
+          success : function(obj) {
+            for ( var id in obj) {
+              obj[id].id = id;
+              state.backend_attributes[id] = obj[id];
+              for ( var i in obj[id].learningObjects) {
+                state.active_l_objects[obj[id].learningObjects[i].id] = obj[id].learningObjects[i];
+              }
+            }
+            if (callback)
+              callback();
+          },
+          error : function(obj) {
+            console.error(JSON.stringify(obj));
           }
-        }
-        if (callback)
-          callback();
-      },
-      error : function(obj) {
-        console.error(JSON.stringify(obj));
-      }
-    });
+        });
   },
 
   get_l_objects : function(callback) {
@@ -314,46 +316,48 @@ util = {
     }
     // IE COMPAT taken from https://github.com/jaubourg/ajaxHooks
     if (state.msie) {
-      jQuery.ajaxTransport(function(s) {
-        if (s.crossDomain && s.async) {
-          if (s.timeout) {
-            s.xdrTimeout = s.timeout;
-            delete s.timeout;
-          }
-          var xdr;
-          return {
-            send : function(_, complete) {
-              function callback(status, statusText, responses, responseHeaders) {
-                xdr.onload = xdr.onerror = xdr.ontimeout = jQuery.noop;
-                xdr = undefined;
-                complete(status, statusText, responses, responseHeaders);
+      jQuery
+          .ajaxTransport(function(s) {
+            if (s.crossDomain && s.async) {
+              if (s.timeout) {
+                s.xdrTimeout = s.timeout;
+                delete s.timeout;
               }
-              xdr = new XDomainRequest();
-              xdr.onload = function() {
-                callback(200, "OK", {
-                  text : xdr.responseText
-                }, "Content-Type: " + xdr.contentType);
+              var xdr;
+              return {
+                send : function(_, complete) {
+                  function callback(status, statusText, responses,
+                      responseHeaders) {
+                    xdr.onload = xdr.onerror = xdr.ontimeout = jQuery.noop;
+                    xdr = undefined;
+                    complete(status, statusText, responses, responseHeaders);
+                  }
+                  xdr = new XDomainRequest();
+                  xdr.onload = function() {
+                    callback(200, "OK", {
+                      text : xdr.responseText
+                    }, "Content-Type: " + xdr.contentType);
+                  };
+                  xdr.onerror = function() {
+                    callback(404, "Not Found");
+                  };
+                  xdr.onprogress = jQuery.noop;
+                  xdr.ontimeout = function() {
+                    callback(0, "timeout");
+                  };
+                  xdr.timeout = s.xdrTimeout || Number.MAX_VALUE;
+                  xdr.open(s.type, s.url);
+                  xdr.send((s.hasContent && s.data) || null);
+                },
+                abort : function() {
+                  if (xdr) {
+                    xdr.onerror = jQuery.noop;
+                    xdr.abort();
+                  }
+                }
               };
-              xdr.onerror = function() {
-                callback(404, "Not Found");
-              };
-              xdr.onprogress = jQuery.noop;
-              xdr.ontimeout = function() {
-                callback(0, "timeout");
-              };
-              xdr.timeout = s.xdrTimeout || Number.MAX_VALUE;
-              xdr.open(s.type, s.url);
-              xdr.send((s.hasContent && s.data) || null);
-            },
-            abort : function() {
-              if (xdr) {
-                xdr.onerror = jQuery.noop;
-                xdr.abort();
-              }
             }
-          };
-        }
-      });
+          });
       ui.display_ie_warning();
     } else {
       try {
@@ -499,14 +503,16 @@ util = {
         "id" : n,
         "learningObjects" : obj[n].learningObjects
       };
-      (o == 1) ? state.backend_attributes[n] = object : state.backend_objects[n] = object;
+      (o == 1) ? state.backend_attributes[n] = object
+          : state.backend_objects[n] = object;
       for ( var i in object.learningObjects) {
         state.active_l_objects[object.learningObjects[i].id] = object.learningObjects[i];
       }
       var currentObjects;
       var key;
       (o == 1) ? key = logic.key_attr : key = logic.key_obj;
-      (o == 1) ? currentObjects = $(".btn_attr") : currentObjects = $(".btn_obj");
+      (o == 1) ? currentObjects = $(".btn_attr")
+          : currentObjects = $(".btn_obj");
       for (var i = 0; i < currentObjects.length; ++i) {
 
         if ($.data(currentObjects[i], key).id == obj[n].id) {
@@ -515,7 +521,8 @@ util = {
       }
     }
     for ( var n in obj)
-      (o == 1) ? delete state.new_attributes[obj[n].id] : delete state.new_objects[obj[n].id];
+      (o == 1) ? delete state.new_attributes[obj[n].id]
+          : delete state.new_objects[obj[n].id];
   },
 
   underConstruction : function(selector) {
@@ -587,62 +594,45 @@ logic = {
     $(".td_attr").css("width", tmp_h + 15);
     $(".td_attr").css("height", tmp_w + 15);
 
-    if (state.msie) {
-      console.debug("OH NO, IE! initilaizing objects and attributes on-demand");
-      backend.get_l_objects(function() {
-        var uris = [];
-        for ( var lo in state.backend_l_objects) {
-          console.debug(state.backend_l_objects[lo]);
-          // if (state.backend_l_objects[lo].owner.externalUid ==
-          // state.user.guid.toString())
-          uris.push(state.backend_l_objects[lo].data);
-        }
-        console.debug(uris);
-        console.debug(state.files);
-        for ( var f in state.files) {
-          if (uris.indexOf(state.files[f].data) == -1)
-            logic.create_lo(state.files[f].name, state.files[f].description.replace(
-                /(<([^>]+)>)/ig, ""), state.files[f].data);
-        }
-        if (!state.teacher) {
-          util.switch_student();
-          if (state.load_domain)
-            backend.get_domains(state.gid, ui.show_initial_domain);
-        } else {
-          if (state.load_domain)
-            backend.get_domains('-1', ui.show_initial_domain);
-        }
-      });
-
-    } else {
-      backend.get_objects(function() {
-        backend.get_attributes(function() {
-          backend.get_l_objects(function() {
-            var uris = [];
-            for ( var lo in state.backend_l_objects) {
-              console.debug(state.backend_l_objects[lo]);
-              if (state.backend_l_objects[lo].owner.externalUid == state.user.guid.toString())
-                uris.push(state.backend_l_objects[lo].data);
-            }
-            console.debug(uris);
-            console.debug(state.files);
-            for ( var f in state.files) {
-              if (uris.indexOf(state.files[f].data) == -1)
-                logic.create_lo(state.files[f].name, state.files[f].description.replace(
-                    /(<([^>]+)>)/ig, ""), state.files[f].data);
-            }
-            if (!state.teacher) {
-              util.switch_student();
-              if (state.load_domain)
-                backend.get_domains(state.gid, ui.show_initial_domain);
-            } else {
-              if (state.load_domain)
-                backend.get_domains('-1', ui.show_initial_domain);
-            }
-          });
-        });
-      });
+    var los = [];
+    for ( var f in state.files) {
+      var lo = {
+        "name" : state.files[f].name,
+        "description" : state.files[f].description.replace(/(<([^>]+)>)/ig, ""),
+        "data" : state.files[f].data,
+        "id" : Date.now(),
+        "externalUID" : state.user.guid
+      };
+      los.push(lo);
     }
+
+    backend
+        .create_l_objects(
+            JSON.stringify(los),
+            function(obj) {
+              backend
+                  .get_l_objects(function() {
+                    if (!state.teacher) {
+                      util.switch_student();
+                      if (state.load_domain)
+                        backend.get_domains(state.gid, ui.show_initial_domain);
+                    } else {
+                      if (state.load_domain)
+                        backend.get_domains('-1', ui.show_initial_domain);
+                    }
+                    if (state.msie) {
+                      console
+                          .debug("OH NO, IE! initilaizing objects and attributes on-demand");
+
+                    } else {
+                      backend.get_objects(function() {
+                        backend.get_attributes(function() {
+                        });
+                      });
+                    }
+                  });
+            });
+
   },
   /*
    * create_object : function(name, description) {
@@ -716,13 +706,15 @@ logic = {
     /*
      * if (selectedIndex != -1) selectedIndex++;
      */
-    data.object.learningObjects.push(JSON.parse(sel.options[sel.selectedIndex].value));
+    data.object.learningObjects.push(JSON
+        .parse(sel.options[sel.selectedIndex].value));
     for ( var i in data.object.learningObjects) {
       state.active_l_objects[data.object.learningObjects[i].id] = data.object.learningObjects[i];
     }
 
     $("#dia_set_lo").dialog("close");
-    logic.save_item(data.object.name, data.select, data.object.description, data.o);
+    logic.save_item(data.object.name, data.select, data.object.description,
+        data.o);
   },
 
   save_item : function(name, select, description, o) {
@@ -763,12 +755,16 @@ logic = {
             obj.learningObjects[l].owner.attributes = {};
           }
           // delete obj["learningObjects"];
-          backend.update_attribute(JSON.stringify(obj), function(resp) {
-            // 
+          backend
+              .update_attribute(
+                  JSON.stringify(obj),
+                  function(resp) {
+                    // 
 
-            state.backend_attributes[select.options[select.selectedIndex].value] = resp;
-            ui.set_item(state.attr_index, o, select.options[select.selectedIndex].value);
-          });
+                    state.backend_attributes[select.options[select.selectedIndex].value] = resp;
+                    ui.set_item(state.attr_index, o,
+                        select.options[select.selectedIndex].value);
+                  });
 
           // FIXME!!! SO MUCH DUPLICATED CODE; REFACTOR ASAP!
         } else {
@@ -780,11 +776,15 @@ logic = {
             obj.learningObjects[l].owner.attributes = {};
           }
           // delete obj["learningObjects"];
-          backend.update_object(JSON.stringify(obj), function(resp) {
-            // 
-            state.backend_objects[select.options[select.selectedIndex].value] = resp;
-            ui.set_item(state.obj_index, o, select.options[select.selectedIndex].value);
-          });
+          backend
+              .update_object(
+                  JSON.stringify(obj),
+                  function(resp) {
+                    // 
+                    state.backend_objects[select.options[select.selectedIndex].value] = resp;
+                    ui.set_item(state.obj_index, o,
+                        select.options[select.selectedIndex].value);
+                  });
         }
       } else {
         if (o == 1) {
@@ -792,13 +792,15 @@ logic = {
           obj.name = name;
           obj.description = description;
           state.new_attributes[select.options[select.selectedIndex].value] = obj;
-          ui.set_item(state.attr_index, o, select.options[select.selectedIndex].value);
+          ui.set_item(state.attr_index, o,
+              select.options[select.selectedIndex].value);
         } else {
           var obj = state.new_objects[select.options[select.selectedIndex].value];
           obj.name = name;
           obj.description = description;
           state.new_objects[select.options[select.selectedIndex].value] = obj;
-          ui.set_item(state.obj_index, o, select.options[select.selectedIndex].value);
+          ui.set_item(state.obj_index, o,
+              select.options[select.selectedIndex].value);
         }
       }
     }
@@ -814,7 +816,8 @@ logic = {
       object = state.backend_objects[id];
     else
       object = state.new_objects[id];
-    $("#obj_" + state.obj_index).prop("value", object.name).data(logic.key_obj, object);
+    $("#obj_" + state.obj_index).prop("value", object.name).data(logic.key_obj,
+        object);
     state.obj_index = -1;
     util.filter_items(0);
   },
@@ -829,7 +832,8 @@ logic = {
       object = state.backend_attributes[id];
     else
       object = state.new_attributes[id];
-    $("#attr_" + state.attr_index).prop("value", object.name).data(logic.key_attr, object);
+    $("#attr_" + state.attr_index).prop("value", object.name).data(
+        logic.key_attr, object);
     state.attr_index = -1;
     util.filter_items(1);
   },
@@ -859,7 +863,8 @@ logic = {
         var btn = $("#obj_" + (checks[c]).id.split("_")[1]);
         var obj = btn.data(logic.key_obj);
 
-        var attr = $("#attr_" + (checks[c]).id.split("_")[3]).data(logic.key_attr);
+        var attr = $("#attr_" + (checks[c]).id.split("_")[3]).data(
+            logic.key_attr);
         if (!(obj.id.toString() in mapping)) {
           mapping[obj.id.toString()] = [];
 
@@ -926,7 +931,8 @@ logic = {
     var sel = document.getElementById("sel_set_lo");
     $(sel.options[0]).prop("disabled", true);
     // $(sel).empty();
-    if ((data.substring(0, 7) != "http://") && (data.substring(0, 8) != "https://"))
+    if ((data.substring(0, 7) != "http://")
+        && (data.substring(0, 8) != "https://"))
       data = "http://" + data;
     var lo = {
       "name" : name,
@@ -945,6 +951,7 @@ logic = {
         lo.id = i;
       }
       // 
+
       state.backend_l_objects[lo.id] = lo;
       var opt = document.createElement("option");
       opt.text = name;
@@ -954,6 +961,7 @@ logic = {
       // state.new_l_objects[lo.id] = lo;
       $("#dia_create_lo").dialog("close");
       // sel.selectedIndex = sel.selectedIndex - 1;
+
     });
   },
 
@@ -1016,56 +1024,61 @@ logic = {
     while ($(".btn_del_obj").length > num_objects) {
       logic.rem_object($($(".btn_del_obj")[0]).prop("id").split("_")[3]);
     }
-    backend.get_objects(backend.get_attributes(function() {
-      setTimeout(function() {
-        var index = 0;
-        for ( var a in domain.mapping.attributes) {
+    backend
+        .get_objects(backend
+            .get_attributes(function() {
+              setTimeout(
+                  function() {
+                    var index = 0;
+                    for ( var a in domain.mapping.attributes) {
 
-          var id = "#attr_" + $(".td_attr")[index].childNodes[2].id.split("_")[1];
+                      var id = "#attr_"
+                          + $(".td_attr")[index].childNodes[2].id.split("_")[1];
 
-          var attribute = JSON.parse(a);
-          // 
-          // 
-          $(id).data(logic.key_attr, attribute);
-          $(id).prop("value", attribute.name);
-          ++index;
-        }
+                      var attribute = JSON.parse(a);
+                      // 
+                      // 
+                      $(id).data(logic.key_attr, attribute);
+                      $(id).prop("value", attribute.name);
+                      ++index;
+                    }
 
-        $(".check").prop("checked", false);
-        var objects = $(".btn_del_obj");
-        index = 0;
-        for ( var o in domain.mapping.objects) {
-          var id = "#obj_" + ($(objects[index]).prop("id").split("_")[3]);
-          var object = $.parseJSON(o);
+                    $(".check").prop("checked", false);
+                    var objects = $(".btn_del_obj");
+                    index = 0;
+                    for ( var o in domain.mapping.objects) {
+                      var id = "#obj_"
+                          + ($(objects[index]).prop("id").split("_")[3]);
+                      var object = $.parseJSON(o);
 
-          $(id).data(logic.key_obj, object);
-          $(id).prop("value", object.name);
-          var mapped = domain.mapping.objects[o];
+                      $(id).data(logic.key_obj, object);
+                      $(id).prop("value", object.name);
+                      var mapped = domain.mapping.objects[o];
 
-          for (var m = 0; m < mapped.length; ++m) {
-            var currentA = $(".btn_attr");
-            for (var a = 0; a < currentA.length; ++a) {
-              if ($("#" + currentA[a].id).data(logic.key_attr).id == mapped[m].id) {
-                $(id + "_" + currentA[a].id).prop("checked", true);
-              }
-            }
-          }
-          ++index;
-        }
+                      for (var m = 0; m < mapped.length; ++m) {
+                        var currentA = $(".btn_attr");
+                        for (var a = 0; a < currentA.length; ++a) {
+                          if ($("#" + currentA[a].id).data(logic.key_attr).id == mapped[m].id) {
+                            $(id + "_" + currentA[a].id).prop("checked", true);
+                          }
+                        }
+                      }
+                      ++index;
+                    }
 
-        if (state.msie) {
-          setTimeout(function() {
-            ui.display_lattice();
-            if (teacher)
-              $("#dia_vis").dialogExtend("minimize");
-          }, 300);
-        } else {
-          ui.display_lattice();
-          if (teacher)
-            $("#dia_vis").dialogExtend("minimize");
-        }
-      }, 1000);
-    }));
+                    if (state.msie) {
+                      setTimeout(function() {
+                        ui.display_lattice();
+                        if (teacher)
+                          $("#dia_vis").dialogExtend("minimize");
+                      }, 300);
+                    } else {
+                      ui.display_lattice();
+                      if (teacher)
+                        $("#dia_vis").dialogExtend("minimize");
+                    }
+                  }, 1000);
+            }));
   },
 
   load : function(domainid, teacher) {
@@ -1079,9 +1092,10 @@ logic = {
         logic.populate_domain(domain, teacher);
       });
     } else {
-      backend.get_learner_domain(domainid, state.user.guid.toString(), function(domain) {
-        logic.populate_domain(domain);
-      });
+      backend.get_learner_domain(domainid, state.user.guid.toString(),
+          function(domain) {
+            logic.populate_domain(domain);
+          });
     }
   }
 };
@@ -1396,8 +1410,8 @@ ui = {
       sel.empty();
       var i = -1;
       var newitem;
-      (o == 1) ? newitem = "<New " + elgg.echo("wespot_fca:attr") + ">" : newitem = "<New "
-          + elgg.echo("wespot_fca:obj") + ">";
+      (o == 1) ? newitem = "<New " + elgg.echo("wespot_fca:attr") + ">"
+          : newitem = "<New " + elgg.echo("wespot_fca:obj") + ">";
       sel.create("option").prop("disabled", true).create("txt", newitem);
       for ( var obj in objects) {
         ++i;
@@ -1416,7 +1430,8 @@ ui = {
       sel.prop("selectedIndex", selectedIndex);
 
       // 
-      (o == 1) ? $("#dia_set_attr").dialog("open") : $("#dia_set_obj").dialog("open");
+      (o == 1) ? $("#dia_set_attr").dialog("open") : $("#dia_set_obj").dialog(
+          "open");
       if (selectedIndex != -1) {
         ui.display_item_description(document.getElementById(sel.prop("id")), o);
       }
@@ -1491,8 +1506,9 @@ ui = {
                 + state.basedir
                 + "img/delete.svg\" "
                 + " width=\"16px\" height= \"16px\" alt=\"x\" title=\"Delete Attribute\" id=\"btn_del_attr_"
-                + id + "\" class=\"input btn_del_attr\" onclick=\"ui.rem_attribute(" + id
-                + ")\" /></td>").insertBefore($(tails[elem]));
+                + id
+                + "\" class=\"input btn_del_attr\" onclick=\"ui.rem_attribute("
+                + id + ")\" /></td>").insertBefore($(tails[elem]));
       } else if (i == 1) {
         $(
             "<td class=\"td_attr td_attr_"
@@ -1511,10 +1527,14 @@ ui = {
                 + "id=\"btn_move_right_"
                 + id
                 + "\" width=\"16px\" height=\"40px\" alt=\"&gt;\" title=\"Move Right\" class=\"input btn_move_right\""
-                + " onclick=\"ui.move_right(" + id + ")\" /><input type=\"button\" id=\"attr_" + id
-                + "\" " + "class=\"input fullheight btn_attr col\" value=\"Dummy Attribute "
-                + (id + 1) + "\" onclick=\"ui.set_item(" + id + ",1)\" /></td>").insertBefore(
-            $(tails[elem]));
+                + " onclick=\"ui.move_right("
+                + id
+                + ")\" /><input type=\"button\" id=\"attr_"
+                + id
+                + "\" "
+                + "class=\"input fullheight btn_attr col\" value=\"Dummy Attribute "
+                + (id + 1) + "\" onclick=\"ui.set_item(" + id + ",1)\" /></td>")
+            .insertBefore($(tails[elem]));
         ui.setup_hover_attr($("#attr_" + id));
       } else if (i < len - 1) {
 
@@ -1529,7 +1549,8 @@ ui = {
         });
 
       } else if (i == len - 1) {
-        $("<td class=\"td_attr_" + id + "\"></td>").insertBefore($(tails[elem]));
+        $("<td class=\"td_attr_" + id + "\"></td>")
+            .insertBefore($(tails[elem]));
       }
       ++i;
     }
@@ -1590,8 +1611,8 @@ ui = {
 
       var attr_id = $(attrs[a]).prop("id").split("_")[1];
       tr.append("<td class=\"td_attr_" + attr_id
-          + "\"><input type=\"checkbox\" class=\"input check\" id=\"obj_" + id + "_attr_" + attr_id
-          + "\" /></td>");
+          + "\"><input type=\"checkbox\" class=\"input check\" id=\"obj_" + id
+          + "_attr_" + attr_id + "\" /></td>");
     }
     tr.append("<td class=\"tail\" style=\"background-color: #fff\"></td>");
   },
@@ -1653,8 +1674,10 @@ ui = {
           $(".item_description").create("txt", obj.description);
           if (obj.owner) {
             $(".item_description").create("br");
-            $(".item_description").create("txt",
-                "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name + ")");
+            $(".item_description").create(
+                "txt",
+                "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name
+                    + ")");
           }
         } else {
           $("#btn_choose_dom_ok").prop("disabled", true);
@@ -1672,8 +1695,10 @@ ui = {
           $(".item_description").create("txt", obj.description);
           if (obj.owner) {
             $(".item_description").create("br");
-            $(".item_description").create("txt",
-                "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name + ")");
+            $(".item_description").create(
+                "txt",
+                "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name
+                    + ")");
           }
         } else {
           $("#btn_choose_dom_ok").prop("disabled", true);
@@ -1683,8 +1708,10 @@ ui = {
         $(".item_description").create("txt", obj.description);
         if (obj.owner) {
           $(".item_description").create("br");
-          $(".item_description").create("txt",
-              "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name + ")");
+          $(".item_description").create(
+              "txt",
+              "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name
+                  + ")");
         }
       }
     }
@@ -1785,8 +1812,8 @@ ui = {
     if (select.selectedIndex == 0) {
       ui.display_item_edit(select, textarea, o);
     } else if (select.selectedIndex != -1) {
-      var obj = (o == 1) ? $("#attr_" + state.attr_index).data(logic.key_attr) : $(
-          "#obj_" + state.obj_index).data(logic.key_obj);
+      var obj = (o == 1) ? $("#attr_" + state.attr_index).data(logic.key_attr)
+          : $("#obj_" + state.obj_index).data(logic.key_obj);
       // 
 
       if (obj) {
@@ -1799,27 +1826,37 @@ ui = {
       }
       if (o == 1) {
         try {
-          $(".text_description").val(
-              state.backend_attributes[select.options[select.selectedIndex].value].description);
-          ui.display_learning_objects(
-              state.backend_attributes[select.options[select.selectedIndex].value], select, o);
+          $(".text_description")
+              .val(
+                  state.backend_attributes[select.options[select.selectedIndex].value].description);
+          ui
+              .display_learning_objects(
+                  state.backend_attributes[select.options[select.selectedIndex].value],
+                  select, o);
         } catch (not_an_error) {
-          $(".text_description").val(
-              state.new_attributes[select.options[select.selectedIndex].value].description);
+          $(".text_description")
+              .val(
+                  state.new_attributes[select.options[select.selectedIndex].value].description);
           ui.display_learning_objects(
-              state.new_attributes[select.options[select.selectedIndex].value], select, o);
+              state.new_attributes[select.options[select.selectedIndex].value],
+              select, o);
         }
       } else {
         try {
-          $(".text_description").val(
-              state.backend_objects[select.options[select.selectedIndex].value].description);
-          ui.display_learning_objects(
-              state.backend_objects[select.options[select.selectedIndex].value], select, o);
+          $(".text_description")
+              .val(
+                  state.backend_objects[select.options[select.selectedIndex].value].description);
+          ui
+              .display_learning_objects(
+                  state.backend_objects[select.options[select.selectedIndex].value],
+                  select, o);
         } catch (not_an_error) {
-          $(".text_description").val(
-              state.new_objects[select.options[select.selectedIndex].value].description);
+          $(".text_description")
+              .val(
+                  state.new_objects[select.options[select.selectedIndex].value].description);
           ui.display_learning_objects(
-              state.new_objects[select.options[select.selectedIndex].value], select, o);
+              state.new_objects[select.options[select.selectedIndex].value],
+              select, o);
         }
       }
     }
@@ -1940,8 +1977,10 @@ ui = {
       } else {
         $("#sel_set_dom").create("option", {
           value : "-1"
-        }).prop("disabled", true).create("txt",
-            "--- " + elgg.echo("wespot_fca:course") + " " + decodeURIComponent(courses[id].name) + " ---");
+        }).prop("disabled", true).create(
+            "txt",
+            "--- " + elgg.echo("wespot_fca:course") + " "
+                + decodeURIComponent(courses[id].name) + " ---");
         for ( var d in courses[id].domains) {
           courses[id].domains[d].id = d;
           $("#sel_set_dom").create("option", {
@@ -1957,8 +1996,8 @@ ui = {
 
   display_lattice : function() {
     if (state.teacher) {
-      lattice.init("#canvas_lattice", $(window).width() - 350, $(window).height() - 100,
-          "#div_lattice_info", backend);
+      lattice.init("#canvas_lattice", $(window).width() - 350, $(window)
+          .height() - 100, "#div_lattice_info", backend);
       lattice.draw();
       $("#vis_loading").show();
       $("#canvas_lattice").hide();
@@ -1978,8 +2017,10 @@ ui = {
       }
       $("#dia_vis").dialog("option", "title",
           elgg.echo('wespot_fca:lattice:tax') + " '" + state.domain.name + "'");
-      $("#dia_vis").dialog("option", "width", $("#canvas_lattice").prop("width") + 240);
-      $("#dia_vis").dialog("option", "height", $("#canvas_lattice").prop("height") + 50);
+      $("#dia_vis").dialog("option", "width",
+          $("#canvas_lattice").prop("width") + 240);
+      $("#dia_vis").dialog("option", "height",
+          $("#canvas_lattice").prop("height") + 50);
       try {
         $("#dia_vis").dialog("open").dialogExtend("restore");
       } catch (error) {
@@ -1990,8 +2031,8 @@ ui = {
       $("#dia_vis").show();
       $("#dia_vis").css("width", "100%");
       $("#dia_vis").css("height", $(window).height() - 150 + "px");
-      lattice.init("#canvas_lattice", $("#dia_vis").width() - 220, $("#dia_vis").height(),
-          "#div_lattice_info", backend);
+      lattice.init("#canvas_lattice", $("#dia_vis").width() - 220,
+          $("#dia_vis").height(), "#div_lattice_info", backend);
       lattice.draw();
       $("#vis_loading").show();
       $("#canvas_lattice").hide();
@@ -2015,8 +2056,10 @@ ui = {
       var d_state = $("#dia_vis").data("dialog-state");
 
       lattice.resize($(window).width() - 350, $(window).height() - 100);
-      $("#dia_vis").dialog("option", "width", $("#canvas_lattice").prop("width") + 240);
-      $("#dia_vis").dialog("option", "height", $("#canvas_lattice").prop("height") + 50);
+      $("#dia_vis").dialog("option", "width",
+          $("#canvas_lattice").prop("width") + 240);
+      $("#dia_vis").dialog("option", "height",
+          $("#canvas_lattice").prop("height") + 50);
       if (d_state == "minimized") {
         $("#dia_vis").dialogExtend("minimize");
       }

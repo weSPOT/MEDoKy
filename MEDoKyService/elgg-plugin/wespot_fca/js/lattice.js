@@ -97,7 +97,8 @@ lattice = {
             dragged.node.fixed = true;
           }
           $(lattice.info).empty();
-          if (!dragged.node.data.active || dragged.node.data.selected || lattice.initial) {
+          if (!dragged.node.data.active || dragged.node.data.selected
+              || lattice.initial) {
             lattice.initial = false;
             lattice.sys.eachNode(function(_n, ___pt) {
               _n.data.active = false;
@@ -215,8 +216,8 @@ lattice = {
       if (node.data.obj == "" && node.data.attr == "")
         w = 2;
       if (node.data.selected) {
-        ctx.fillStyle = "rgba(0,60,180,1)";
         ctx.closePath();
+        ctx.fillStyle = "rgba(0,60,180,1)";
         ctx.beginPath();
         ctx.arc((pt.x), (pt.y), w + 5, 0, 2 * Math.PI, true);
         ctx.fill();
@@ -239,10 +240,7 @@ lattice = {
       ctx.fill();
       ctx.closePath();
       ctx.beginPath();
-      /*
-       * if (node.data.isObjectConcept) ctx.arc((pt.x), (pt.y), w - 1, 0,
-       * Math.PI, true); else
-       */
+
       ctx.arc((pt.x), (pt.y), w - 1, 0, 2 * Math.PI, true);
       if (node.data.active)
         if (w == 2)
@@ -258,35 +256,42 @@ lattice = {
       // ctx.lineWidth = 4;
       ctx.stroke();
 
-      if (node.data.uniqueAttributes.length > 0) {
-        ctx.closePath();
-        ctx.beginPath();
+      var col = "rgba(255,255,255,0.5)";
+      if (node.data.active)
+        col = "rgba(255,255,255,1)";
+      if (node.data.isAttributeConcept) {
         if (node.data.active) {
-          ctx.fillStyle = "rgba(" + node.data.color_attr + ",1)";
-
+          col = "rgba(" + node.data.color_attr + ",1)";
         } else {
-          ctx.fillStyle = "rgba(" + node.data.color_attr + ",0.5)";
-
+          col = "rgba(" + node.data.color_attr + ",0.5)";
         }
-        ctx.arc((pt.x), (pt.y - 0.5), w - 2, 0, Math.PI, true);
-        ctx.fill();
-        ctx.closePath();
       }
 
+      ctx.closePath();
+      ctx.beginPath();
+      ctx.fillStyle = col;
+      ctx.arc((pt.x), (pt.y - 0.5), w - 2, 0, Math.PI, true);
+      ctx.fill();
+      ctx.closePath();
+      
+      col = "rgba(255,255,255,0.5)";
+      if (node.data.active)
+        col = "rgba(255,255,255,1)";
       if (node.data.isObjectConcept) {
-        ctx.closePath();
-        ctx.beginPath();
         if (node.data.active) {
-          ctx.fillStyle = "rgba(" + node.data.color_obj + ",1)";
+          col = "rgba(" + node.data.color_obj + ",1)";
 
         } else {
-          ctx.fillStyle = "rgba(" + node.data.color_obj + ",0.5)";
+          col = "rgba(" + node.data.color_obj + ",0.5)";
 
         }
-        ctx.arc((pt.x), (pt.y + 0.5), w - 2, 1 * Math.PI, 2 * Math.PI, true);
-        ctx.fill();
-        ctx.closePath();
       }
+      ctx.closePath();
+      ctx.beginPath();
+      ctx.fillStyle = col;
+      ctx.arc((pt.x), (pt.y + 0.5), w - 2, 1 * Math.PI, 2 * Math.PI, true);
+      ctx.fill();
+      ctx.closePath();
 
       if (node.data.objActive) {
         // ctx.lineWidth = 4;
@@ -313,7 +318,6 @@ lattice = {
           ctx.strokeStyle = "rgba(0,0,0,1)";
         else
           ctx.strokeStyle = "rgba(0,0,0,0.5)";
-        // ctx.strokeStyle="black";
         ctx.moveTo(pt.x - w + 2, pt.y);
         ctx.lineTo(pt.x + w - 2, pt.y);
         ctx.stroke();
@@ -340,16 +344,18 @@ lattice = {
       ctx.beginPath();
       var angle = Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x);
       ctx.moveTo(pt1.x, pt1.y);
-      ctx.lineTo(pt2.x - arrow * Math.cos(angle), pt2.y - arrow * Math.sin(angle));
+      ctx.lineTo(pt2.x - arrow * Math.cos(angle), pt2.y - arrow
+          * Math.sin(angle));
       ctx.stroke();
-      ctx.moveTo(pt2.x - offset * Math.cos(angle), pt2.y - offset * Math.sin(angle));
+      ctx.moveTo(pt2.x - offset * Math.cos(angle), pt2.y - offset
+          * Math.sin(angle));
       ctx.beginPath();
       ctx.lineTo(pt2.x - arrow * Math.cos(angle - Math.PI / 20), pt2.y - arrow
           * Math.sin(angle - Math.PI / 20));
-      // ctx.stroke();
       ctx.lineTo(pt2.x - arrow * Math.cos(angle + Math.PI / 20), pt2.y - arrow
           * Math.sin(angle + Math.PI / 20));
-      ctx.lineTo(pt2.x - offset * Math.cos(angle), pt2.y - offset * Math.sin(angle));
+      ctx.lineTo(pt2.x - offset * Math.cos(angle), pt2.y - offset
+          * Math.sin(angle));
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
@@ -364,16 +370,19 @@ lattice = {
       ctx.beginPath();
       ctx.moveTo(pt1.x, pt1.y);
 
-      ctx.lineTo(pt2.x - (arrow) * Math.cos(angle), pt2.y - (arrow) * Math.sin(angle));
+      ctx.lineTo(pt2.x - (arrow) * Math.cos(angle), pt2.y - (arrow)
+          * Math.sin(angle));
       ctx.stroke();
-      ctx.moveTo(pt2.x - offset * Math.cos(angle), pt2.y - offset * Math.sin(angle));
+      ctx.moveTo(pt2.x - offset * Math.cos(angle), pt2.y - offset
+          * Math.sin(angle));
       ctx.beginPath();
       ctx.lineTo(pt2.x - arrow * Math.cos(angle - Math.PI / 20), pt2.y - arrow
           * Math.sin(angle - Math.PI / 20));
       // ctx.stroke();
       ctx.lineTo(pt2.x - arrow * Math.cos(angle + Math.PI / 20), pt2.y - arrow
           * Math.sin(angle + Math.PI / 20));
-      ctx.lineTo(pt2.x - offset * Math.cos(angle), pt2.y - offset * Math.sin(angle));
+      ctx.lineTo(pt2.x - offset * Math.cos(angle), pt2.y - offset
+          * Math.sin(angle));
       ctx.closePath();
       ctx.fill();
 
@@ -424,8 +433,11 @@ lattice = {
         if (edge.data.taxonomy)
           lattice.sys.pruneEdge(edge);
       });
-      $("#dia_vis").dialog("option", "title",
-          elgg.echo('wespot_fca:lattice:lattice') + " '" + state.domain.name + "'");
+      $("#dia_vis").dialog(
+          "option",
+          "title",
+          elgg.echo('wespot_fca:lattice:lattice') + " '" + state.domain.name
+              + "'");
     } else {
       $("#dia_vis").dialog("option", "title",
           elgg.echo('wespot_fca:lattice:tax') + " '" + state.domain.name + "'");
@@ -488,9 +500,12 @@ lattice = {
     console.debug(new Date().toString());
     var num_lo = Object.keys(learningObjects).length;
 
-    var table = $(lattice.info).create("table", {
-      style : "background-color: inherit; vertical-align: bottom; table-layout: auto"
-    });
+    var table = $(lattice.info)
+        .create(
+            "table",
+            {
+              style : "background-color: inherit; vertical-align: bottom; table-layout: auto"
+            });
     var tr = table.create("tr", {
       style : "background-color: inherit"
     });
@@ -534,20 +549,23 @@ lattice = {
                 class : "input lattice_lo col",
                 style : "margin-left: -61px; margin-right: -61px; text-overflow: ellipsis; overflow: hidden;",
                 value : learningObjects[lo].name
-              }).data("url", learningObjects[lo].data).data("objectValuations", {}).data(
-              "attributeValuations", {}).click(function() {
-            if (!state.teacher) {
-              var postdata = {
-                "id" : state.domain.id,
-                "externalUID" : state.user.guid.toString(),
-                "objectValuations" : $(this).data("objectValuations"),
-                "attributeValuations" : $(this).data("attributeValuations")
-              };
-              backend.update_valuation(JSON.stringify(postdata), lattice.update_valuation);
-            }
-            window.open($(this).data("url"), "Learning Object", "width=800,height=600");
-            // console.debug(learningObjects[lo].description);
-          }).hover(function() {
+              }).data("url", learningObjects[lo].data).data("objectValuations",
+              {}).data("attributeValuations", {}).click(
+              function() {
+                if (!state.teacher) {
+                  var postdata = {
+                    "id" : state.domain.id,
+                    "externalUID" : state.user.guid.toString(),
+                    "objectValuations" : $(this).data("objectValuations"),
+                    "attributeValuations" : $(this).data("attributeValuations")
+                  };
+                  backend.update_valuation(JSON.stringify(postdata),
+                      lattice.update_valuation);
+                }
+                window.open($(this).data("url"), "Learning Object",
+                    "width=800,height=600");
+                // console.debug(learningObjects[lo].description);
+              }).hover(function() {
             $(this).css("background-color", "rgba(255,255,255,1)");
           }, function() {
             $(this).css("background-color", "rgba(255,255,255,0.6)");
@@ -653,57 +671,64 @@ lattice = {
       style : "background-color: inherit",
       colspan : "2"
     }).append(
-        Object.keys(concept.objects).length > 0 ? elgg.echo('wespot_fca:objs') + ":"
-            : "(No Objects)");
+        Object.keys(concept.objects).length > 0 ? elgg.echo('wespot_fca:objs')
+            + ":" : "(No Objects)");
 
-    var btn_expand = tr.create("td", {
-      rowspan : Object.keys(concept.objects).length + Object.keys(concept.attributes).length + 2,
-      "class" : "tr_spacer",
-      style : "vertical-align:middle"
-    }).create("input", {
-      type : "image",
-      id : "btn_show_lo",
-      class : "input",
-      style : "border: none; height: 30px; width: 16px; margin-left: 5px; margin-right: 0px;",
-      height : "30px",
-      width : "16px",
-      src : state.basedir + "img/right_s.svg"
-    }).click(function() {
-      if (!lattice.lo_shown) {
-        $(".td_lo").show();
-        $("#btn_lo_show").prop("disabled", true);
-        $(".lattice_o_a").css("white-space", "nowrap");
-        setTimeout(function() {
-          $(".lattice_o_a").css("white-space", "normal");
+    var btn_expand = tr
+        .create(
+            "td",
+            {
+              rowspan : Object.keys(concept.objects).length
+                  + Object.keys(concept.attributes).length + 2,
+              "class" : "tr_spacer",
+              style : "vertical-align:middle"
+            })
+        .create(
+            "input",
+            {
+              type : "image",
+              id : "btn_show_lo",
+              class : "input",
+              style : "border: none; height: 30px; width: 16px; margin-left: 5px; margin-right: 0px;",
+              height : "30px",
+              width : "16px",
+              src : state.basedir + "img/right_s.svg"
+            }).click(function() {
+          if (!lattice.lo_shown) {
+            $(".td_lo").show();
+            $("#btn_lo_show").prop("disabled", true);
+            $(".lattice_o_a").css("white-space", "nowrap");
+            setTimeout(function() {
+              $(".lattice_o_a").css("white-space", "normal");
 
-          $("#btn_lo_show").prop("disabled", false);
-        }, 290);
-        t_edit.css("padding-right", "3px");
-        t_name.css("padding-right", "3px");
-        t_descr.css("padding-right", "3px");
-        $("#btn_show_lo").prop("src", state.basedir + "img/left_s.svg");
-        $(lattice.info).animate({
-          marginLeft : "-" + num_lo * 28 + "px",
-          width : "+=" + num_lo * 28 + "px"
-        }, 300);
-      } else {
-        $(".td_lo").hide();
-        $("#btn_lo_show").prop("disabled", false);
-        $(".lattice_o_a").css("white-space", "normal");
-        t_edit.css("padding-right", "0px");
-        t_name.css("padding-right", "0px");
-        t_descr.css("padding-right", "0px");
-        $("#btn_show_lo").prop("src", state.basedir + "img/right_s.svg");
-        $(lattice.info).animate({
-          marginLeft : "0px",
-          width : "210px"
-        }, 300, function() {
+              $("#btn_lo_show").prop("disabled", false);
+            }, 290);
+            t_edit.css("padding-right", "3px");
+            t_name.css("padding-right", "3px");
+            t_descr.css("padding-right", "3px");
+            $("#btn_show_lo").prop("src", state.basedir + "img/left_s.svg");
+            $(lattice.info).animate({
+              marginLeft : "-" + num_lo * 28 + "px",
+              width : "+=" + num_lo * 28 + "px"
+            }, 300);
+          } else {
+            $(".td_lo").hide();
+            $("#btn_lo_show").prop("disabled", false);
+            $(".lattice_o_a").css("white-space", "normal");
+            t_edit.css("padding-right", "0px");
+            t_name.css("padding-right", "0px");
+            t_descr.css("padding-right", "0px");
+            $("#btn_show_lo").prop("src", state.basedir + "img/right_s.svg");
+            $(lattice.info).animate({
+              marginLeft : "0px",
+              width : "210px"
+            }, 300, function() {
 
-          $("#btn_lo_show").prop("disabled", false);
+              $("#btn_lo_show").prop("disabled", false);
+            });
+          }
+          lattice.lo_shown = !lattice.lo_shown;
         });
-      }
-      lattice.lo_shown = !lattice.lo_shown;
-    });
     if (Object.keys(learningObjects).length == 0)
       btn_expand.hide();
     //
@@ -740,9 +765,11 @@ lattice = {
         for ( var ol in o.learningObjects) {
           if (o.learningObjects[ol].id == lo) {
             tmp.create("txt", "x");
-            var ov = $("#btn_lo_" + o.learningObjects[ol].id).data("objectValuations");
+            var ov = $("#btn_lo_" + o.learningObjects[ol].id).data(
+                "objectValuations");
             ov[o.id] = 1;
-            $("#btn_lo_" + o.learningObjects[ol].id).data("objectValuations", ov);
+            $("#btn_lo_" + o.learningObjects[ol].id).data("objectValuations",
+                ov);
           }
         }
 
@@ -767,8 +794,9 @@ lattice = {
       style : "background-color: inherit",
       colspan : "2"
     }).append(
-        Object.keys(concept.attributes).length > 0 ? elgg.echo('wespot_fca:attrs') + ":"
-            : "(No Attributes)");
+        Object.keys(concept.attributes).length > 0 ? elgg
+            .echo('wespot_fca:attrs')
+            + ":" : "(No Attributes)");
     if (Object.keys(concept.objects).length > 0)
       for ( var lo in learningObjects) {
         tr.create("td", {
@@ -816,9 +844,11 @@ lattice = {
         for ( var ol in o.learningObjects) {
           if (o.learningObjects[ol].id == lo) {
             tmp.create("txt", "x");
-            var av = $("#btn_lo_" + o.learningObjects[ol].id).data("attributeValuations");
+            var av = $("#btn_lo_" + o.learningObjects[ol].id).data(
+                "attributeValuations");
             av[o.id] = 1;
-            $("#btn_lo_" + o.learningObjects[ol].id).data("attributeValuations", av);
+            $("#btn_lo_" + o.learningObjects[ol].id).data(
+                "attributeValuations", av);
           }
         }
       }
@@ -847,14 +877,17 @@ lattice = {
     tr.create("td", {
       style : "background-color: inherit"
     }).append(elgg.echo('wespot_fca:lattice:part_of'));
-    $(lattice.info).create("input", {
-      id : "btn_concept_save",
-      type : "button",
-      "class" : "input",
-      style : "position: absolute; bottom: 0; left: 0; right: 0; margin-bottom: 10px",
-      value : elgg.echo('wespot_fca:save'),
-      onclick : "lattice.update_concept(" + c + ")"
-    }).hide();
+    $(lattice.info)
+        .create(
+            "input",
+            {
+              id : "btn_concept_save",
+              type : "button",
+              "class" : "input",
+              style : "position: absolute; bottom: 0; left: 0; right: 0; margin-bottom: 10px",
+              value : elgg.echo('wespot_fca:save'),
+              onclick : "lattice.update_concept(" + c + ")"
+            }).hide();
   },
 
   enable_editing : function() {
@@ -931,59 +964,21 @@ lattice = {
 
   create_node : function(concept, mass, y, x, fixed) {
     var sys = lattice.sys;
-
-    var pre;
-    if (y) {
-      if (x) {
-        pre = sys.addNode(concept.id, {
-
-          "shape" : "dot",
-          "isObjectConcept" : concept.objectConcept,
-          "mass" : mass ? mass : 1,
-          "y" : y,
-          "x" : x,
-          "conceptid" : concept.id,
-          "active" : true,
-          "fixed" : fixed ? fixed : false,
-          "enabled" : true
-        });
-      } else
-        pre = sys.addNode(concept.id, {
-
-          "shape" : "dot",
-          "isObjectConcept" : concept.objectConcept,
-          "mass" : mass ? mass : 1,
-          "y" : y,
-          "conceptid" : concept.id,
-          "active" : true,
-          "fixed" : fixed ? fixed : false,
-          "enabled" : true
-        });
-    } else {
-      if (x) {
-        pre = sys.addNode(concept.id, {
-
-          "shape" : "dot",
-          "isObjectConcept" : concept.objectConcept,
-          "mass" : mass ? mass : 1,
-          "x" : x,
-          "conceptid" : concept.id,
-          "active" : true,
-          "fixed" : fixed ? fixed : false,
-          "enabled" : true
-        });
-      } else
-        pre = sys.addNode(concept.id, {
-
-          "shape" : "dot",
-          "conceptid" : concept.id,
-          "isObjectConcept" : concept.objectConcept,
-          "mass" : mass ? mass : 1,
-          "active" : true,
-          "fixed" : fixed ? fixed : false,
-          "enabled" : true
-        });
+    var data = {
+      "shape" : "dot",
+      "isObjectConcept" : concept.objectConcept,
+      "isAttributeConcept" : concept.attributeConcept,
+      "mass" : mass ? mass : 1,
+      "y" : y,
+      "conceptid" : concept.id,
+      "active" : true,
+      "fixed" : fixed ? fixed : false,
+      "enabled" : true
+    };
+    if (x) {
+      data.x = x;
     }
+    var pre = sys.addNode(concept.id, data);
     return pre;
   },
 
@@ -1019,7 +1014,8 @@ lattice = {
       // console.debug("Successor: " + successors[s].name);
       var post = sys.getNode(successors[s].id);
       if (post) {
-        var isTaxonomy = (!util.containsConcept(concept.successors, successors[s]))
+        var isTaxonomy = (!util.containsConcept(concept.successors,
+            successors[s]))
             && (util.containsConcept(concept.taxonomySuccessors, successors[s]));
         post.p.y = y;
         // if (isTaxonomy)
@@ -1047,8 +1043,6 @@ lattice = {
   },
 
   calc_color : function(valuation) {
-    // FOR REVIEW:
-    return "50,50,50";
     if (valuation < 0) {
       var val = valuation + 1;
       var r = 255 - (55 * val);
@@ -1083,7 +1077,8 @@ lattice = {
 
       // console.debug("concept " + concepts[c].name + " is part fo taxonomy");
       if (first) {
-        var botnode = lattice.create_node(concepts[c], 2, y, 0.5, concepts.length > 2);
+        var botnode = lattice.create_node(concepts[c], 2, y, 0.5,
+            concepts.length > 2);
         botnode.data.fixed = concepts.length > 2;
 
         botnode.data.color_obj = lattice.calc_color(concepts[c].valuations[0]);
@@ -1091,7 +1086,8 @@ lattice = {
 
         lattice.node_bot = botnode;
       } else if (concepts[c].successors.length == 0) {
-        var topnode = lattice.create_node(concepts[c], 2, 0, 0.5, concepts.length > 2);
+        var topnode = lattice.create_node(concepts[c], 2, 0, 0.5,
+            concepts.length > 2);
         topnode.data.fixed = concepts.length > 2;
 
         topnode.data.color_obj = lattice.calc_color(concepts[c].valuations[0]);
