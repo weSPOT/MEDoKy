@@ -632,32 +632,11 @@ logic = {
                     }
                   });
             });
-
   },
-  /*
-   * create_object : function(name, description) {
-   * $("#input_create_obj_name").prop("value", "");
-   * $("#input_create_obj_description").prop("value", ""); var now = Date.now();
-   * var object = { "name" : name, "description" : description, "id" : now,
-   * "creationId": state.gid+state.user+new Date().getTime() };
-   * 
-   * state.new_objects[now] = object; $("#dia_create_obj").dialog("close");
-   * $("#dia_set_obj").dialog("close"); ui.set_item(state.obj_index, 0); },
-   */
 
   remove_lo : function(lo, object, select, o) {
     for ( var i in object.learningObjects) {
       if (object.learningObjects[i] == lo) {
-        /*
-         * var id = select.options[select.selectedIndex].value; if (o == 1) {
-         * 
-         * if (id in state.backend_attributes) {
-         * state.backend_attributes[id].learningObjects[i].splice(i, 1); } else {
-         * state.new_attributes[id].learningObjects[i].splice(i, 1); } } else {
-         * if (id in state.backend_objects) {
-         * state.backend_objects[id].learningObjects[i].splice(i, 1); } else {
-         * state.new_objects[id].learningObjects[i].splice(i, 1); } }
-         */
         delete state.active_l_objects[object.learningObjects[i].id];
         object.learningObjects.splice(i, 1);
         break;
@@ -667,8 +646,6 @@ logic = {
   },
 
   set_l_object : function(object, select, o) {
-
-    // 
     $(".item_description").empty();
     var l_objs = util.filter_l_lobjects(object);
     var sel = $("#sel_set_lo").empty();
@@ -682,30 +659,18 @@ logic = {
     }
     sel.prop("selectedIndex", -1);
     $("#dia_set_lo").dialog("open");
-    // util.underConstruction("#dia_set_lo");
     $("#dia_set_lo_content").css("background", "rgba(255,255,255,0.6)");
-    // $("#dia_set_lo").removeData();
 
     $("#dia_set_lo").data(logic.key_lo, {
       "object" : object,
       "select" : select,
       "o" : o
     });
-    // object.learningObjects.push({
-    // id : Date.now(),
-    // name : "LO " + Math.floor((Math.random() * Date.now()) / 590),
-    // description : "LO dummy " + Date.now()
-    // });
-    // logic.save_item(object.name, select, object.description, o);
   },
 
   set_lo : function() {
     var data = $("#dia_set_lo").data(logic.key_lo);
     var sel = $("#sel_set_lo").get(0);
-
-    /*
-     * if (selectedIndex != -1) selectedIndex++;
-     */
     data.object.learningObjects.push(JSON
         .parse(sel.options[sel.selectedIndex].value));
     for ( var i in data.object.learningObjects) {
@@ -717,7 +682,7 @@ logic = {
         data.o);
   },
 
-  save_item : function(name, select, description, o) {
+  save_item : function(name, select, description, type) {
 
     var create = select.selectedIndex == -1;
     if (create) {
@@ -729,79 +694,48 @@ logic = {
         "learningObjects" : [],
         "creationId" : state.gid + state.user.guid + new Date().getTime()
       };
-      // ui.cancel_item_edit(select, o);
-      if (o == 1) {
+
+      if (type == 1) {
         state.new_attributes[now] = object;
-        // $("#attr_" + state.attr_index).data(logic.key_attr, object);
-        ui.set_item(state.attr_index, o, now);
+        ui.set_item(state.attr_index, type, now);
       } else {
         state.new_objects[now] = object;
-        // $("#obj_" + state.attr_index).data(logic.key_obj, object);
-        ui.set_item(state.obj_index, o, now);
+        ui.set_item(state.obj_index, type, now);
       }
     } else {
-      var update = false;
-      if (o == 1)
-        update = select.options[select.selectedIndex].value in state.backend_attributes;
-      else
-        update = select.options[select.selectedIndex].value in state.backend_objects;
-      if (update) {
-        if (o == 1) {
-          var obj = state.backend_attributes[select.options[select.selectedIndex].value];
-          obj.name = name;
-          obj.description = description;
-          for ( var l in obj.learningObjects) {
-            obj.learningObjects[l].owner.objects = {};
+
+      var items = state.backend_objects;
+      var new_items = state.new_objects;
+      var index = state.obj_index;
+      var updatefunc = backend.update_object;
+      if (type == 1) {
+        items = state.backend_attributes;
+        new_items = state.new_attributes;
+        index = state.attr_index;
+        updatefunc = backend.update_attribute;
+      }
+
+      if (select.options[select.selectedIndex].value in items) { // update!
+        var obj = items[select.options[select.selectedIndex].value];
+        obj.name = name;
+        obj.description = description;
+        for ( var l in obj.learningObjects) {
+          // check yourself before you wreck yourself
+          if (obj.learningObjects[l].owner) {
+            obj.learningObjects[l].owner.objects = {}; // cannot parse
             obj.learningObjects[l].owner.attributes = {};
           }
-          // delete obj["learningObjects"];
-          backend
-              .update_attribute(
-                  JSON.stringify(obj),
-                  function(resp) {
-                    // 
-
-                    state.backend_attributes[select.options[select.selectedIndex].value] = resp;
-                    ui.set_item(state.attr_index, o,
-                        select.options[select.selectedIndex].value);
-                  });
-
-          // FIXME!!! SO MUCH DUPLICATED CODE; REFACTOR ASAP!
-        } else {
-          var obj = state.backend_objects[select.options[select.selectedIndex].value];
-          obj.name = name;
-          obj.description = description;
-          for ( var l in obj.learningObjects) {
-            obj.learningObjects[l].owner.objects = {};
-            obj.learningObjects[l].owner.attributes = {};
-          }
-          // delete obj["learningObjects"];
-          backend
-              .update_object(
-                  JSON.stringify(obj),
-                  function(resp) {
-                    // 
-                    state.backend_objects[select.options[select.selectedIndex].value] = resp;
-                    ui.set_item(state.obj_index, o,
-                        select.options[select.selectedIndex].value);
-                  });
         }
+        updatefunc(JSON.stringify(obj), function(resp) {
+          items[select.options[select.selectedIndex].value] = resp;
+          ui.set_item(index, type, select.options[select.selectedIndex].value);
+        });
       } else {
-        if (o == 1) {
-          var obj = state.new_attributes[select.options[select.selectedIndex].value];
-          obj.name = name;
-          obj.description = description;
-          state.new_attributes[select.options[select.selectedIndex].value] = obj;
-          ui.set_item(state.attr_index, o,
-              select.options[select.selectedIndex].value);
-        } else {
-          var obj = state.new_objects[select.options[select.selectedIndex].value];
-          obj.name = name;
-          obj.description = description;
-          state.new_objects[select.options[select.selectedIndex].value] = obj;
-          ui.set_item(state.obj_index, o,
-              select.options[select.selectedIndex].value);
-        }
+        var obj = new_items[select.options[select.selectedIndex].value];
+        obj.name = name;
+        obj.description = description;
+        new_items[select.options[select.selectedIndex].value] = obj;
+        ui.set_item(index, type, select.options[select.selectedIndex].value);
       }
     }
   },
@@ -1036,8 +970,6 @@ logic = {
                           + $(".td_attr")[index].childNodes[2].id.split("_")[1];
 
                       var attribute = JSON.parse(a);
-                      // 
-                      // 
                       $(id).data(logic.key_attr, attribute);
                       $(id).prop("value", attribute.name);
                       ++index;
@@ -1499,17 +1431,53 @@ ui = {
 
     for ( var elem in tails) {
       if (i == 0) {
-        $(
-            "<td class=\"right td_attr_"
-                + id
-                + "\"><input type=\"image\" src=\""
-                + state.basedir
-                + "img/delete.svg\" "
-                + " width=\"16px\" height= \"16px\" alt=\"x\" title=\"Delete Attribute\" id=\"btn_del_attr_"
-                + id
-                + "\" class=\"input btn_del_attr\" onclick=\"ui.rem_attribute("
-                + id + ")\" /></td>").insertBefore($(tails[elem]));
+        var td = $(document.createElement("td"));
+        td.addClass("right td_attr_" + id);
+        td.create("input", {
+          type : "image",
+          src : state.basedir + "img/delete.svg",
+          width : "16px",
+          height : "16px",
+          alt : "x",
+          title : "Remove Attribute",
+          id : "btn_del_attr_" + id,
+          class : "input btn_del_attr",
+          onclick : "ui.rem_attribute(" + id + ")"
+        });
+        td.insertBefore($(tails[elem]));
       } else if (i == 1) {
+     /*   var td = $(document.createElement("td"));
+        td.addClass("right td_attr_" + id);
+        td.create("input", {
+          type : "image",
+          src : state.basedir + "img/left.svg",
+          id : "btn_move_left_" + id,
+          width : "16px",
+          height : "40px",
+          alt : "&lt",
+          title : "Move Left",
+          class : "input btn_move_left",
+          onclick : "ui.move_left(" + id + ")"
+        });
+        td.create("input", {
+          type : "image",
+          src : state.basedir + "img/right.svg",
+          id: "btn_move_right_"+id,
+          width:"16px",
+          height:"40px",
+          alt :"&gt",
+          title: "Move Right",
+          class: "input btn_move_right",
+          onclick: "ui.move_left("+id+")",
+        });
+        td.create("input",{
+          type:"button",
+          id: "attr_"+id,
+          class:"input btn_attr col",
+          value : "Dummy Attribute "+(id+1),
+          onclick: "ui.set_item("+id+",1)"
+        });
+        td.insertBefore($(tails[elem]));*/
         $(
             "<td class=\"td_attr td_attr_"
                 + id
@@ -1532,7 +1500,7 @@ ui = {
                 + ")\" /><input type=\"button\" id=\"attr_"
                 + id
                 + "\" "
-                + "class=\"input fullheight btn_attr col\" value=\"Dummy Attribute "
+                + "class=\"input btn_attr col\" value=\"Dummy Attribute "
                 + (id + 1) + "\" onclick=\"ui.set_item(" + id + ",1)\" /></td>")
             .insertBefore($(tails[elem]));
         ui.setup_hover_attr($("#attr_" + id));

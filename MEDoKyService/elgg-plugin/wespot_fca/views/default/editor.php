@@ -86,7 +86,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
     id="btn_move_right_0" width="16px" height="40px" alt="&gt;"
     title="<?php echo elgg_echo('wespot_fca:move_right'); ?>" class="input btn_move_right"
     onclick="ui.move_right(0)" /><input type="button" id="attr_0"
-    class="input fullheight btn_attr col"
+    class="input btn_attr col"
     value="<?php echo elgg_echo('wespot_fca:attr:dummy'); ?> 1" onclick="ui.set_item(0,1)" /></td>
    <td class="td_attr td_attr_1"><input type="image" src="<?php echo $basedir; ?>img/left.svg"
     id="btn_move_left_1" width="16px" height="40px" alt="&lt;"
@@ -95,7 +95,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
     id="btn_move_right_1" width="16px" height="40px" alt="&gt;"
     title="<?php echo elgg_echo('wespot_fca:move_right'); ?>" class="input btn_move_right"
     onclick="ui.move_right(1)" /><input type="button" id="attr_1"
-    class="input fullheight btn_attr col"
+    class="input  btn_attr col"
     value="<?php echo elgg_echo('wespot_fca:attr:dummy'); ?> 2" onclick="ui.set_item(1,1)" /></td>
    <td class="td_attr td_attr_2"><input type="image" src="<?php echo $basedir; ?>img/left.svg"
     id="btn_move_left_2" width="16px" height="40px" alt="&lt;"
@@ -104,7 +104,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
     id="btn_move_right_2" width="16px" height="40px" alt="&gt;"
     title="<?php echo elgg_echo('wespot_fca:move_right'); ?>" class="input btn_move_right"
     onclick="ui.move_right(2)" /><input type="button" id="attr_2"
-    class="input fullheight btn_attr col"
+    class="input  btn_attr col"
     value="<?php echo elgg_echo('wespot_fca:attr:dummy'); ?> 3" onclick="ui.set_item(2,1)" /></td>
    <td class="td_attr td_attr_3"><input type="image" src="<?php echo $basedir; ?>img/left.svg"
     id="btn_move_left_3" width="16px" height="40px" alt="&lt;"
@@ -113,7 +113,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
     id="btn_move_right_3" width="16px" height="40px" alt="&gt;"
     title="<?php echo elgg_echo('wespot_fca:move_right'); ?>" class="input btn_move_right"
     onclick="ui.move_right(3)" /><input type="button" id="attr_3"
-    class="input fullheight btn_attr col"
+    class="input  btn_attr col"
     value="<?php echo elgg_echo('wespot_fca:attr:dummy'); ?> 4" onclick="ui.set_item(3,1)" /></td>
    <td class="tail" style="background-color: #fff; vertical-alignment: middle"><input type="image"
     class="input" style="border: none; padding-left: 10px;"
