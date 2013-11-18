@@ -77,8 +77,6 @@ backend = {
             }
             if (callback)
               callback();
-            // 
-            // state.backend_objects = obj;
           },
           error : function(obj) {
             console.error(JSON.stringify(obj));
@@ -417,18 +415,20 @@ util = {
 
     if (current)
       current = current.id;
+
     for (var i = 0; i < currentObjects.length; ++i) {
       var obj = $(currentObjects[i]);
       if (obj.data(key)) {
-        // 
         if (obj.data(key).id in entities) {
           if (current != objs[obj.data(key).id].id)
             delete objs[obj.data(key).id];
         }
       }
     }
+
     for ( var i in new_entities)
       objs[i] = new_entities[i];
+
     for (var i = 0; i < currentObjects.length; ++i) {
       var obj = $(currentObjects[i]);
       if (obj.data(key)) {
@@ -453,9 +453,19 @@ util = {
         l_objs[i] = state.backend_l_objects[i];
     return l_objs;
   },
-  
-  // TODO refactoring -> remove specific methods and only use generic one
-  replace_objects : function(obj) {
+
+  replace_items : function(obj, entityType) {
+    var entities = state.backend_objects;
+    var new_entities = state.new_objects;
+    var id_buttons = ".btn_obj";
+    var key = logic.key_obj;
+    if (entityType == entity_types.attribute) {
+      entities = state.backend_attributes;
+      new_entities = state.new_attributes;
+      id_buttons = ".btn_attr";
+      key = logic.key_attr;
+    }
+
     for ( var o in obj) {
       var object = {
         "name" : obj[o].name,
@@ -463,71 +473,18 @@ util = {
         "id" : o,
         "learningObjects" : obj[o].learningObjects
       };
-      state.backend_objects[o] = object;
+      entities[o] = object;
       for ( var i in object.learningObjects) {
         state.active_l_objects[object.learningObjects[i].id] = object.learningObjects[i];
       }
-      var currentObjects = $(".btn_obj");
+      var currentObjects = $(id_buttons);
       for (var i = 0; i < currentObjects.length; ++i) {
-        if ($.data(currentObjects[i], logic.key_obj).id == obj[o].id) {
-          $(currentObjects[i]).data(logic.key_obj, object);
-        }
-      }
-      delete state.new_objects[obj[o].id];
-    }
-  },
-
-  replace_attributes : function(obj) {
-    for ( var o in obj) {
-      var object = {
-        "name" : obj[o].name,
-        "description" : obj[o].description,
-        "id" : o,
-        "learningObjects" : obj[o].learningObjects
-      };
-      for ( var i in object.learningObjects) {
-        state.active_l_objects[object.learningObjects[i].id] = object.learningObjects[i];
-      }
-      state.backend_attributes[o] = object;
-      var currentObjects = $(".btn_attr");
-      for (var i = 0; i < currentObjects.length; ++i) {
-        if ($.data(currentObjects[i], logic.key_attr).id == obj[o].id) {
-          $(currentObjects[i]).data(logic.key_attr, object);
-        }
-      }
-      delete state.new_attributes[obj[o].id];
-    }
-  },
-
-  replace_items : function(obj, o) {
-    for ( var n in obj) {
-
-      var object = {
-        "name" : obj[n].name,
-        "description" : obj[n].description,
-        "id" : n,
-        "learningObjects" : obj[n].learningObjects
-      };
-      (o == 1) ? state.backend_attributes[n] = object
-          : state.backend_objects[n] = object;
-      for ( var i in object.learningObjects) {
-        state.active_l_objects[object.learningObjects[i].id] = object.learningObjects[i];
-      }
-      var currentObjects;
-      var key;
-      (o == 1) ? key = logic.key_attr : key = logic.key_obj;
-      (o == 1) ? currentObjects = $(".btn_attr")
-          : currentObjects = $(".btn_obj");
-      for (var i = 0; i < currentObjects.length; ++i) {
-
-        if ($.data(currentObjects[i], key).id == obj[n].id) {
+        if ($.data(currentObjects[i], key).id == obj[o].id) {
           $(currentObjects[i]).data(key, object);
         }
       }
+      delete new_entities[obj[o].id];
     }
-    for ( var n in obj)
-      (o == 1) ? delete state.new_attributes[obj[n].id]
-          : delete state.new_objects[obj[n].id];
   },
 
   underConstruction : function(selector) {
@@ -687,7 +644,7 @@ logic = {
         data.o);
   },
 
-  save_item : function(name, select, description, type) {
+  save_item : function(name, select, description, entityType) {
 
     var create = select.selectedIndex == -1;
     if (create) {
@@ -700,12 +657,12 @@ logic = {
         "creationId" : state.gid + state.user.guid + new Date().getTime()
       };
 
-      if (type == 1) {
+      if (entityType == 1) {
         state.new_attributes[now] = object;
-        ui.set_item(state.attr_index, type, now);
+        ui.set_item(state.attr_index, entityType, now);
       } else {
         state.new_objects[now] = object;
-        ui.set_item(state.obj_index, type, now);
+        ui.set_item(state.obj_index, entityType, now);
       }
     } else {
 
@@ -713,7 +670,7 @@ logic = {
       var new_items = state.new_objects;
       var index = state.obj_index;
       var updatefunc = backend.update_object;
-      if (type == 1) {
+      if (entityType == 1) {
         items = state.backend_attributes;
         new_items = state.new_attributes;
         index = state.attr_index;
@@ -733,14 +690,16 @@ logic = {
         }
         updatefunc(JSON.stringify(obj), function(resp) {
           items[select.options[select.selectedIndex].value] = resp;
-          ui.set_item(index, type, select.options[select.selectedIndex].value);
+          ui.set_item(index, entityType,
+              select.options[select.selectedIndex].value);
         });
       } else {
         var obj = new_items[select.options[select.selectedIndex].value];
         obj.name = name;
         obj.description = description;
         new_items[select.options[select.selectedIndex].value] = obj;
-        ui.set_item(index, type, select.options[select.selectedIndex].value);
+        ui.set_item(index, entityType,
+            select.options[select.selectedIndex].value);
       }
     }
   },
@@ -812,7 +771,6 @@ logic = {
         mapping[obj.id.toString()].push(attr.id);
 
       } catch (error) {
-        // 
       }
     }
 
@@ -865,10 +823,8 @@ logic = {
 
   create_lo : function(name, description, data) {
 
-    // var data =$("#dia_set_lo").data(logic.key_lo);
     var sel = document.getElementById("sel_set_lo");
     $(sel.options[0]).prop("disabled", true);
-    // $(sel).empty();
     if ((data.substring(0, 7) != "http://")
         && (data.substring(0, 8) != "https://"))
       data = "http://" + data;
@@ -888,17 +844,13 @@ logic = {
         lo = obj[i];
         lo.id = i;
       }
-      // 
-
       state.backend_l_objects[lo.id] = lo;
       var opt = document.createElement("option");
       opt.text = name;
       opt.value = JSON.stringify(lo);
       $(sel).append($(opt));
       sel.selectedIndex = sel.options.length - 1;
-      // state.new_l_objects[lo.id] = lo;
       $("#dia_create_lo").dialog("close");
-      // sel.selectedIndex = sel.selectedIndex - 1;
 
     });
   },
@@ -930,10 +882,10 @@ logic = {
 
     backend.create_objects(JSON.stringify(objects), function(obj) {
 
-      util.replace_objects(obj);
+      util.replace_items(obj, entity_types.object);
       backend.create_attributes(JSON.stringify(attributes), function(attr) {
 
-        util.replace_attributes(attr);
+        util.replace_items(attr, entity_types.attribute);
         if (callback)
           callback();
       });
@@ -944,7 +896,6 @@ logic = {
 
     state.domain = domain;
     $("#h_domain_name").empty().create("txt", domain.name);
-    // 
     var num_attributes = Object.keys(domain.mapping.attributes).length;
     var num_objects = Object.keys(domain.mapping.objects).length;
 
@@ -1019,10 +970,6 @@ logic = {
 
   load : function(domainid, teacher) {
     $("#dia_set_dom").dialog("close");
-    // state.domain = domain;
-    // state.new
-    console.debug(teacher);
-    console.debug(state.load_domain);
     if (state.teacher) {
       backend.get_domain(domainid, function(domain) {
         logic.populate_domain(domain, teacher);
@@ -1303,28 +1250,21 @@ ui = {
     $("#dia_create_lo").dialog("open");
     $("#input_create_lo_name").val("");
     $("#input_create_lo_description").val("");
-    // util.underConstruction("#dia_create_lo");
   },
 
   set_item : function(index, entityType, id) {
 
-    // var select = document.getElementById("sel_set_obj");
-    // if (entityType == entity_types.attribute)
-    // select = document.getElementById("sel_set_attr");
-
     ui.prepare_dialog(entityType);
-    (entityType == entity_types.attribute) ? state.attr_index = index : state.obj_index = index;
-    // 
+    (entityType == entity_types.attribute) ? state.attr_index = index
+        : state.obj_index = index;
     var key;
     (entityType == entity_types.attribute) ? key = logic.key_attr
         : key = logic.key_obj;
     var data;
     (entityType == entity_types.attribute) ? data = $("#attr_" + index)
         : data = $("#obj_" + index);
-    // 
     if (!id && data.data(key))
       id = data.data(key).id;
-    // 
     var inited = (entityType == entity_types.attribute) ? state.inited_attr
         : state.inited_obj;
     if (state.msie && !(inited)) {
@@ -1342,7 +1282,6 @@ ui = {
     } else {
       var selectedIndex = -1;
       var objects = util.filter_items(entityType);
-      // 
       var sel;
       (entityType == entity_types.attribute) ? sel = $("#sel_set_attr")
           : sel = $("#sel_set_obj");
@@ -1355,21 +1294,18 @@ ui = {
       sel.create("option").prop("disabled", true).create("txt", newitem);
       for ( var obj in objects) {
         ++i;
-        // 
-        // 
         if (id && (objects[obj].id == id))
           selectedIndex = i; // watch out for disabled attributes!
         sel.create("option", {
           value : obj
         }).create("txt", objects[obj].name);
       }
-      // now here comes teh tricky part: Disabled options mess with the indices
+      // now here comes the tricky part: Disabled options mess with the indices
       // But if none was selected (-1) we want to kkep it that way
       if (selectedIndex != -1)
         selectedIndex++;
       sel.prop("selectedIndex", selectedIndex);
 
-      // 
       (entityType == entity_types.attribute) ? $("#dia_set_attr")
           .dialog("open") : $("#dia_set_obj").dialog("open");
       if (selectedIndex != -1) {
@@ -1448,7 +1384,7 @@ ui = {
           width : "16px",
           height : "16px",
           alt : "x",
-          title : "Remove Attribute",
+          title : elgg.echo('wespot_fca:attr:rem'),
           id : "btn_del_attr_" + id,
           class : "input btn_del_attr",
           onclick : "ui.rem_attribute(" + id + ")"
@@ -1464,7 +1400,7 @@ ui = {
           width : "16px",
           height : "40px",
           alt : "&lt",
-          title : "Move Left",
+          title : elgg.echo('wespot_fca:move_left'),
           class : "input btn_move_left",
           onclick : "ui.move_left(" + id + ")"
         });
@@ -1475,7 +1411,7 @@ ui = {
           width : "16px",
           height : "40px",
           alt : "&gt",
-          title : "Move Right",
+          title : elgg.echo('wespot_fca:move_right'),
           class : "input btn_move_right",
           onclick : "ui.move_left(" + id + ")",
         });
@@ -1483,8 +1419,8 @@ ui = {
           type : "button",
           id : "attr_" + id,
           class : "input btn_attr col",
-          value : "Dummy Attribute " + (id + 1),
-          onclick : "ui.set_item(" + id + ",1)"
+          value : elgg.echo('wespot_fca:obj:dummy') + " " + (id + 1),
+          onclick : "ui.set_item(" + id + ",entity_types.attribute)"
         });
         td.insertBefore($(tails[elem]));
         ui.setup_hover_attr($("#attr_" + id));
@@ -1523,7 +1459,7 @@ ui = {
       "type" : "image",
       "src" : state.basedir + "img/up.svg",
       "alt" : "^",
-      "title" : "Move Up",
+      "title" : elgg.echo('wespot_fca:move_up'),
       "id" : "btn_move_up_" + id,
       "class" : "input btn_move_up",
       "onclick" : "ui.move_up(" + id + ")",
@@ -1534,7 +1470,7 @@ ui = {
       "type" : "image",
       "src" : state.basedir + "img/down.svg",
       "alt" : "v",
-      "title" : "Move Down",
+      "title" : elgg.echo('wespot_fca:move_down'),
       "id" : "btn_move_down_" + id,
       "class" : "input btn_move_down",
       "onclick" : "ui.move_down(" + id + ")",
@@ -1546,7 +1482,7 @@ ui = {
       "type" : "image",
       "src" : state.basedir + "img/delete.svg",
       "alt" : "x",
-      "title" : "Remove Object",
+      "title" : elgg.echo('wespot_fca:obj:rem'),
       "id" : "btn_del_obj_" + id,
       "class" : "input btn_del_obj",
       "onclick" : "ui.rem_object(" + id + ")"
@@ -1555,8 +1491,8 @@ ui = {
       "type" : "button",
       "id" : "obj_" + id,
       "class" : "input btn_obj",
-      "value" : "Dummy Object " + (id + 1),
-      "onclick" : "ui.set_item(" + id + ",0)"
+      "value" : elgg.echo('wespot_fca:obj:dummy') + " " + (id + 1),
+      "onclick" : "ui.set_item(" + id + ",entity_types.object)"
     }));
 
     for (var a = 0; a < attrs.length; ++a) {
@@ -1610,75 +1546,57 @@ ui = {
     $("#dia_create_attr").dialog("open");
   },
 
-  display_description : function(select, o) {
+  display_description : function(select, entityType) {
     $(".item_description").empty();
     if (select.selectedIndex == 0) {
-      if (o == 0) {
-        ui.create_lo(o);
+      if (entityType == entity_types.learningobject) {
+        ui.create_lo(entityType);
         select.selectedIndex = -1;
-      } else if (o == 2) {
-
+      } else if (entityType == entity_types.domain) {
         var str_domain = select.options[select.selectedIndex].value;
-
         if (str_domain != "-1") {
-          var obj = JSON.parse(select.options[select.selectedIndex].value);
-          $("#btn_choose_dom_ok").prop("disabled", false);
-          $(".item_description").create("txt", obj.description);
-          if (obj.owner) {
-            $(".item_description").create("br");
-            $(".item_description").create(
-                "txt",
-                "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name
-                    + ")");
-          }
+          ui.dispaly_domain_escription(select);
         } else {
           $("#btn_choose_dom_ok").prop("disabled", true);
         }
       }
     } else if (select.selectedIndex != -1) {
-
-      if (o == 2) {
-
+      if (entityType == entity_types.domain) {
         var str_domain = select.options[select.selectedIndex].value;
-
         if (str_domain != "-1") {
-          var obj = JSON.parse(select.options[select.selectedIndex].value);
-          $("#btn_choose_dom_ok").prop("disabled", false);
-          $(".item_description").create("txt", obj.description);
-          if (obj.owner) {
-            $(".item_description").create("br");
-            $(".item_description").create(
-                "txt",
-                "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name
-                    + ")");
-          }
+          ui.dispaly_domain_escription(select);
         } else {
           $("#btn_choose_dom_ok").prop("disabled", true);
         }
-      } else if (o == 0) {
-        var obj = JSON.parse(select.options[select.selectedIndex].value);
-        $(".item_description").create("txt", obj.description);
-        if (obj.owner) {
-          $(".item_description").create("br");
-          $(".item_description").create(
-              "txt",
-              "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name
-                  + ")");
-        }
+      } else if (entityType == entity_types.learningobject) {
+        ui.dispaly_domain_escription(select);
       }
     }
   },
 
-  set_lo : function(object, select, o) {
+  dispaly_domain_escription : function(select) {
+
+    var obj = JSON.parse(select.options[select.selectedIndex].value);
+    $("#btn_choose_dom_ok").prop("disabled", false);
+    $(".item_description").create("txt", obj.description);
+    if (obj.owner) {
+      $(".item_description").create("br");
+      $(".item_description")
+          .create(
+              "txt",
+              "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name
+                  + ")");
+    }
+  },
+  set_lo : function(object, select, entityType) {
     $("#btn_choose_lo_ok").unbind("click");
     $("#btn_choose_lo_ok").click(function() {
-      logic.save_item(object.name, select, object.description, o);// name,
+      logic.save_item(object.name, select, object.description, entityType);// name,
     });
   },
 
-  create_lo_div : function(lo, object, div_lo, select, o) {
-    // 
-    // 
+  create_lo_div : function(lo, object, div_lo, select, entityType) {
+
     var div = div_lo.create("div", {
       id : "lo_" + lo.id,
       "class" : "span_lo"
@@ -1706,7 +1624,7 @@ ui = {
       width : "16px",
       height : "16px"
     }).click(function() {
-      logic.remove_lo(lo, object, select, o);
+      logic.remove_lo(lo, object, select, entityType);
     });
     div.hover(function() {
       ui.hide_lo_buttons();
@@ -1717,8 +1635,7 @@ ui = {
   },
 
   display_learning_objects : function(object, select, entityType) {
-    // 
-    // 
+
     var div_lo;
     (entityType == entity_types.attribute) ? div_lo = $("#lo_attr")
         : div_lo = $("#lo_obj");
@@ -1737,16 +1654,10 @@ ui = {
       class : "input btn_add_lo"
     }).click(function() {
       logic.set_l_object(object, select, entityType);
-      // name,
-      // select,
-      // description,
-      // o
-      // ui.display_learning_objects(object, o);
     });
   },
 
   display_item_description : function(select, entityType) {
-    // ui.hide_lo_buttons();
     $(select.options[0]).prop("disabled", true);
 
     $(".div_lo").empty();
@@ -1802,7 +1713,6 @@ ui = {
   },
 
   show_lo_buttons : function(lo) {
-    // $(this).css("border-color", "#888");
     $(lo).children(".txt_lo").css("border-bottom-right-radius", "5px");
     $(lo).children(".txt_lo").css("background-color", "#fff");
 
@@ -1813,7 +1723,6 @@ ui = {
     $(".div_lo_buttons").css("z-index", "-1");
     $(".txt_lo").css("border-bottom-right-radius", "3px");
     $(".txt_lo").css("background-color", "rgba(255,255,255,0.9)");
-    // $(".span_lo").css("border", "1px solid #FFF");
   },
   cancel_item_edit : function(select, entityType) {
     state.editing = false;
@@ -1888,10 +1797,8 @@ ui = {
 
   show_initial_domain : function(courses) {
     for ( var id in courses) {
-
       if (courses[id].externalCourseID == state.gid) {
         for ( var d in courses[id].domains) {
-
           logic.load(d, state.teacher);
           break;
         }
@@ -1944,7 +1851,6 @@ ui = {
         lattice.switch_view();
       }, 1500);
       $("#cb_latticeview").prop("checked", false);
-      // lattice.sys.stop();
       try {
         $("#dia_vis").dialogExtend("restore");
       } catch (error) {

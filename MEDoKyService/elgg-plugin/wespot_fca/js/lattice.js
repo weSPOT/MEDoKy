@@ -114,9 +114,7 @@ lattice = {
               lattice.enable_all();
             else
               lattice.enable_upper(lattice.sys.getEdgesFrom(dragged.node));
-            // for ( var xyz in lattice.sys.getEdgesTo(dragged.node)) {
-            // console.debug(lattice.sys.getEdgesTo(dragged.node)[xyz]);
-            // }
+      
             lattice.enable_lower(lattice.sys.getEdgesTo(dragged.node));
             dragged.node.data.objActive = true;
             dragged.node.data.attrActive = true;
@@ -155,7 +153,6 @@ lattice = {
         if (dragged.node !== null && !dragged.node.data.fixed) {
           dragged.node.fixed = false;
         }
-        // dragged.node.tempMass = 1000;
         dragged = null;
         $(lattice.canvas).unbind('mousemove', handler.dragged);
         $(window).unbind('mouseup', handler.dropped);
@@ -196,8 +193,6 @@ lattice = {
     lattice.done = false;
     lattice.initial = true;
     lattice.taxonomy_edges = [];
-    // lattice.latticeview=true;
-    // lattice.sys.screenSize(lattice.canvas.width, lattice.canvas.height);
     lattice.sys.parameters({
       repulsion : 1000,
       stiffness : 1500,
@@ -230,7 +225,6 @@ lattice = {
         ctx.strokeStyle = lattice.color_bg_inactive;
       ctx.beginPath();
       ctx.arc((pt.x), (pt.y), w, 0, 2 * Math.PI, true);
-      // ctx.lineWidth = 4;
 
       ctx.stroke();
       if (node.data.active)
@@ -253,7 +247,6 @@ lattice = {
         else
           ctx.strokeStyle = "rgba(0,0,0,0.5)";
       }
-      // ctx.lineWidth = 4;
       ctx.stroke();
 
       var col = "rgba(255,255,255,0.5)";
@@ -294,7 +287,6 @@ lattice = {
       ctx.closePath();
 
       if (node.data.objActive) {
-        // ctx.lineWidth = 4;
         ctx.strokeStyle = lattice.color_bg_active;
         ctx.font = "bold 10pt sans-serif";
         ctx.strokeText(node.data.obj, pt.x, pt.y - 1.5 * w - 3);
@@ -304,7 +296,6 @@ lattice = {
         ctx.fillText(node.data.obj, pt.x, pt.y - 1.5 * w - 3);
       }
       if (node.data.attrActive) {
-        // ctx.lineWidth = 4;
         ctx.strokeStyle = lattice.color_bg_active;
         ctx.font = "bold 10pt sans-serif";
         ctx.strokeText(node.data.attr, pt.x, pt.y + 10 + 1.5 * w);
@@ -378,7 +369,6 @@ lattice = {
       ctx.beginPath();
       ctx.lineTo(pt2.x - arrow * Math.cos(angle - Math.PI / 20), pt2.y - arrow
           * Math.sin(angle - Math.PI / 20));
-      // ctx.stroke();
       ctx.lineTo(pt2.x - arrow * Math.cos(angle + Math.PI / 20), pt2.y - arrow
           * Math.sin(angle + Math.PI / 20));
       ctx.lineTo(pt2.x - offset * Math.cos(angle), pt2.y - offset
@@ -443,28 +433,20 @@ lattice = {
           elgg.echo('wespot_fca:lattice:tax') + " '" + state.domain.name + "'");
 
     }
-    // lattice.sys.eachNode(function(node) {
-    // if (node != lattice.node_top || lattice.node_bot)
-    // node.data.fixed = !lattice.latticeview;
-    // });
+    
     if (!lattice.latticeview) {
       for ( var e in lattice.taxonomy_edges) {
-        // console.debug(e);
         var pre = lattice.sys.getNode(lattice.taxonomy_edges[e].source);
         var post = lattice.sys.getNode(lattice.taxonomy_edges[e].target);
         lattice.sys.addEdge(pre, post, {
           "active" : true,
           "enabled" : pre.data.enabled && post.data.enabled,
           "taxonomy" : true
-        // pre.data.enabled && post.data.enabled
+       
         });
       }
     }
-    // lattice.sys.eachEdge(function(edge, pt1, pt2) {
-    // if (edge.data.taxonomy)
-    // edge.data.enabled = !lattice.latticeview;
-    // });
-    // lattice.reset_props();
+   
     lattice.renderer.redraw();
   },
 
@@ -479,7 +461,6 @@ lattice = {
 
     $("#btn_show_lo").prop("src", state.basedir + "img/left_s.svg");
 
-    console.debug(new Date().toString());
     var concept = state.domain.formalContext.concepts[c];
     var learningObjects = {};
     for ( var os in concept.objects) {
@@ -497,7 +478,6 @@ lattice = {
       }
     }
 
-    console.debug(new Date().toString());
     var num_lo = Object.keys(learningObjects).length;
 
     var table = $(lattice.info)
@@ -564,7 +544,6 @@ lattice = {
                 }
                 window.open($(this).data("url"), "Learning Object",
                     "width=800,height=600");
-                // console.debug(learningObjects[lo].description);
               }).hover(function() {
             $(this).css("background-color", "rgba(255,255,255,1)");
           }, function() {
@@ -910,7 +889,6 @@ lattice = {
 
     var concept = state.domain.formalContext.concepts[c];
     var partOfTaxonomy = concept.partOfTaxonomy;
-    // concept.id = domainconcept.id;
     concept.name = $("#input_concept_name").get(0).value;
     concept.description = $("#input_concept_description").get(0).value;
     concept.partOfTaxonomy = $("#cb_concept_taxonomy").prop("checked");
@@ -920,9 +898,7 @@ lattice = {
     concept.attributes = {};
     concept.successors = [];
     concept.taxonomySuccessors = [];
-    // console.debug($("#cb_concept_taxonomy").prop("checked"));
-    // domainconcept.name = concept.name;
-    // domainconcept.description = concept.description;
+
     lattice.sys.getNode(concept.id).data.obj = concept.name;
     lattice.sys.getNode(concept.id).data.attr = concept.description;
     backend.update_concept(JSON.stringify(concept), function(formalContext) {
@@ -936,7 +912,6 @@ lattice = {
   },
 
   update_valuation : function(lat) {
-    console.debug(lat);
     for ( var i in lat.concepts) {
       var node = lattice.sys.getNode(lat.concepts[i].id);
       node.data.color_obj = lattice.calc_color(lat.concepts[i].valuations[0]);
@@ -946,8 +921,6 @@ lattice = {
   },
 
   update_vis : function(domain) {
-    // console.debug("update");
-    // console.debug(domain);
     state.domain = domain;
     lattice.reset_props();
     lattice.draw();
@@ -984,7 +957,6 @@ lattice = {
 
   draw_node : function(concept, y) {
     var sys = lattice.sys;
-    console.debug(".");
     var pre;
     if (sys.getNode(concept.id))
       pre = sys.getNode(concept.id);
@@ -1005,31 +977,20 @@ lattice = {
   draw_edge : function(concept, y) {
     var arr = concept.successors;
     var successors = util.unique(arr.concat(concept.taxonomySuccessors));
-    // lattice.latticeview ? (concept.successors) :
-    // (concept.taxonomySuccessors);
     var sys = lattice.sys;
-    // console.debug("draw " + concept.name);
     var pre = sys.getNode(concept.id);
     for ( var s in successors) {
-      // console.debug("Successor: " + successors[s].name);
       var post = sys.getNode(successors[s].id);
       if (post) {
         var isTaxonomy = (!util.containsConcept(concept.successors,
             successors[s]))
             && (util.containsConcept(concept.taxonomySuccessors, successors[s]));
         post.p.y = y;
-        // if (isTaxonomy)
-        // console.debug(concept.name + " to " + successors[s].name + "is a
-        // taxonomy edge");
-        // else
-        // console.debug(concept.name + " to " + successors[s].name + "is a
-        // regular edge");
         if (!isTaxonomy) {
           sys.addEdge(pre, post, {
             "active" : true,
             "enabled" : (pre.data.enabled && post.data.enabled) && !isTaxonomy,
             "taxonomy" : isTaxonomy
-          // pre.data.enabled && post.data.enabled
           });
         } else {
           lattice.taxonomy_edges.push({
@@ -1065,18 +1026,14 @@ lattice = {
     lattice.sys.eachNode(function(node, pt) {
       lattice.sys.pruneNode(node);
     });
-    // lattice.latticeview = true;
+   
     var concepts = state.domain.formalContext.concepts;
-    // console.debug(concepts);
-    // lattice.sys.stop();
-    // var bot = state.domain.formalContext.bottom;
     var y = concepts.length > 10 ? 10 : 5;
 
     var first = true;
     for ( var c in concepts) {
 
-      // console.debug("concept " + concepts[c].name + " is part fo taxonomy");
-      if (first) {
+       if (first) {
         var botnode = lattice.create_node(concepts[c], 2, y, 0.5,
             concepts.length > 2);
         botnode.data.fixed = concepts.length > 2;
@@ -1102,11 +1059,9 @@ lattice = {
     }
     y = concepts.length > 10 ? 10 : 5;
     for ( var c in concepts) {
-      // if (lattice.latticeview || concepts[c].partOfTaxonomy)
       lattice.draw_edge(concepts[c], y);
       y -= 0.05;
     }
-    // lattice.switch_view();
     setTimeout(function() {
       lattice.sys.parameters({
         repulsion : 400,

@@ -119,13 +119,12 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
         src="<?php echo $basedir; ?>img/delete.svg" width="16px" height="16px" alt="x"
         title="<?php echo elgg_echo('wespot_fca:obj:rem'); ?>" id="btn_del_obj_0" class="input btn_del_obj"
         onclick="ui.rem_object(0)" /> <input type="button" id="obj_0" class="input btn_obj"
-        value="<?php echo elgg_echo('wespot_fca:obj:dummy'); ?> 1" onclick="ui.set_item(0,0)" /></td>
+        value="<?php echo elgg_echo('wespot_fca:obj:dummy'); ?> 1" onclick="ui.set_item(0,entity_types.object)" /></td>
       <td class="td_attr_0"><input type="checkbox" class="input check" id="obj_0_attr_0" /></td>
       <td class="td_attr_1"><input type="checkbox" class="input check" id="obj_0_attr_1" /></td>
       <td class="td_attr_2"><input type="checkbox" class="input check" id="obj_0_attr_2" /></td>
       <td class="td_attr_3"><input type="checkbox" class="input check" id="obj_0_attr_3" /></td>
       <td class="tail" style="background-color: #fff"></td>
-
     </tr>
     <tr id="tr_obj_1" class="tr_obj">
       <td class="left"><input type="image" src="<?php echo $basedir; ?>img/up.svg" width="40px" height="16px" alt="^"
@@ -136,7 +135,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
         src="<?php echo $basedir; ?>img/delete.svg" width="16px" height="16px" alt="x"
         title="<?php echo elgg_echo('wespot_fca:obj:rem'); ?>" id="btn_del_obj_1" class="input btn_del_obj"
         onclick="ui.rem_object(1)" /> <input type="button" id="obj_1" class="input btn_obj"
-        value="<?php echo elgg_echo('wespot_fca:obj:dummy'); ?> 2" onclick="ui.set_item(1,0)" /></td>
+        value="<?php echo elgg_echo('wespot_fca:obj:dummy'); ?> 2" onclick="ui.set_item(1,entity_types.object)" /></td>
       <td class="td_attr_0"><input type="checkbox" class="input check" id="obj_1_attr_0" /></td>
       <td class="td_attr_1"><input type="checkbox" class="input check" id="obj_1_attr_1" /></td>
       <td class="td_attr_2"><input type="checkbox" class="input check" id="obj_1_attr_2" /></td>
@@ -152,7 +151,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
         src="<?php echo $basedir; ?>img/delete.svg" width="16px" height="16px" alt="x"
         title="<?php echo elgg_echo('wespot_fca:obj:rem'); ?>" id="btn_del_obj_2" class="input btn_del_obj"
         onclick="ui.rem_object(2)" /><input type="button" id="obj_2" class="input btn_obj"
-        value="<?php echo elgg_echo('wespot_fca:obj:dummy'); ?> 3" onclick="ui.set_item(2,0)" /></td>
+        value="<?php echo elgg_echo('wespot_fca:obj:dummy'); ?> 3" onclick="ui.set_item(2,entity_types.object)" /></td>
       <td class="td_attr_0"><input type="checkbox" class="input check" id="obj_2_attr_0" /></td>
       <td class="td_attr_1"><input type="checkbox" class="input check" id="obj_2_attr_1" /></td>
       <td class="td_attr_2"><input type="checkbox" class="input check" id="obj_2_attr_2" /></td>
@@ -168,7 +167,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
         src="<?php echo $basedir; ?>img/delete.svg" width="16px" height="16px" alt="x"
         title="<?php echo elgg_echo('wespot_fca:obj:rem'); ?>" id="btn_del_obj_3" class="input btn_del_obj"
         onclick="ui.rem_object(3)" /><input type="button" id="obj_3" class="input btn_obj"
-        value="<?php echo elgg_echo('wespot_fca:obj:dummy'); ?> 4" onclick="ui.set_item(3,0)" /></td>
+        value="<?php echo elgg_echo('wespot_fca:obj:dummy'); ?> 4" onclick="ui.set_item(3,entity_types.object)" /></td>
       <td class="td_attr_0"><input type="checkbox" class="input check" id="obj_3_attr_0" /></td>
       <td class="td_attr_1"><input type="checkbox" class="input check" id="obj_3_attr_1" /></td>
       <td class="td_attr_2"><input type="checkbox" class="input check" id="obj_3_attr_2" /></td>
@@ -184,7 +183,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
         src="<?php echo $basedir; ?>img/delete.svg" width="16px" height="16px" alt="x"
         title="<?php echo elgg_echo('wespot_fca:obj:rem'); ?>" id="btn_del_obj_4" class="input btn_del_obj"
         onclick="ui.rem_object(4)" /><input type="button" id="obj_4" class="input btn_obj"
-        value="<?php echo elgg_echo('wespot_fca:obj:dummy'); ?> 5" onclick="ui.set_item(4,0)" /></td>
+        value="<?php echo elgg_echo('wespot_fca:obj:dummy'); ?> 5" onclick="ui.set_item(4,entity_types.object)" /></td>
       <td class="td_attr_0"><input type="checkbox" class="input check" id="obj_4_attr_0" /></td>
       <td class="td_attr_1"><input type="checkbox" class="input check" id="obj_4_attr_1" /></td>
       <td class="td_attr_2"><input type="checkbox" class="input check" id="obj_4_attr_2" /></td>
@@ -277,7 +276,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
 <div id="dia_set_lo" title="<?php echo elgg_echo('wespot_fca:l_objs:add'); ?>">
   <div id="dia_set_lo_content">
   <?php echo elgg_echo('wespot_fca:l_obj:sel'); ?><select id="sel_set_lo" class="select_basic"
-      onchange="ui.display_description(this, 0)" onmousedown="ui.enable_options(this)"
+      onchange="ui.display_description(this, entity_types.learningobject)" onmousedown="ui.enable_options(this)"
       onkeydown="ui.disable_options(this)"></select>
     <p class="item_description"></p>
   </div>
@@ -293,7 +292,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
 <div id="dia_set_dom" title="<?php echo elgg_echo('wespot_fca:domain:open'); ?>">
   <div id="dia_set_dom_content">
   <?php echo elgg_echo('wespot_fca:domain:sel'); ?><select id="sel_set_dom" class="select_basic"
-      onchange="ui.display_description(this, 2)"></select>
+      onchange="ui.display_description(this, entity_types.domain)"></select>
     <p class="item_description"></p>
   </div>
   <div class="choice">
