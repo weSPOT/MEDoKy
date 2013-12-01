@@ -25,6 +25,7 @@ foreach ( $files as $file ) {
 <!--
 <script src="<?php echo $basedir; ?>js/jquery-1.9.1.js"></script>
 <script src="<?php echo $basedir; ?>js/jquery-ui.js"></script>
+
 -->
 <script src="<?php echo $basedir; ?>js/jquery-create.js"></script>
 <script type="text/javascript" src="<?php echo $basedir; ?>js/fcatool.js"></script>
@@ -34,6 +35,7 @@ foreach ( $files as $file ) {
 <script>
 $(function(){
 logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
+//logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
 });
 </script>
 <table id="toolbar">
@@ -204,14 +206,46 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
   </table>
 </div>
 
+<div id="dia_set_obj" title="<?php echo elgg_echo('wespot_fca:obj:set'); ?>">
+  <div id="dia_set_obj_content">
+    <table>
+      <tr>
+        <td class="layout_select_name"> <?php echo elgg_echo('wespot_fca:obj:sel'); ?> </td>
+        <td><select id="sel_set_obj" class="sel_set" onchange="ui.display_item_description(this, entity_types.object)"
+          onmousedown="ui.enable_options(this)" onkeydown="ui.disable_options(this)"></select></td>
+        <td><input type="image" class="btn_edit" src="<?php echo $basedir; ?>img/edit.svg" width="24px" height="24px"
+          onclick="ui.display_item_edit(document.getElementById('sel_set_obj'),document.getElementById('text_descr_obj'),entity_types.object)" /></td>
+      </tr>
+      <tr class="descr_detail">
+        <td class="layout_select"><?php echo elgg_echo('wespot_fca:description'); ?></td>
+        <td><textarea id="text_descr_obj" rows="5" cols="35" class="text_description"></textarea></td>
+        <td></td>
+      </tr>
+      <tr class="descr_detail">
+        <td class="layout_select"><?php echo elgg_echo('wespot_fca:l_objs'); ?></td>
+        <td>
+          <div id="lo_obj" class="div_lo"></div>
+        </td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+  <div class="choice">
+    <hr>
+    <input id="btn_choose_obj_cancel" type="button" class="input_pad"
+      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" onclick="$('#dia_set_obj').dialog('close')" /> <input
+      id="btn_choose_obj_ok" class="input_pad" type="button" value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
+      onclick="logic.choose_object()" />
+  </div>
+</div>
 
+<!-- 
 <div id="dia_set_obj" title="<?php echo elgg_echo('wespot_fca:obj:set'); ?>">
   <div id="dia_set_obj_content">
     <table>
       <tr>
         <td class="layout_select_name"><?php echo elgg_echo('wespot_fca:obj:sel'); ?></td>
-        <td><select id="sel_set_obj" class="sel_set" onchange="ui.display_item_description(this, 0)"
-          onmousedown="ui.enable_options(this)" onkeydown="ui.disable_options(this)"></select></td>
+        <td><input id="sel_set_obj" class="sel_set" /></td>
         <td><input type="image" class="btn_edit" src="<?php echo $basedir; ?>img/edit.svg" width="24px" height="24px"
           onclick="ui.display_item_edit(document.getElementById('sel_set_obj'),document.getElementById('text_descr_obj'),0)" /></td>
       </tr>
@@ -237,7 +271,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
       onclick="logic.choose_object()" />
   </div>
 </div>
-
+-->
 
 
 <div id="dia_set_attr" title="<?php echo elgg_echo('wespot_fca:attr:set'); ?>">
@@ -245,10 +279,10 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
     <table>
       <tr>
         <td class="layout_select_name"><?php echo elgg_echo('wespot_fca:attr:sel'); ?></td>
-        <td><select id="sel_set_attr" class="sel_set" onchange="ui.display_item_description(this, 1)"
+        <td><select id="sel_set_attr" class="sel_set" onchange="ui.display_item_description(this, entity_types.attribute)"
           onmousedown="ui.enable_options(this)" onkeydown="ui.disable_options(this)"></select></td>
         <td><input type="image" class="btn_edit" src="<?php echo $basedir; ?>img/edit.svg" width="24px" height="24px"
-          onclick="ui.display_item_edit(document.getElementById('sel_set_attr'),document.getElementById('text_descr_attr'),1)" /></td>
+          onclick="ui.display_item_edit(document.getElementById('sel_set_attr'),document.getElementById('text_descr_attr'),entity_types.attribute)" /></td>
       </tr>
       <tr class="descr_detail">
         <td class="layout_select"><?php echo elgg_echo('wespot_fca:description'); ?></td>

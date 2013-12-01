@@ -607,6 +607,17 @@ logic = {
     logic.save_item(object.name, select, object.description, o);
   },
 
+  remove_lo___ : function(lo, object, o) {
+    for ( var i in object.learningObjects) {
+      if (object.learningObjects[i] == lo) {
+        delete state.active_l_objects[object.learningObjects[i].id];
+        object.learningObjects.splice(i, 1);
+        break;
+      }
+    }
+    logic.save_item___(object.name, object.description, o);
+  },
+
   set_l_object : function(object, select, o) {
     $(".item_description").empty();
     var l_objs = util.filter_l_lobjects(object);
@@ -630,6 +641,29 @@ logic = {
     });
   },
 
+  set_l_object___ : function(object, id, o) {
+    $(".item_description").empty();
+    var l_objs = util.filter_l_lobjects(object);
+    var sel = $("#sel_set_lo").empty();
+
+    sel.create("option").prop("disabled", true).create("txt",
+        "<New " + elgg.echo("wespot_fca:l_obj") + ">");
+    for ( var i in l_objs) {
+      sel.create("option", {
+        value : JSON.stringify(l_objs[i])
+      }).create("txt", l_objs[i].name);
+    }
+    sel.prop("selectedIndex", -1);
+    $("#dia_set_lo").dialog("open");
+    $("#dia_set_lo_content").css("background", "rgba(255,255,255,0.6)");
+
+    $("#dia_set_lo").data(logic.key_lo, {
+      "object" : object,
+      "entity_id" : id,
+      "o" : o
+    });
+  },
+
   set_lo : function() {
     var data = $("#dia_set_lo").data(logic.key_lo);
     var sel = $("#sel_set_lo").get(0);
@@ -642,6 +676,20 @@ logic = {
     $("#dia_set_lo").dialog("close");
     logic.save_item(data.object.name, data.select, data.object.description,
         data.o);
+  },
+
+  set_lo___ : function() {
+    var data = $("#dia_set_lo").data(logic.key_lo);
+    var sel = $("#sel_set_lo").get(0);
+    data.object.learningObjects.push(JSON
+        .parse(sel.options[sel.selectedIndex].value));
+    for ( var i in data.object.learningObjects) {
+      state.active_l_objects[data.object.learningObjects[i].id] = data.object.learningObjects[i];
+    }
+
+    $("#dia_set_lo").dialog("close");
+    logic.save_item___(data.object.name, data.entity_id,
+        data.object.description, data.o);
   },
 
   save_item : function(name, select, description, entityType) {
@@ -704,8 +752,80 @@ logic = {
     }
   },
 
-  choose_object : function() {
+  save_item___ : function(name, entity_id, description, entityType) {
 
+    var create = select.selectedIndex == -1;
+    if (create) {
+
+    } else {
+
+      var items = state.backend_objects;
+      var new_items = state.new_objects;
+      var index = state.obj_index;
+      var updatefunc = backend.update_object;
+      if (entityType == 1) {
+        items = state.backend_attributes;
+        new_items = state.new_attributes;
+        index = state.attr_index;
+        updatefunc = backend.update_attribute;
+      }
+
+      if (entity_id in items) { // update!
+        var obj = items[entity_id];
+        obj.name = name;
+        obj.description = description;
+        for ( var l in obj.learningObjects) {
+          // check yourself before you wreck yourself
+          if (obj.learningObjects[l].owner) {
+            obj.learningObjects[l].owner.objects = {}; // cannot parse
+            obj.learningObjects[l].owner.attributes = {};
+          }
+        }
+        updatefunc(JSON.stringify(obj), function(resp) {
+          items[entity_id] = resp;
+          ui.set_item(index, entityType, entity_id);
+        });
+      } else {
+        var obj = new_items[entity_id];
+        obj.name = name;
+        obj.description = description;
+        new_items[entity_id] = obj;
+        ui.set_item(index, entityType, entity_id);
+      }
+    }
+  },
+
+  choose_item : function(entityType) {
+    var sel = $("#sel_set_obj");
+    var dia = $("#dia_set_obj");
+    var entites = state.backend_objects;
+    var new_entities = state.new_objects;
+    var index = state.obj_index;
+    var prefix = "#obj_";
+    var key = logic.key_obj;
+    if (entityType == entity_types.attribute) {
+      sel = $("#sel_set_attr");
+      dia = $("#dia_set_attr");
+      entites = state.backend_attributes;
+      new_entities = state.new_attributes;
+      index = state.attr_index;
+      prefix = "#_attr";
+      key = logic.key_attr;
+    }
+    dia.dialog("close");
+    var id = $.data(sel, "id");
+    var item;
+    if (id in entities) {
+      item = entites[id];
+    } else
+      item = new_entities[id];
+
+    $(prefix + index).prop("value", item.name).data(key, item);
+    index = -1;
+    util.filter_items(entityType);
+  },
+
+  choose_object : function() {
     var select = $("#sel_set_obj").get(0);
     var id = select.options[select.selectedIndex].value;
     $("#dia_set_obj").dialog("close");
@@ -1315,6 +1435,76 @@ ui = {
     }
   },
 
+  set_item___ : function(index, entityType, id) {
+
+    ui.prepare_dialog(entityType);
+    (entityType == entity_types.attribute) ? state.attr_index = index
+        : state.obj_index = index;
+
+    var sel = $("#sel_set_obj");
+    var key = logic.key_obj;
+    var data = $("#obj_" + index);
+    var inited = state.inited_obj;
+    if (entityType == entity_types.attribute) {
+      key = logic.key_attr;
+      data = $("#attr_" + index);
+      inited = state.inited_attr;
+      sel = $("#sel_set_attr");
+    }
+
+    $.removeData(sel, "id");
+
+    if (!id && data.data(key))
+      id = data.data(key).id;
+
+    if (state.msie && !(inited)) {
+      if (entityType == entity_types.attribute) {
+        state.inited_attr = true;
+        backend.get_attributes(function() {
+          ui.set_item(index, entityType, id);
+        });
+      } else {
+        state.inited_obj = true;
+        backend.get_objects(function() {
+          ui.set_item(index, entityType, id);
+        });
+      }
+    } else {
+      var objects = util.filter_items(entityType);
+
+      var items = [];
+      for ( var obj in objects) {
+        items.push({
+          label : objects[obj].name,
+          value : objects[obj].name,
+          data : obj
+        });
+      }
+      sel.autocomplete({
+        source : items,
+        response : function(event, ui) {
+          console.debug(ui);
+          ui.content.splice(0, 0, {
+            value : sel.val(),
+            label : "create " + sel.val()
+          });
+        },
+        select : function(event, ui) {
+          if (!ui.item.data)
+            console.debug("create");
+          else
+            // this is not nice
+            window.ui.display_item_description___(ui.item.data, entityType);
+          $.data(sel, "id", ui.item.data);
+        }
+      });
+      console.debug(sel);
+      (entityType == entity_types.attribute) ? $("#dia_set_attr")
+          .dialog("open") : $("#dia_set_obj").dialog("open");
+
+    }
+  },
+
   prepare_dialog : function(entityType) {
 
     state.editing = false;
@@ -1634,6 +1824,45 @@ ui = {
     });
   },
 
+  create_lo_div___ : function(lo, object, div_lo, entityType) {
+
+    var div = div_lo.create("div", {
+      id : "lo_" + lo.id,
+      "class" : "span_lo"
+    });
+    var tdiv = div.create("div", {
+      "class" : "txt_lo"
+    }).click(function() {
+      window.open(lo.data, "Learning Object", "width=800,height=600");
+    });
+    tdiv.create("txt", lo.name);
+    var buttons = div.create("div", {
+      class : "div_lo_buttons"
+    });
+    /*
+     * buttons.create("input", { type : "image", "class" : "input btn_lo", src :
+     * state.basedir + "img/edit.svg", width : "16px", height : "16px"
+     * }).click(function() {
+     * 
+     * });
+     */
+    buttons.create("input", {
+      type : "image",
+      "class" : "input btn_lo",
+      src : state.basedir + "img/delete.svg",
+      width : "16px",
+      height : "16px"
+    }).click(function() {
+      logic.remove_lo___(lo, object, entityType);
+    });
+    div.hover(function() {
+      ui.hide_lo_buttons();
+      ui.show_lo_buttons(this);
+    }, function() {
+      ui.hide_lo_buttons();
+    });
+  },
+
   display_learning_objects : function(object, select, entityType) {
 
     var div_lo;
@@ -1654,6 +1883,28 @@ ui = {
       class : "input btn_add_lo"
     }).click(function() {
       logic.set_l_object(object, select, entityType);
+    });
+  },
+
+  display_learning_objects___ : function(object, entityType) {
+
+    var div_lo;
+    (entityType == entity_types.attribute) ? div_lo = $("#lo_attr")
+        : div_lo = $("#lo_obj");
+    div_lo.empty();
+
+    for ( var i in object.learningObjects) {
+      ui.create_lo_div(object.learningObjects[i], object, div_lo, entityType);
+    }
+    div_lo.append("<br>");
+    div_lo.create("input", {
+      type : "image",
+      src : state.basedir + "img/add.svg",
+      width : "22px",
+      height : "22px",
+      class : "input btn_add_lo"
+    }).click(function() {
+      logic.set_l_object___(object, entityType);
     });
   },
 
@@ -1694,6 +1945,7 @@ ui = {
         entities = state.backend_attributes;
         new_entities = state.new_attributes;
       }
+
       try {
         $(".text_description").val(
             entities[select.options[select.selectedIndex].value].description);
@@ -1712,6 +1964,39 @@ ui = {
 
   },
 
+  display_item_description___ : function(id, entityType) {
+
+    $(".div_lo").empty();
+    $(".btn_edit").show();
+    var textarea = document.getElementById("text_descr_obj");
+    var entities = state.backend_objects;
+    var new_entities = state.new_objects;
+    var textfield = $("#sel_set_obj");
+    if (entityType == entity_types.attribute) {
+      textarea = document.getElementById("text_descr_attr");
+      entities = state.backend_attributes;
+      new_entities = state.new_attributes;
+      textfield = $("#sel_set_attr");
+    }
+
+    textfield.blur();
+    $(".text_description").empty();
+    $(".descr_detail").show();
+    $(".text_description").show();
+    $(textarea).prop("readonly", true);
+    console.debug("...");
+    console.debug(entities[id]);
+    console.debug("...");
+    try {
+      $(".text_description").val(entities[id].description);
+      ui.display_learning_objects___(entities[id], entityType);
+    } catch (not_an_error) {
+      $(".text_description").val(new_entities[id].description);
+      ui.display_learning_objects___(new_entities[id], entityType);
+    }
+
+  },
+
   show_lo_buttons : function(lo) {
     $(lo).children(".txt_lo").css("border-bottom-right-radius", "5px");
     $(lo).children(".txt_lo").css("background-color", "#fff");
@@ -1724,6 +2009,7 @@ ui = {
     $(".txt_lo").css("border-bottom-right-radius", "3px");
     $(".txt_lo").css("background-color", "rgba(255,255,255,0.9)");
   },
+
   cancel_item_edit : function(select, entityType) {
     state.editing = false;
     ui.prepare_dialog(entityType);
