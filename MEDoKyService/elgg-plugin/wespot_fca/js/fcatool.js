@@ -597,7 +597,7 @@ logic = {
             });
   },
 
-  remove_lo : function(lo, object, select, o) {
+  remove_lo : function(lo, object, o) {
     for ( var i in object.learningObjects) {
       if (object.learningObjects[i] == lo) {
         delete state.active_l_objects[object.learningObjects[i].id];
@@ -605,44 +605,10 @@ logic = {
         break;
       }
     }
-    logic.save_item(object.name, select, object.description, o);
+    logic.save_item(object, o);
   },
 
-  remove_lo___ : function(lo, object, o) {
-    for ( var i in object.learningObjects) {
-      if (object.learningObjects[i] == lo) {
-        delete state.active_l_objects[object.learningObjects[i].id];
-        object.learningObjects.splice(i, 1);
-        break;
-      }
-    }
-    logic.save_item___(object, o);
-  },
-
-  set_l_object : function(object, select, o) {
-    $(".item_description").empty();
-    var l_objs = util.filter_l_lobjects(object);
-    var sel = $("#sel_set_lo").empty();
-
-    sel.create("option").prop("disabled", true).create("txt",
-        "<New " + elgg.echo("wespot_fca:l_obj") + ">");
-    for ( var i in l_objs) {
-      sel.create("option", {
-        value : JSON.stringify(l_objs[i])
-      }).create("txt", l_objs[i].name);
-    }
-    sel.prop("selectedIndex", -1);
-    $("#dia_set_lo").dialog("open");
-    $("#dia_set_lo_content").css("background", "rgba(255,255,255,0.6)");
-
-    $("#dia_set_lo").data(logic.key_lo, {
-      "object" : object,
-      "select" : select,
-      "o" : o
-    });
-  },
-
-  set_l_object___ : function(object, o) {
+  set_l_object : function(object, o) {
     $(".item_description").empty();
     var l_objs = util.filter_l_lobjects(object);
     var sel = $("#sel_set_lo").empty();
@@ -674,84 +640,9 @@ logic = {
     }
 
     $("#dia_set_lo").dialog("close");
-    logic.save_item(data.object.name, data.select, data.object.description,
-        data.o);
+    logic.save_item(data.object, data.o);
   },
-
-  set_lo___ : function() {
-    var data = $("#dia_set_lo").data(logic.key_lo);
-    var sel = $("#sel_set_lo").get(0);
-    data.object.learningObjects.push(JSON
-        .parse(sel.options[sel.selectedIndex].value));
-    for ( var i in data.object.learningObjects) {
-      state.active_l_objects[data.object.learningObjects[i].id] = data.object.learningObjects[i];
-    }
-
-    $("#dia_set_lo").dialog("close");
-    logic.save_item___(data.object, data.o);
-  },
-
-  save_item : function(name, select, description, entityType) {
-
-    var create = select.selectedIndex == -1;
-    if (create) {
-      var now = Date.now();
-      var object = {
-        "name" : name,
-        "description" : description,
-        "id" : now,
-        "learningObjects" : [],
-        "creationId" : state.gid + state.user.guid + new Date().getTime()
-      };
-
-      if (entityType == 1) {
-        state.new_attributes[now] = object;
-        ui.set_item(state.attr_index, entityType, now);
-      } else {
-        state.new_objects[now] = object;
-        ui.set_item(state.obj_index, entityType, now);
-      }
-    } else {
-
-      var items = state.backend_objects;
-      var new_items = state.new_objects;
-      var index = state.obj_index;
-      var updatefunc = backend.update_object;
-      if (entityType == 1) {
-        items = state.backend_attributes;
-        new_items = state.new_attributes;
-        index = state.attr_index;
-        updatefunc = backend.update_attribute;
-      }
-
-      if (select.options[select.selectedIndex].value in items) { // update!
-        var obj = items[select.options[select.selectedIndex].value];
-        obj.name = name;
-        obj.description = description;
-        for ( var l in obj.learningObjects) {
-          // check yourself before you wreck yourself
-          if (obj.learningObjects[l].owner) {
-            obj.learningObjects[l].owner.objects = {}; // cannot parse
-            obj.learningObjects[l].owner.attributes = {};
-          }
-        }
-        updatefunc(JSON.stringify(obj), function(resp) {
-          items[select.options[select.selectedIndex].value] = resp;
-          ui.set_item(index, entityType,
-              select.options[select.selectedIndex].value);
-        });
-      } else {
-        var obj = new_items[select.options[select.selectedIndex].value];
-        obj.name = name;
-        obj.description = description;
-        new_items[select.options[select.selectedIndex].value] = obj;
-        ui.set_item(index, entityType,
-            select.options[select.selectedIndex].value);
-      }
-    }
-  },
-
-  save_item___ : function(object, entityType) {
+  save_item : function(object, entityType) {
     console.debug({
       object : object,
       entityType : entityType
@@ -785,13 +676,13 @@ logic = {
         }
         updatefunc(JSON.stringify(obj), function(resp) {
           items[object.id] = resp;
-          ui.set_item___(index, entityType, object.id);
+          ui.set_item(index, entityType, object.id);
         });
       } else {
         var obj = new_items[object.id];
         obj.name = object.name;
         obj.description = object.description;
-        ui.set_item___(index, entityType, object.id);
+        ui.set_item(index, entityType, object.id);
       }
     }
   },
@@ -808,7 +699,7 @@ logic = {
       entities = state.backend_attributes;
       new_entities = state.new_attributes;
       index = state.attr_index;
-      prefix = "#_attr";
+      prefix = "#attr_";
       key = logic.key_attr;
     }
     dia.dialog("close");
@@ -822,36 +713,6 @@ logic = {
     $(prefix + index).prop("value", item.name).data(key, item);
     index = -1;
     util.filter_items(entityType);
-  },
-
-  choose_object : function() {
-    var select = $("#sel_set_obj").get(0);
-    var id = select.options[select.selectedIndex].value;
-    $("#dia_set_obj").dialog("close");
-    var object;
-    if (id in state.backend_objects)
-      object = state.backend_objects[id];
-    else
-      object = state.new_objects[id];
-    $("#obj_" + state.obj_index).prop("value", object.name).data(logic.key_obj,
-        object);
-    state.obj_index = -1;
-    util.filter_items(0);
-  },
-
-  choose_attribute : function() {
-    var select = $("#sel_set_attr").get(0);
-    var id = select.options[select.selectedIndex].value;
-    $("#dia_set_attr").dialog("close");
-    var object;
-    if (id in state.backend_attributes)
-      object = state.backend_attributes[id];
-    else
-      object = state.new_attributes[id];
-    $("#attr_" + state.attr_index).prop("value", object.name).data(
-        logic.key_attr, object);
-    state.attr_index = -1;
-    util.filter_items(1);
   },
 
   create_mapping : function(name, description) {
@@ -1372,69 +1233,6 @@ ui = {
   },
 
   set_item : function(index, entityType, id) {
-
-    ui.prepare_dialog(entityType);
-    (entityType == entity_types.attribute) ? state.attr_index = index
-        : state.obj_index = index;
-    var key;
-    (entityType == entity_types.attribute) ? key = logic.key_attr
-        : key = logic.key_obj;
-    var data;
-    (entityType == entity_types.attribute) ? data = $("#attr_" + index)
-        : data = $("#obj_" + index);
-    if (!id && data.data(key))
-      id = data.data(key).id;
-    var inited = (entityType == entity_types.attribute) ? state.inited_attr
-        : state.inited_obj;
-    if (state.msie && !(inited)) {
-      if (entityType == entity_types.attribute) {
-        state.inited_attr = true;
-        backend.get_attributes(function() {
-          ui.set_item(index, entityType, id);
-        });
-      } else {
-        state.inited_obj = true;
-        backend.get_objects(function() {
-          ui.set_item(index, entityType, id);
-        });
-      }
-    } else {
-      var selectedIndex = -1;
-      var objects = util.filter_items(entityType);
-      var sel;
-      (entityType == entity_types.attribute) ? sel = $("#sel_set_attr")
-          : sel = $("#sel_set_obj");
-      sel.empty();
-      var i = -1;
-      var newitem;
-      (entityType == entity_types.attribute) ? newitem = "<New "
-          + elgg.echo("wespot_fca:attr") + ">" : newitem = "<New "
-          + elgg.echo("wespot_fca:obj") + ">";
-      sel.create("option").prop("disabled", true).create("txt", newitem);
-      for ( var obj in objects) {
-        ++i;
-        if (id && (objects[obj].id == id))
-          selectedIndex = i; // watch out for disabled attributes!
-        sel.create("option", {
-          value : obj
-        }).create("txt", objects[obj].name);
-      }
-      // now here comes the tricky part: Disabled options mess with the indices
-      // But if none was selected (-1) we want to kkep it that way
-      if (selectedIndex != -1)
-        selectedIndex++;
-      sel.prop("selectedIndex", selectedIndex);
-
-      (entityType == entity_types.attribute) ? $("#dia_set_attr")
-          .dialog("open") : $("#dia_set_obj").dialog("open");
-      if (selectedIndex != -1) {
-        ui.display_item_description(document.getElementById(sel.prop("id")),
-            entityType);
-      }
-    }
-  },
-
-  set_item___ : function(index, entityType, id) {
     ui.prepare_dialog(entityType);
     (entityType == entity_types.attribute) ? state.attr_index = index
         : state.obj_index = index;
@@ -1450,23 +1248,22 @@ ui = {
       sel = $("#sel_set_attr");
     }
     state.item_id = undefined;
-    // $.removeData(sel, "id");
 
     if (!id && data.data(key))
       id = data.data(key).id;
     if (id)
-      ui.display_item_description___(id, entityType);
+      ui.display_item_description(id, entityType);
 
     if (state.msie && !(inited)) {
       if (entityType == entity_types.attribute) {
         state.inited_attr = true;
         backend.get_attributes(function() {
-          ui.set_item___(index, entityType, id);
+          ui.set_item(index, entityType, id);
         });
       } else {
         state.inited_obj = true;
         backend.get_objects(function() {
-          ui.set_item___(index, entityType, id);
+          ui.set_item(index, entityType, id);
         });
       }
     } else {
@@ -1480,6 +1277,7 @@ ui = {
           data : obj
         });
       }
+
       sel.autocomplete({
         source : items,
         response : function(event, ui) {
@@ -1491,10 +1289,10 @@ ui = {
         },
         select : function(event, ui) {
           if (!ui.item.data)
-            window.ui.prepare_item_edit___(entityType);
+            window.ui.prepare_item_edit(entityType);
           else
             // this is not nice
-            window.ui.display_item_description___(ui.item.data, entityType);
+            window.ui.display_item_description(ui.item.data, entityType);
         }
       });
       console.debug(sel);
@@ -1509,6 +1307,7 @@ ui = {
     state.editing = false;
     var btn;
     var btn_cancel;
+
     if (entityType == entity_types.attribute) {
       btn = $("#btn_choose_attr_ok");
       btn_cancel = $("#btn_choose_attr_cancel");
@@ -1528,21 +1327,21 @@ ui = {
         $('#dia_set_obj').dialog('close');
     });
     btn.click(function() {
-      if (entityType == entity_types.attribute)
-        logic.choose_attribute();
-      else
-        logic.choose_item(entityType);
+      logic.choose_item(entityType);
     });
     $(".text_description").empty();
     $(".descr_detail").hide();
     $(".btn_edit").hide();
-    $("#input_name").remove();
     if (entityType == entity_types.attribute) {
-      $("#sel_set_attr").show();
-      // $("#sel_set_attr").removeData();
+      $("#sel_set_attr").click(function() {
+        $(this).val("");
+        ui.set_item(state.attr_index, entityType);
+      });
     } else {
-      $("#sel_set_obj").show();
-      // $("#sel_set_obj").removeData();
+      $("#sel_set_obj").click(function() {
+        $(this).val("");
+        ui.set_item(state.obj_index, entityType);
+      });
     }
   },
 
@@ -1780,6 +1579,7 @@ ui = {
                   + ")");
     }
   },
+
   set_lo : function(object, select, entityType) {
     $("#btn_choose_lo_ok").unbind("click");
     $("#btn_choose_lo_ok").click(function() {
@@ -1787,7 +1587,7 @@ ui = {
     });
   },
 
-  create_lo_div : function(lo, object, div_lo, select, entityType) {
+  create_lo_div : function(lo, object, div_lo, entityType) {
 
     var div = div_lo.create("div", {
       id : "lo_" + lo.id,
@@ -1816,7 +1616,7 @@ ui = {
       width : "16px",
       height : "16px"
     }).click(function() {
-      logic.remove_lo(lo, object, select, entityType);
+      logic.remove_lo(lo, object, entityType);
     });
     div.hover(function() {
       ui.hide_lo_buttons();
@@ -1826,46 +1626,7 @@ ui = {
     });
   },
 
-  create_lo_div___ : function(lo, object, div_lo, entityType) {
-
-    var div = div_lo.create("div", {
-      id : "lo_" + lo.id,
-      "class" : "span_lo"
-    });
-    var tdiv = div.create("div", {
-      "class" : "txt_lo"
-    }).click(function() {
-      window.open(lo.data, "Learning Object", "width=800,height=600");
-    });
-    tdiv.create("txt", lo.name);
-    var buttons = div.create("div", {
-      class : "div_lo_buttons"
-    });
-    /*
-     * buttons.create("input", { type : "image", "class" : "input btn_lo", src :
-     * state.basedir + "img/edit.svg", width : "16px", height : "16px"
-     * }).click(function() {
-     * 
-     * });
-     */
-    buttons.create("input", {
-      type : "image",
-      "class" : "input btn_lo",
-      src : state.basedir + "img/delete.svg",
-      width : "16px",
-      height : "16px"
-    }).click(function() {
-      logic.remove_lo___(lo, object, entityType);
-    });
-    div.hover(function() {
-      ui.hide_lo_buttons();
-      ui.show_lo_buttons(this);
-    }, function() {
-      ui.hide_lo_buttons();
-    });
-  },
-
-  display_learning_objects : function(object, select, entityType) {
+  display_learning_objects : function(object, entityType) {
 
     var div_lo;
     (entityType == entity_types.attribute) ? div_lo = $("#lo_attr")
@@ -1873,8 +1634,7 @@ ui = {
     div_lo.empty();
 
     for ( var i in object.learningObjects) {
-      ui.create_lo_div(object.learningObjects[i], object, div_lo, select,
-          entityType);
+      ui.create_lo_div(object.learningObjects[i], object, div_lo, entityType);
     }
     div_lo.append("<br>");
     div_lo.create("input", {
@@ -1884,91 +1644,11 @@ ui = {
       height : "22px",
       class : "input btn_add_lo"
     }).click(function() {
-      logic.set_l_object(object, select, entityType);
+      logic.set_l_object(object, entityType);
     });
   },
 
-  display_learning_objects___ : function(object, entityType) {
-
-    var div_lo;
-    (entityType == entity_types.attribute) ? div_lo = $("#lo_attr")
-        : div_lo = $("#lo_obj");
-    div_lo.empty();
-
-    for ( var i in object.learningObjects) {
-      ui
-          .create_lo_div___(object.learningObjects[i], object, div_lo,
-              entityType);
-    }
-    div_lo.append("<br>");
-    div_lo.create("input", {
-      type : "image",
-      src : state.basedir + "img/add.svg",
-      width : "22px",
-      height : "22px",
-      class : "input btn_add_lo"
-    }).click(function() {
-      logic.set_l_object___(object, entityType);
-    });
-  },
-
-  display_item_description : function(select, entityType) {
-    $(select.options[0]).prop("disabled", true);
-
-    $(".div_lo").empty();
-    $(select).show();
-    $(".btn_edit").show();
-    var textarea = document.getElementById("text_descr_obj");
-    if (entityType == entity_types.attribute)
-      textarea = document.getElementById("text_descr_attr");
-
-    $(".text_description").empty();
-    $(".descr_detail").show();
-    $(".text_description").show();
-    $(textarea).prop("readonly", true);
-
-    if (select.selectedIndex == 0) {
-      ui.display_item_edit(select, textarea, entityType);
-    } else if (select.selectedIndex != -1) {
-      var obj = (entityType == entity_types.attribute) ? $(
-          "#attr_" + state.attr_index).data(logic.key_attr) : $(
-          "#obj_" + state.obj_index).data(logic.key_obj);
-
-      if (obj) {
-        for ( var index in select.options) {
-          if (select.options[index].value == obj) {
-            select.selectedIndex = index;
-            break;
-          }
-        }
-      }
-
-      var entities = state.backend_objects;
-      var new_entities = state.new_objects;
-      if (entityType == entity_types.attribute) {
-        entities = state.backend_attributes;
-        new_entities = state.new_attributes;
-      }
-
-      try {
-        $(".text_description").val(
-            entities[select.options[select.selectedIndex].value].description);
-        ui.display_learning_objects(
-            entities[select.options[select.selectedIndex].value], select,
-            entityType);
-      } catch (not_an_error) {
-        $(".text_description")
-            .val(
-                new_entities[select.options[select.selectedIndex].value].description);
-        ui.display_learning_objects(
-            new_entities[select.options[select.selectedIndex].value], select,
-            entityType);
-      }
-    }
-
-  },
-
-  display_item_description___ : function(id, entityType) {
+  display_item_description : function(id, entityType) {
 
     $(".div_lo").empty();
     $(".btn_edit").show();
@@ -1982,7 +1662,6 @@ ui = {
       new_entities = state.new_attributes;
       textfield = $("#sel_set_attr");
     }
-
     textfield.blur();
     state.item_id = id;
     $(".text_description").empty();
@@ -1991,10 +1670,12 @@ ui = {
     $(textarea).prop("readonly", true);
     try {
       $(".text_description").val(entities[id].description);
-      ui.display_learning_objects___(entities[id], entityType);
+      ui.display_learning_objects(entities[id], entityType);
+      textfield.val(entities[id].name);
     } catch (not_an_error) {
       $(".text_description").val(new_entities[id].description);
-      ui.display_learning_objects___(new_entities[id], entityType);
+      ui.display_learning_objects(new_entities[id], entityType);
+      textfield.val(new_entities[id].name);
     }
 
   },
@@ -2012,91 +1693,57 @@ ui = {
     $(".txt_lo").css("background-color", "rgba(255,255,255,0.9)");
   },
 
-  cancel_item_edit : function(select, entityType) {
+  cancel_item_edit : function(entityType) {
     state.editing = false;
-    ui.prepare_dialog(entityType);
-    $(select).show();
-    ui.display_item_description(select, entityType);
-    if (select.selectedIndex == -1) {
-      $(".descr_detail").hide();
-      $(".btn_edit").hide();
+    var sel = $("#sel_set_obj");
+    var textarea = $("#text_descr_obj");
+    if (entityType == entity_types.attribute) {
+      sel = $("#sel_set_attr");
+      textarea = $("#text_descr_attr");
     }
-  },
-  cancel_item_edit___ : function(entityType) {
-    state.editing = false;
-
+    textarea.val("");
+    sel.val("");
     $(".descr_detail").hide();
-    ui.prepare_dialog___(entityType);
+    ui.prepare_dialog(entityType);
   },
 
-  prepare_item_edit___ : function(entityType) {
+  prepare_item_edit : function(entityType) {
     $(".btn_edit").hide();
     var sel = $("#sel_set_obj");
     var textarea = $("#text_descr_obj");
     var btn = $("#btn_choose_obj_ok");
     var btn_cancel = $("#btn_choose_obj_cancel");
-    var new_items= state.new_objects;
+    var new_items = state.new_objects;
     if (entityType == entity_types.attribute) {
       sel = $("#sel_set_attr");
-      textarea =$("#text_descr_attr");
+      textarea = $("#text_descr_attr");
       btn = $("#btn_choose_attr_ok");
       btn_cancel = $("#btn_choose_attr_cancel");
-      new_items=state.new_attributes;
+      new_items = state.new_attributes;
     }
     sel.autocomplete("destroy");
+    sel.unbind("click");
     btn.removeProp("onclick");
     btn_cancel.removeProp("onclick");
     btn.unbind("click");
     btn_cancel.unbind("click");
     btn.val(elgg.echo('wespot_fca:save'));
-    var item = {
-      name : sel.val(),
-      description : textarea.val(),
-      id : Date.now()
-    };
     btn.click(function() {
-      new_items[item.id]=item;
-      logic.save_item___(item, entityType);
+      var item = {
+        name : sel.val(),
+        description : textarea.val(),
+        id : Date.now(),
+        learningObjects : []
+      };
+      new_items[item.id] = item;
+      logic.save_item(item, entityType);
     });
 
     btn_cancel.click(function() {
-      ui.cancel_item_edit___(entityType);
+      ui.cancel_item_edit(entityType);
     });
     $(".descr_detail").show();
     textarea.prop("readonly", false);
-  },
-
-  prepare_item_edit : function(select, textarea, entityType) {
-    $(".btn_edit").hide();
-    var btn = $("#btn_choose_obj_ok");
-    var btn_cancel = $("#btn_choose_obj_cancel");
-    if (entityType == entity_types.attribute) {
-      btn = $("#btn_choose_attr_ok");
-      btn_cancel = $("#btn_choose_attr_cancel");
-    }
-    btn.removeProp("onclick");
-    btn_cancel.removeProp("onclick");
-    btn.unbind("click");
-    btn_cancel.unbind("click");
-    btn.val(elgg.echo('wespot_fca:save'));
-    btn.click(function() {
-      logic.save_item($("#input_name").val(), select, $(textarea).val(),
-          entityType);
-    });
-
-    btn_cancel.click(function() {
-      ui.cancel_item_edit(select, entityType);
-    });
-
-    $(select).hide();
-    var td = $(select).parent();
-    var input = td.create("input", {
-      type : "text",
-      id : "input_name",
-      class : "sel_set",
-    });
-    $(textarea).prop("readonly", false);
-    return input;
   },
 
   display_item_edit : function(select, textarea, entityType) {
