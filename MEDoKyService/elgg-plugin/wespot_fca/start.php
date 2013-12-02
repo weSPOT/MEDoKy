@@ -26,17 +26,17 @@ elgg_register_plugin_hook_handler('register', 'menu:owner_block', 'wespot_fca_si
 
 
 function fcatool_page_handler($segments) {
- //// elgg_unregister_js('jquery');
+  elgg_unregister_js('jquery');
   // Register CDN jQuery
-////  elgg_register_js('jquery-cdn', 'http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js', 'head');
+  elgg_register_js('jquery-cdn', 'http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js', 'head');
   // Load CDN jQuery
- /// elgg_load_js('jquery-cdn');
+  elgg_load_js('jquery-cdn');
   
-////  elgg_unregister_js('jquery-ui');
+  elgg_unregister_js('jquery-ui');
   // Register CDN jQuery UI
- /// elgg_register_js('jquery-ui-cdn', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js', 'head');
+  elgg_register_js('jquery-ui-cdn', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js', 'head');
   // Load CDN jQuery UI
-////  elgg_load_js('jquery-ui-cdn');
+  elgg_load_js('jquery-ui-cdn');
   
     $base_dir = elgg_get_plugins_path() . 'wespot_fca/pages/fca';
     $group_guid = elgg_get_page_owner_guid();

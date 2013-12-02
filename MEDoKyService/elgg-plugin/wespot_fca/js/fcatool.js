@@ -11,6 +11,7 @@ state = {
   active_l_objects : {},
   obj_index : -1,
   attr_index : -1,
+  item_id : undefined,
   domain : [],
   inited_attr : false,
   inited_obj : false,
@@ -615,7 +616,7 @@ logic = {
         break;
       }
     }
-    logic.save_item___(object.name, object.description, o);
+    logic.save_item___(object, o);
   },
 
   set_l_object : function(object, select, o) {
@@ -641,7 +642,7 @@ logic = {
     });
   },
 
-  set_l_object___ : function(object, id, o) {
+  set_l_object___ : function(object, o) {
     $(".item_description").empty();
     var l_objs = util.filter_l_lobjects(object);
     var sel = $("#sel_set_lo").empty();
@@ -659,7 +660,6 @@ logic = {
 
     $("#dia_set_lo").data(logic.key_lo, {
       "object" : object,
-      "entity_id" : id,
       "o" : o
     });
   },
@@ -688,8 +688,7 @@ logic = {
     }
 
     $("#dia_set_lo").dialog("close");
-    logic.save_item___(data.object.name, data.entity_id,
-        data.object.description, data.o);
+    logic.save_item___(data.object, data.o);
   },
 
   save_item : function(name, select, description, entityType) {
@@ -752,9 +751,12 @@ logic = {
     }
   },
 
-  save_item___ : function(name, entity_id, description, entityType) {
-
-    var create = select.selectedIndex == -1;
+  save_item___ : function(object, entityType) {
+    console.debug({
+      object : object,
+      entityType : entityType
+    });
+    var create = false;
     if (create) {
 
     } else {
@@ -770,10 +772,10 @@ logic = {
         updatefunc = backend.update_attribute;
       }
 
-      if (entity_id in items) { // update!
-        var obj = items[entity_id];
-        obj.name = name;
-        obj.description = description;
+      if (object.id in items) { // update!
+        var obj = items[object.id];
+        obj.name = object.name;
+        obj.description = object.description;
         for ( var l in obj.learningObjects) {
           // check yourself before you wreck yourself
           if (obj.learningObjects[l].owner) {
@@ -782,41 +784,38 @@ logic = {
           }
         }
         updatefunc(JSON.stringify(obj), function(resp) {
-          items[entity_id] = resp;
-          ui.set_item(index, entityType, entity_id);
+          items[object.id] = resp;
+          ui.set_item___(index, entityType, object.id);
         });
       } else {
-        var obj = new_items[entity_id];
-        obj.name = name;
-        obj.description = description;
-        new_items[entity_id] = obj;
-        ui.set_item(index, entityType, entity_id);
+        var obj = new_items[object.id];
+        obj.name = object.name;
+        obj.description = object.description;
+        ui.set_item___(index, entityType, object.id);
       }
     }
   },
 
   choose_item : function(entityType) {
-    var sel = $("#sel_set_obj");
     var dia = $("#dia_set_obj");
-    var entites = state.backend_objects;
+    var entities = state.backend_objects;
     var new_entities = state.new_objects;
     var index = state.obj_index;
     var prefix = "#obj_";
     var key = logic.key_obj;
     if (entityType == entity_types.attribute) {
-      sel = $("#sel_set_attr");
       dia = $("#dia_set_attr");
-      entites = state.backend_attributes;
+      entities = state.backend_attributes;
       new_entities = state.new_attributes;
       index = state.attr_index;
       prefix = "#_attr";
       key = logic.key_attr;
     }
     dia.dialog("close");
-    var id = $.data(sel, "id");
+    var id = state.item_id;
     var item;
     if (id in entities) {
-      item = entites[id];
+      item = entities[id];
     } else
       item = new_entities[id];
 
@@ -1436,7 +1435,6 @@ ui = {
   },
 
   set_item___ : function(index, entityType, id) {
-
     ui.prepare_dialog(entityType);
     (entityType == entity_types.attribute) ? state.attr_index = index
         : state.obj_index = index;
@@ -1451,22 +1449,24 @@ ui = {
       inited = state.inited_attr;
       sel = $("#sel_set_attr");
     }
-
-    $.removeData(sel, "id");
+    state.item_id = undefined;
+    // $.removeData(sel, "id");
 
     if (!id && data.data(key))
       id = data.data(key).id;
+    if (id)
+      ui.display_item_description___(id, entityType);
 
     if (state.msie && !(inited)) {
       if (entityType == entity_types.attribute) {
         state.inited_attr = true;
         backend.get_attributes(function() {
-          ui.set_item(index, entityType, id);
+          ui.set_item___(index, entityType, id);
         });
       } else {
         state.inited_obj = true;
         backend.get_objects(function() {
-          ui.set_item(index, entityType, id);
+          ui.set_item___(index, entityType, id);
         });
       }
     } else {
@@ -1491,11 +1491,10 @@ ui = {
         },
         select : function(event, ui) {
           if (!ui.item.data)
-            console.debug("create");
+            window.ui.prepare_item_edit___(entityType);
           else
             // this is not nice
             window.ui.display_item_description___(ui.item.data, entityType);
-          $.data(sel, "id", ui.item.data);
         }
       });
       console.debug(sel);
@@ -1532,16 +1531,19 @@ ui = {
       if (entityType == entity_types.attribute)
         logic.choose_attribute();
       else
-        logic.choose_object();
+        logic.choose_item(entityType);
     });
     $(".text_description").empty();
     $(".descr_detail").hide();
     $(".btn_edit").hide();
     $("#input_name").remove();
-    if (entityType == entity_types.attribute)
+    if (entityType == entity_types.attribute) {
       $("#sel_set_attr").show();
-    else
+      // $("#sel_set_attr").removeData();
+    } else {
       $("#sel_set_obj").show();
+      // $("#sel_set_obj").removeData();
+    }
   },
 
   add_object : function() {
@@ -1894,7 +1896,9 @@ ui = {
     div_lo.empty();
 
     for ( var i in object.learningObjects) {
-      ui.create_lo_div(object.learningObjects[i], object, div_lo, entityType);
+      ui
+          .create_lo_div___(object.learningObjects[i], object, div_lo,
+              entityType);
     }
     div_lo.append("<br>");
     div_lo.create("input", {
@@ -1980,13 +1984,11 @@ ui = {
     }
 
     textfield.blur();
+    state.item_id = id;
     $(".text_description").empty();
     $(".descr_detail").show();
     $(".text_description").show();
     $(textarea).prop("readonly", true);
-    console.debug("...");
-    console.debug(entities[id]);
-    console.debug("...");
     try {
       $(".text_description").val(entities[id].description);
       ui.display_learning_objects___(entities[id], entityType);
@@ -2019,7 +2021,49 @@ ui = {
       $(".descr_detail").hide();
       $(".btn_edit").hide();
     }
+  },
+  cancel_item_edit___ : function(entityType) {
+    state.editing = false;
 
+    $(".descr_detail").hide();
+    ui.prepare_dialog___(entityType);
+  },
+
+  prepare_item_edit___ : function(entityType) {
+    $(".btn_edit").hide();
+    var sel = $("#sel_set_obj");
+    var textarea = $("#text_descr_obj");
+    var btn = $("#btn_choose_obj_ok");
+    var btn_cancel = $("#btn_choose_obj_cancel");
+    var new_items= state.new_objects;
+    if (entityType == entity_types.attribute) {
+      sel = $("#sel_set_attr");
+      textarea =$("#text_descr_attr");
+      btn = $("#btn_choose_attr_ok");
+      btn_cancel = $("#btn_choose_attr_cancel");
+      new_items=state.new_attributes;
+    }
+    sel.autocomplete("destroy");
+    btn.removeProp("onclick");
+    btn_cancel.removeProp("onclick");
+    btn.unbind("click");
+    btn_cancel.unbind("click");
+    btn.val(elgg.echo('wespot_fca:save'));
+    var item = {
+      name : sel.val(),
+      description : textarea.val(),
+      id : Date.now()
+    };
+    btn.click(function() {
+      new_items[item.id]=item;
+      logic.save_item___(item, entityType);
+    });
+
+    btn_cancel.click(function() {
+      ui.cancel_item_edit___(entityType);
+    });
+    $(".descr_detail").show();
+    textarea.prop("readonly", false);
   },
 
   prepare_item_edit : function(select, textarea, entityType) {
