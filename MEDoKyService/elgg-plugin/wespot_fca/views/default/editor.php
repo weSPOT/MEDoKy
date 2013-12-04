@@ -248,7 +248,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
         <td class="layout_select_name"><?php echo elgg_echo('wespot_fca:obj:sel'); ?></td>
         <td><input id="sel_set_obj" class="sel_set" /></td>
         <td><input type="image" class="btn_edit" src="<?php echo $basedir; ?>img/edit.svg" width="24px" height="24px"
-          onclick="ui.display_item_edit(document.getElementById('sel_set_obj'),document.getElementById('text_descr_obj'),0)" /></td>
+          onclick="ui.display_item_edit(entity_types.object)" /></td>
       </tr>
       <tr class="descr_detail">
         <td class="layout_select"><?php echo elgg_echo('wespot_fca:description'); ?></td>
@@ -281,7 +281,7 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
         <td class="layout_select_name"><?php echo elgg_echo('wespot_fca:attr:sel'); ?></td>
         <td><input id="sel_set_attr" class="sel_set" /></td>
         <td><input type="image" class="btn_edit" src="<?php echo $basedir; ?>img/edit.svg" width="24px" height="24px"
-          onclick="ui.display_item_edit(document.getElementById('sel_set_attr'),document.getElementById('text_descr_attr'),entity_types.attribute)" /></td>
+          onclick="ui.display_item_edit(entity_types.attribute)" /></td>
       </tr>
       <tr class="descr_detail">
         <td class="layout_select"><?php echo elgg_echo('wespot_fca:description'); ?></td>

@@ -643,48 +643,40 @@ logic = {
     logic.save_item(data.object, data.o);
   },
   save_item : function(object, entityType) {
-    console.debug({
-      object : object,
-      entityType : entityType
-    });
-    var create = false;
-    if (create) {
 
-    } else {
-
-      var items = state.backend_objects;
-      var new_items = state.new_objects;
-      var index = state.obj_index;
-      var updatefunc = backend.update_object;
-      if (entityType == 1) {
-        items = state.backend_attributes;
-        new_items = state.new_attributes;
-        index = state.attr_index;
-        updatefunc = backend.update_attribute;
-      }
-
-      if (object.id in items) { // update!
-        var obj = items[object.id];
-        obj.name = object.name;
-        obj.description = object.description;
-        for ( var l in obj.learningObjects) {
-          // check yourself before you wreck yourself
-          if (obj.learningObjects[l].owner) {
-            obj.learningObjects[l].owner.objects = {}; // cannot parse
-            obj.learningObjects[l].owner.attributes = {};
-          }
-        }
-        updatefunc(JSON.stringify(obj), function(resp) {
-          items[object.id] = resp;
-          ui.set_item(index, entityType, object.id);
-        });
-      } else {
-        var obj = new_items[object.id];
-        obj.name = object.name;
-        obj.description = object.description;
-        ui.set_item(index, entityType, object.id);
-      }
+    var items = state.backend_objects;
+    var new_items = state.new_objects;
+    var index = state.obj_index;
+    var updatefunc = backend.update_object;
+    if (entityType == 1) {
+      items = state.backend_attributes;
+      new_items = state.new_attributes;
+      index = state.attr_index;
+      updatefunc = backend.update_attribute;
     }
+
+    if (object.id in items) { // update!
+      var obj = items[object.id];
+      obj.name = object.name;
+      obj.description = object.description;
+      for ( var l in obj.learningObjects) {
+        // check yourself before you wreck yourself
+        if (obj.learningObjects[l].owner) {
+          obj.learningObjects[l].owner.objects = {}; // cannot parse
+          obj.learningObjects[l].owner.attributes = {};
+        }
+      }
+      updatefunc(JSON.stringify(obj), function(resp) {
+        items[object.id] = resp;
+        ui.set_item(index, entityType, object.id);
+      });
+    } else {
+      var obj = new_items[object.id];
+      obj.name = object.name;
+      obj.description = object.description;
+      ui.set_item(index, entityType, object.id);
+    }
+
   },
 
   choose_item : function(entityType) {
@@ -1281,7 +1273,6 @@ ui = {
       sel.autocomplete({
         source : items,
         response : function(event, ui) {
-          console.debug(ui);
           ui.content.splice(0, 0, {
             value : sel.val(),
             label : "create " + sel.val()
@@ -1291,11 +1282,9 @@ ui = {
           if (!ui.item.data)
             window.ui.prepare_item_edit(entityType);
           else
-            // this is not nice
             window.ui.display_item_description(ui.item.data, entityType);
         }
       });
-      console.debug(sel);
       (entityType == entity_types.attribute) ? $("#dia_set_attr")
           .dialog("open") : $("#dia_set_obj").dialog("open");
 
@@ -1546,7 +1535,7 @@ ui = {
       } else if (entityType == entity_types.domain) {
         var str_domain = select.options[select.selectedIndex].value;
         if (str_domain != "-1") {
-          ui.dispaly_domain_escription(select);
+          ui.display_domain_description(select);
         } else {
           $("#btn_choose_dom_ok").prop("disabled", true);
         }
@@ -1555,17 +1544,17 @@ ui = {
       if (entityType == entity_types.domain) {
         var str_domain = select.options[select.selectedIndex].value;
         if (str_domain != "-1") {
-          ui.dispaly_domain_escription(select);
+          ui.display_domain_description(select);
         } else {
           $("#btn_choose_dom_ok").prop("disabled", true);
         }
       } else if (entityType == entity_types.learningobject) {
-        ui.dispaly_domain_escription(select);
+        ui.display_domain_description(select);
       }
     }
   },
 
-  dispaly_domain_escription : function(select) {
+  display_domain_description : function(select) {
 
     var obj = JSON.parse(select.options[select.selectedIndex].value);
     $("#btn_choose_dom_ok").prop("disabled", false);
@@ -1672,12 +1661,14 @@ ui = {
       $(".text_description").val(entities[id].description);
       ui.display_learning_objects(entities[id], entityType);
       textfield.val(entities[id].name);
+      $("body").data("item", entities[id]);
     } catch (not_an_error) {
+      $("body").data("item", new_entities[id]);
       $(".text_description").val(new_entities[id].description);
       ui.display_learning_objects(new_entities[id], entityType);
       textfield.val(new_entities[id].name);
     }
-
+    console.debug( $("body").data("item"));
   },
 
   show_lo_buttons : function(lo) {
@@ -1721,7 +1712,10 @@ ui = {
       btn_cancel = $("#btn_choose_attr_cancel");
       new_items = state.new_attributes;
     }
-    sel.autocomplete("destroy");
+    try {
+      sel.autocomplete("destroy");
+    } catch (not_an_error) {
+    }
     sel.unbind("click");
     btn.removeProp("onclick");
     btn_cancel.removeProp("onclick");
@@ -1729,46 +1723,32 @@ ui = {
     btn_cancel.unbind("click");
     btn.val(elgg.echo('wespot_fca:save'));
     btn.click(function() {
-      var item = {
-        name : sel.val(),
-        description : textarea.val(),
-        id : Date.now(),
-        learningObjects : []
-      };
-      new_items[item.id] = item;
+      var item =  $("body").data("item");
+      $("body").removeData("item");
+      if (!item) {
+        var item = {
+          id : Date.now(),
+          learningObjects : []
+        };
+        new_items[item.id] = item;
+      }
+      item.name = sel.val();
+      item.description = textarea.val();
       logic.save_item(item, entityType);
     });
 
     btn_cancel.click(function() {
+      $("body").removeData("item");
       ui.cancel_item_edit(entityType);
     });
     $(".descr_detail").show();
     textarea.prop("readonly", false);
   },
 
-  display_item_edit : function(select, textarea, entityType) {
-    var create = select.selectedIndex == 0;
+  display_item_edit : function(entityType) {
     state.editing = !state.editing;
-    var name;
-    if (!create) {
-      var entities = state.backend_objects;
-      var new_entities = state.new_objects;
-      if (entityType == entity_types.attribute) {
-        entities = state.backend_attributes;
-        new_entities = state.new_attributes;
-      }
-      try {
-        name = entities[select.options[select.selectedIndex].value].name;
-      } catch (not_an_error) {
-        name = new_entities[select.options[select.selectedIndex].value].name;
-      }
-
-    } else {
-      name = "";
-      $(textarea).val("");
-      select.selectedIndex = -1;
-    }
-    ui.prepare_item_edit(select, textarea, entityType).val(name).focus();
+    console.debug($("#sel_set_obj").data("item"));
+    ui.prepare_item_edit(entityType);
 
   },
 

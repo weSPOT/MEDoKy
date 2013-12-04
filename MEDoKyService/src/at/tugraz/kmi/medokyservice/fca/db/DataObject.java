@@ -1,13 +1,10 @@
 package at.tugraz.kmi.medokyservice.fca.db;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringWriter;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
+import at.tugraz.kmi.medokyservice.json.JSONMapper;
 
-import at.tugraz.kmi.medokyservice.fca.JSONMapper;
+import com.google.gson.JsonObject;
 
 /**
  * Root Class of all FCA related classes providing a {@link Long} id to store it
@@ -16,8 +13,7 @@ import at.tugraz.kmi.medokyservice.fca.JSONMapper;
  * @author Bernd Prünster <bernd.pruenster@gmail.com>
  * 
  */
-public abstract class DataObject implements Comparable<DataObject>,
-    Serializable {
+public abstract class DataObject implements Comparable<DataObject>, Serializable {
 
   private static final long serialVersionUID = 4030398877692134854L;
   /**
@@ -40,7 +36,6 @@ public abstract class DataObject implements Comparable<DataObject>,
     this.id = IDGenerator.getInstance().getID();
     this.name = name;
     this.description = description;
-
   }
 
   public long getId() {
@@ -97,8 +92,7 @@ public abstract class DataObject implements Comparable<DataObject>,
   @Override
   public boolean equals(Object o) {
     if (o == null)
-      throw new NullPointerException(
-          "Error trying to compare a DataObject to null!");
+      throw new NullPointerException("Error trying to compare a DataObject to null!");
     if (o instanceof DataObject)
       return id == ((DataObject) (o)).id;
     return o.equals(this);
@@ -112,22 +106,16 @@ public abstract class DataObject implements Comparable<DataObject>,
    */
   @Override
   public String toString() {
-    StringWriter writer = new StringWriter();
     try {
-      JSONMapper.getInstance().writeValue(writer, this);
-      String str = writer.toString();
-      return str;
-    } catch (JsonGenerationException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (JsonMappingException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      return JSONMapper.getInstance().toJson(this);
+    } catch (Exception e) {
+      JsonObject js = new JsonObject();
+      js.addProperty("id", id);
+      js.addProperty("name", name);
+      js.addProperty("description", description);
+      return js.toString();
     }
-    return "id: " + id + ", name: " + name + ", description: " + description;
+
   }
 
 }
