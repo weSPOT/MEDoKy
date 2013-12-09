@@ -1281,7 +1281,7 @@ ui = {
         select : function(event, ui) {
           if (!ui.item.data)
             window.ui.prepare_item_edit(entityType);
-          else{
+          else {
             $(this).blur();
             window.ui.display_item_description(ui.item.data, entityType);
           }
@@ -1323,17 +1323,18 @@ ui = {
     $(".text_description").empty();
     $(".descr_detail").hide();
     $(".btn_edit").hide();
-    if (entityType == entity_types.attribute) {
-      $("#sel_set_attr").click(function() {
-        $(this).val("");
-      //  ui.set_item(state.attr_index, entityType);
-      });
-    } else {
-      $("#sel_set_obj").click(function() {
-        $(this).val("");
-      ///  ui.set_item(state.obj_index, entityType);
-      });
-    }
+
+    var sel = (entityType == entity_types.attribute) ? $("#sel_set_attr")
+        : $("#sel_set_obj");
+
+    sel.blur(function() {
+      $(this).val($("body").data("item").name);
+    });
+    sel.click(function() {
+      $(this).val("");
+      // ui.set_item(state.attr_index, entityType);
+    });
+
   },
 
   add_object : function() {
@@ -1653,7 +1654,7 @@ ui = {
       new_entities = state.new_attributes;
       textfield = $("#sel_set_attr");
     }
- //   textfield.blur();
+    // textfield.blur();
     state.item_id = id;
     $(".text_description").empty();
     $(".descr_detail").show();
@@ -1670,7 +1671,7 @@ ui = {
       ui.display_learning_objects(new_entities[id], entityType);
       textfield.val(new_entities[id].name);
     }
-    console.debug( $("body").data("item"));
+    console.debug($("body").data("item"));
   },
 
   show_lo_buttons : function(lo) {
@@ -1719,13 +1720,14 @@ ui = {
     } catch (not_an_error) {
     }
     sel.unbind("click");
+    sel.unbind("blur");
     btn.removeProp("onclick");
     btn_cancel.removeProp("onclick");
     btn.unbind("click");
     btn_cancel.unbind("click");
     btn.val(elgg.echo('wespot_fca:save'));
     btn.click(function() {
-      var item =  $("body").data("item");
+      var item = $("body").data("item");
       $("body").removeData("item");
       if (!item) {
         var item = {
