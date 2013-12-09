@@ -1281,8 +1281,10 @@ ui = {
         select : function(event, ui) {
           if (!ui.item.data)
             window.ui.prepare_item_edit(entityType);
-          else
+          else{
+            $(this).blur();
             window.ui.display_item_description(ui.item.data, entityType);
+          }
         }
       });
       (entityType == entity_types.attribute) ? $("#dia_set_attr")
@@ -1324,12 +1326,12 @@ ui = {
     if (entityType == entity_types.attribute) {
       $("#sel_set_attr").click(function() {
         $(this).val("");
-        ui.set_item(state.attr_index, entityType);
+      //  ui.set_item(state.attr_index, entityType);
       });
     } else {
       $("#sel_set_obj").click(function() {
         $(this).val("");
-        ui.set_item(state.obj_index, entityType);
+      ///  ui.set_item(state.obj_index, entityType);
       });
     }
   },
@@ -1651,7 +1653,7 @@ ui = {
       new_entities = state.new_attributes;
       textfield = $("#sel_set_attr");
     }
-    textfield.blur();
+ //   textfield.blur();
     state.item_id = id;
     $(".text_description").empty();
     $(".descr_detail").show();
