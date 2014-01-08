@@ -1271,16 +1271,19 @@ ui = {
       }
 
       sel.autocomplete({
-        source : items,
-        response : function(event, ui) {
-          ui.content.splice(0, 0, {
-            value : sel.val(),
-            label : "create " + sel.val()
+        // this is needebe because of the old jQueryUI version used
+        source : function(request, response) {
+          var results = $.ui.autocomplete.filter(items, request.term);
+          results.splice(0, 0, {
+            value : request.term,
+            label : "create " + request.term
           });
+          response(results);
         },
+
         select : function(event, ui) {
           if (!ui.item.data)
-            window.ui.prepare_item_edit(entityType);
+            window.ui.prepare_item_edit(entityType, true);
           else {
             $(this).blur();
             window.ui.display_item_description(ui.item.data, entityType);
@@ -1291,6 +1294,7 @@ ui = {
           .dialog("open") : $("#dia_set_obj").dialog("open");
 
     }
+    sel.blur();
   },
 
   prepare_dialog : function(entityType) {
@@ -1687,21 +1691,30 @@ ui = {
     $(".txt_lo").css("background-color", "rgba(255,255,255,0.9)");
   },
 
-  cancel_item_edit : function(entityType) {
+  cancel_item_edit : function(entityType, item) {
     state.editing = false;
+
+    $("body").removeData("item");
     var sel = $("#sel_set_obj");
+    var index = state.obj_index;
     var textarea = $("#text_descr_obj");
     if (entityType == entity_types.attribute) {
       sel = $("#sel_set_attr");
       textarea = $("#text_descr_attr");
+      index = state.attr_index;
     }
-    textarea.val("");
-    sel.val("");
-    $(".descr_detail").hide();
-    ui.prepare_dialog(entityType);
+    textarea.val(item.description);
+    sel.val(item.name);
+    // $(".descr_detail").hide();
+    // ui.prepare_dialog(entityType);
+    ui.set_item(index, entityType, item.id);
   },
 
-  prepare_item_edit : function(entityType) {
+  prepare_item_edit : function(entityType, clear) {
+    if (clear) {
+      $(".div_lo").empty();
+      $(".text_description").val("");
+    }
     $(".btn_edit").hide();
     var sel = $("#sel_set_obj");
     var textarea = $("#text_descr_obj");
@@ -1742,8 +1755,8 @@ ui = {
     });
 
     btn_cancel.click(function() {
-      $("body").removeData("item");
-      ui.cancel_item_edit(entityType);
+      var item = $("body").data("item");
+      ui.cancel_item_edit(entityType, item);
     });
     $(".descr_detail").show();
     textarea.prop("readonly", false);
