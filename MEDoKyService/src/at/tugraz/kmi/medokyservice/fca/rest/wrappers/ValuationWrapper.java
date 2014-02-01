@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  * Wrapper used to receive valuations
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  *
  */
 public class ValuationWrapper extends AbstractWrapper {

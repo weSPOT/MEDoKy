@@ -11,7 +11,7 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
  * (possibly empty) set of {@link User}s and a(possibly empty) set of
  * {@link Domain}s. Only the teacher may add/remove domains and learners.
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class Course extends DataObject {

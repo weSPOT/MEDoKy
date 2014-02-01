@@ -19,7 +19,7 @@ import at.tugraz.kmi.medokyservice.fca.lib.colibri.lib.Traversal;
  * concept contains a set of its predecessors and its successors defining the
  * lattice's structure.
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 

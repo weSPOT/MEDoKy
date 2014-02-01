@@ -12,7 +12,7 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
  * creating domains based on a mapping of {@link FCAObject}s to
  * {@link FCAAttribute}s.
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class DomainBlueprint extends AbstractWrapper {

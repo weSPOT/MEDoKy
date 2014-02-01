@@ -14,11 +14,10 @@ import com.sun.jersey.spi.container.ContainerResponseFilter;
  * Enable CORS for all requests This is done via filter for 2 reasons: 1. No
  * changes to the resources needed 2. Adaptive header field based on request
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
-public class CORSFilter implements ContainerResponseFilter,
-    ContainerRequestFilter {
+public class CORSFilter implements ContainerResponseFilter, ContainerRequestFilter {
 
   /**
    * adds a CORS header to all responses
@@ -48,11 +47,6 @@ public class CORSFilter implements ContainerResponseFilter,
   @Override
   public ContainerRequest filter(ContainerRequest arg0) {
 
-    List ach = arg0.getRequestHeader("Content-Type");
-    if (ach == null)
-      ach = new ArrayList();
-    ach.add(MediaType.APPLICATION_JSON);
-    arg0.getRequestHeaders().put("Content-Type", ach);
     return arg0;
   }
 

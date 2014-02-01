@@ -3,7 +3,7 @@ package at.tugraz.kmi.medokyservice.fca.rest.wrappers;
 /**
  * Wrapper class for creating a User throigh the REST interface
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class UserWrapper extends AbstractWrapper {

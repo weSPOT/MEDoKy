@@ -8,7 +8,7 @@ import javax.ws.rs.ext.Provider;
  * 
  * A generic Exception Mapper for delivering exceptions over the REST interface
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  * @param <Exception>
  */

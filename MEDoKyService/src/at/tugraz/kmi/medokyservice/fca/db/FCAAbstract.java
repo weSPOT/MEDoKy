@@ -1,5 +1,8 @@
 package at.tugraz.kmi.medokyservice.fca.db;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +15,7 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
  * Base class of {@link FCAObject} and {@link FCAAttribute}. Those classes serve
  * semantics. Every FCAAbstract contains a Set of {@link LearningObject}s
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class FCAAbstract extends DataObject {
@@ -35,8 +38,7 @@ public class FCAAbstract extends DataObject {
   public FCAAbstract(String name, String description, String creationId) {
     super(name, description);
     this.creationId = creationId;
-    learningObjects = Collections
-        .synchronizedSet(new HashSet<LearningObject>());
+    learningObjects = Collections.synchronizedSet(new HashSet<LearningObject>());
   }
 
   public Set<LearningObject> getLearningObjects() {
@@ -52,4 +54,20 @@ public class FCAAbstract extends DataObject {
   public String getCreationId() {
     return creationId;
   }
+
+  private void writeObject(ObjectOutputStream oos) throws IOException {
+    oos.writeObject(getName());
+    oos.writeObject(getDescription());
+    oos.writeObject(getCreationId());
+    oos.writeLong(id);
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    setName((String) in.readObject());
+    setDescription((String) in.readObject());
+    this.creationId = (String) in.readObject();
+    this.id = in.readLong();
+    this.learningObjects = Collections.synchronizedSet(new HashSet<LearningObject>());
+  }
+
 }

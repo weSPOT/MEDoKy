@@ -15,7 +15,7 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
  * {@link IncidenceMatrix} and a {@link Lattice} computed from the
  * IncidenceMatrix.
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class Domain extends DataObject {
@@ -28,6 +28,7 @@ public class Domain extends DataObject {
   private Lattice formalContext;
   private User owner;
   private boolean global;
+
   @JsonIgnore
   private Map<Long, LearnerDomain> learnerDomains;
 
@@ -44,15 +45,13 @@ public class Domain extends DataObject {
    * @param owner
    *          the domain owner
    */
-  public Domain(String name, String description, IncidenceMatrix matrix,
-      User owner, boolean global) {
+  public Domain(String name, String description, IncidenceMatrix matrix, User owner, boolean global) {
     super(name, description);
     mapping = matrix;
     formalContext = new Lattice(matrix);
     this.owner = owner;
-    this.global=global;
-    this.learnerDomains = Collections
-        .synchronizedMap(new HashMap<Long, LearnerDomain>());
+    this.global = global;
+    this.learnerDomains = Collections.synchronizedMap(new HashMap<Long, LearnerDomain>());
   }
 
   /**
@@ -91,6 +90,10 @@ public class Domain extends DataObject {
 
   public boolean isGlobal() {
     return global;
+  }
+
+  public void setMetadata() {
+    mapping.getAttributes();
   }
 
 }

@@ -18,6 +18,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -50,7 +51,7 @@ import com.sun.istack.logging.Logger;
 /**
  * FCA REST interface
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 @Path(RestConfig.PATH_FCASERVICE)
@@ -86,8 +87,7 @@ public class FCAService {
   public Map<Long, FCAAttribute> getAttributes() {
     log("getAttributes");
     LinkedHashMap<Long, FCAAttribute> map = new LinkedHashMap<Long, FCAAttribute>();
-    TreeSet<FCAAttribute> attributes = new TreeSet<FCAAttribute>(
-        new NameComparator());
+    TreeSet<FCAAttribute> attributes = new TreeSet<FCAAttribute>(new NameComparator());
     attributes.addAll(Database.getInstance().getAll(FCAAttribute.class));
     for (FCAAttribute a : attributes) {
       map.put(a.getId(), a);
@@ -106,8 +106,7 @@ public class FCAService {
   public Map<Long, LearningObject> getLearningObjects() {
     log("getLearningObjects");
     LinkedHashMap<Long, LearningObject> map = new LinkedHashMap<Long, LearningObject>();
-    TreeSet<LearningObject> learningObjects = new TreeSet<LearningObject>(
-        new NameComparator());
+    TreeSet<LearningObject> learningObjects = new TreeSet<LearningObject>(new NameComparator());
     learningObjects.addAll(Database.getInstance().getAll(LearningObject.class));
     for (LearningObject a : learningObjects) {
       map.put(a.getId(), a);
@@ -142,8 +141,7 @@ public class FCAService {
   @GET
   @Path(RestConfig.PATH_GETDOMAINHEADERS)
   @Produces(MediaType.APPLICATION_JSON)
-  public Map<Long, CourseWrapper> getDomainHeaders(
-      @QueryParam(RestConfig.KEY_ID) String externalCourseID) {
+  public Map<Long, CourseWrapper> getDomainHeaders(@QueryParam(RestConfig.KEY_ID) String externalCourseID) {
     log("getDomainHeaders");
     Set<Course> courses = new LinkedHashSet<Course>();
     LinkedHashMap<Long, CourseWrapper> result = new LinkedHashMap<Long, CourseWrapper>();
@@ -171,14 +169,12 @@ public class FCAService {
     }
 
     for (Course c : courses) {
-      CourseWrapper wrapper = new CourseWrapper(c.getId(), c.getName(),
-          c.getDescription(), c.getExternalCourseID());
+      CourseWrapper wrapper = new CourseWrapper(c.getId(), c.getName(), c.getDescription(), c.getExternalCourseID());
       LinkedHashMap<Long, DomainBlueprint> map = new LinkedHashMap<Long, DomainBlueprint>();
       TreeSet<Domain> domains = new TreeSet<Domain>(new NameComparator());
       domains.addAll(c.getDomains());
       for (Domain d : c.getDomains()) {
-        map.put(d.getId(), new DomainBlueprint(d.getName(), d.getDescription(),
-            d.getOwner()));
+        map.put(d.getId(), new DomainBlueprint(d.getName(), d.getDescription(), d.getOwner()));
       }
       wrapper.domains = map;
       result.put(c.getId(), wrapper);
@@ -198,9 +194,10 @@ public class FCAService {
   @Produces(MediaType.APPLICATION_JSON)
   public DomainWrapper getDomain(@QueryParam(RestConfig.KEY_ID) long id) {
     log("getDomain");
-    System.out.println(Database.getInstance().<Domain> get(id)
-        .getFormalContext().toString());
-    return new DomainWrapper((Domain) Database.getInstance().get(id));
+    System.out.println(Database.getInstance().<Domain> get(id).getFormalContext().toString());
+    Domain d = Database.getInstance().get(id);
+    d.setMetadata();
+    return new DomainWrapper(d);
   }
 
   /**
@@ -218,16 +215,14 @@ public class FCAService {
   @Path(RestConfig.PATH_GETLEARNERDOMAIN)
   @Produces(MediaType.APPLICATION_JSON)
   public DomainWrapper getLearnerDomain(@QueryParam(RestConfig.KEY_ID) long id,
-      @QueryParam(RestConfig.KEY_EXTERNALUID) String uid)
-      throws FileNotFoundException, IOException {
+      @QueryParam(RestConfig.KEY_EXTERNALUID) String uid) throws FileNotFoundException, IOException {
     log("getLearnerDomain");
     Domain domain = Database.getInstance().<Domain> get(id);
     User learner = Database.getInstance().getUserByExternalUID(uid);
     System.out.println(domain.getFormalContext().toString());
     if (domain.getLearnerDomains().containsKey(learner.getId()))
       return new DomainWrapper(domain.getLearnerDomains().get(learner.getId()));
-    LearnerDomain dom = new LearnerDomain(Database.getInstance().<User> get(
-        learner.getId()), domain);
+    LearnerDomain dom = new LearnerDomain(Database.getInstance().<User> get(learner.getId()), domain);
     domain.addLearnerDomain(learner.getId(), dom);
     Database.getInstance().put(dom);
     Database.getInstance().save();
@@ -247,9 +242,10 @@ public class FCAService {
   @Path(RestConfig.PATH_UPDATEOBJECT)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
   @Produces(MediaType.APPLICATION_JSON)
-  public FCAObject updateObject(FCAObject obj) {
+  public FCAObject updateObject(@PathParam(RestConfig.KEY_DOMAINID) long domainID, FCAObject obj) {
     log("updateObject");
-    return updateItem(obj);
+    Domain d = Database.getInstance().get(domainID);
+    return updateItem(obj, d);
   }
 
   /**
@@ -265,17 +261,20 @@ public class FCAService {
   @Path(RestConfig.PATH_UPDATEATTRIBUTE)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
   @Produces(MediaType.APPLICATION_JSON)
-  public FCAAttribute updateAttribute(FCAAttribute obj) {
+  public FCAAttribute updateAttribute(@PathParam(RestConfig.KEY_DOMAINID) long domainID, FCAAttribute obj) {
     log("updateAttribute");
-    return updateItem(obj);
+    Domain d = Database.getInstance().get(domainID);
+    return updateItem(obj, d);
   }
 
-  private <T extends FCAAbstract> T updateItem(T obj) {
+  private <T extends FCAAbstract> T updateItem(T obj, Domain domain) {
     T domainObject = Database.getInstance().get(obj.getId());
+
     domainObject.setName(obj.getName());
     domainObject.setDescription(obj.getDescription());
     updateLearningObject(obj);
     domainObject.setLearningObjects(obj.getLearningObjects());
+    domain.getMapping().storeMetadata(obj);
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {
@@ -306,8 +305,7 @@ public class FCAService {
   @Path(RestConfig.PATH_UPDATECONCEPT)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
   @Produces(MediaType.APPLICATION_JSON)
-  public LatticeWrapper updateConcept(ConceptWrapper concept)
-      throws NullPointerException {
+  public LatticeWrapper updateConcept(ConceptWrapper concept) throws NullPointerException {
     log("updateConcept");
     Concept c = Database.getInstance().get(concept.id);
     if (c == null)
@@ -341,26 +339,20 @@ public class FCAService {
   @Path(RestConfig.PATH_UPDATEVALUATIONS)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
   @Produces(MediaType.APPLICATION_JSON)
-  public LatticeWrapper updateValuations(ValuationWrapper valuations)
-      throws Exception {
+  public LatticeWrapper updateValuations(ValuationWrapper valuations) throws Exception {
     log("updateConcept");
     HashMap<FCAObject, Float> objectValuations = new HashMap<FCAObject, Float>();
     HashMap<FCAAttribute, Float> attributeValuations = new HashMap<FCAAttribute, Float>();
     for (Long id : valuations.objectValuations.keySet()) {
-      System.out.println("Long O " + id + ", "
-          + valuations.objectValuations.get(id));
-      objectValuations.put(Database.getInstance().<FCAObject> get(id),
-          valuations.objectValuations.get(id));
+      System.out.println("Long O " + id + ", " + valuations.objectValuations.get(id));
+      objectValuations.put(Database.getInstance().<FCAObject> get(id), valuations.objectValuations.get(id));
     }
     for (Long id : valuations.attributeValuations.keySet()) {
-      System.out.println("Long A: " + id + ", "
-          + valuations.attributeValuations.get(id));
-      attributeValuations.put(Database.getInstance().<FCAAttribute> get(id),
-          valuations.attributeValuations.get(id));
+      System.out.println("Long A: " + id + ", " + valuations.attributeValuations.get(id));
+      attributeValuations.put(Database.getInstance().<FCAAttribute> get(id), valuations.attributeValuations.get(id));
     }
     LearnerDomain domain = Database.getInstance().get(valuations.id);
-    Updater.update(domain, objectValuations, attributeValuations, Database
-        .getInstance().getUserByExternalUID(valuations.externalUID));
+    Updater.update(domain, objectValuations, attributeValuations);
     return new DomainWrapper(domain).formalContext;
   }
 
@@ -380,8 +372,7 @@ public class FCAService {
     if (Database.getInstance().getUserByExternalUID(user.externalUID) != null)
       return;
     User u = new User(user.externalUID, user.name, user.description);
-    log("New User " + u.getId() + ", " + u.getExternalUid() + ", "
-        + u.getName() + ", " + u.getDescription());
+    log("New User " + u.getId() + ", " + u.getExternalUid() + ", " + u.getName() + ", " + u.getDescription());
     Database.getInstance().put(u);
   }
 
@@ -403,11 +394,9 @@ public class FCAService {
     HashMap<Long, FCAObject> result = new HashMap<Long, FCAObject>();
     for (FCAObject object : objects) {
 
-      FCAObject fcaObject = (FCAObject) Database.getInstance()
-          .getFCAItemBycreationId(object.getCreationId());
+      FCAObject fcaObject = (FCAObject) Database.getInstance().getFCAItemBycreationId(Long.toHexString(object.getId()));
       if (fcaObject == null) {
-        fcaObject = new FCAObject(object.getName(), object.getDescription(),
-            object.getCreationId());
+        fcaObject = new FCAObject(object.getName(), object.getDescription(), Long.toHexString(object.getId()));
       }
       fcaObject.setLearningObjects(object.getLearningObjects());
       result.put(fcaObject.getId(), object);
@@ -429,19 +418,16 @@ public class FCAService {
   @Path(RestConfig.PATH_CREATELEARNINGOBJECTS)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
   @Produces(MediaType.APPLICATION_JSON)
-  public Map<Long, LearningObjectWrapper> createLearningObjects(
-      Set<LearningObjectWrapper> objects) {
+  public Map<Long, LearningObjectWrapper> createLearningObjects(Set<LearningObjectWrapper> objects) {
     log("createLearningObjects");
 
     HashMap<Long, LearningObjectWrapper> result = new HashMap<Long, LearningObjectWrapper>();
     for (LearningObjectWrapper object : objects) {
-      System.out.println("URL: "+object.data);
+      System.out.println("URL: " + object.data);
       if (Database.getInstance().getLearningObjectsByURL(object.data) == null) {
-        LearningObject fcaObject = new LearningObject(object.name,
-            object.description, object.data, Database.getInstance()
-                .getUserByExternalUID(object.externalUID));
-        object.owner = Database.getInstance().getUserByExternalUID(
-            object.externalUID);
+        LearningObject fcaObject = new LearningObject(object.name, object.description, object.data, Database
+            .getInstance().getUserByExternalUID(object.externalUID));
+        object.owner = Database.getInstance().getUserByExternalUID(object.externalUID);
         result.put(fcaObject.getId(), object);
         Database.getInstance().put(fcaObject);
       }
@@ -468,12 +454,11 @@ public class FCAService {
     log("createAttributes");
     HashMap<Long, FCAAttribute> result = new HashMap<Long, FCAAttribute>();
     for (FCAAttribute attribute : attributes) {
-      FCAAttribute fcaAttribute = (FCAAttribute) Database.getInstance()
-          .getFCAItemBycreationId(attribute.getCreationId());
+      FCAAttribute fcaAttribute = (FCAAttribute) Database.getInstance().getFCAItemBycreationId(
+          Long.toHexString(attribute.getId()));
       if (fcaAttribute == null) {
-
-        fcaAttribute = new FCAAttribute(attribute.getName(),
-            attribute.getDescription(), attribute.getCreationId());
+        fcaAttribute = new FCAAttribute(attribute.getName(), attribute.getDescription(), Long.toHexString(attribute
+            .getId()));
       }
       fcaAttribute.setLearningObjects(attribute.getLearningObjects());
       result.put(fcaAttribute.getId(), attribute);
@@ -499,29 +484,24 @@ public class FCAService {
   public DomainWrapper createDomain(DomainBlueprint relation) {
 
     log("createDomain");
-    IncidenceMatrix matrix = new IncidenceMatrix(relation.name,
-        relation.description);
-    Deque<FCAAttribute> attributes = Database.getInstance().get(
-        relation.attributes);
+    IncidenceMatrix matrix = new IncidenceMatrix(relation.name, relation.description);
+    Deque<FCAAttribute> attributes = Database.getInstance().get(relation.attributes);
     matrix.initAttributes(attributes);
     Deque<FCAObject> objs = Database.getInstance().get(relation.objects);
     matrix.initObjects(objs);
     for (Long iobjectId : relation.mapping.keySet()) {
-      matrix.add(Database.getInstance().<FCAObject> get(iobjectId), Database
-          .getInstance().<FCAAttribute> get(relation.mapping.get(iobjectId)));
+      matrix.add(Database.getInstance().<FCAObject> get(iobjectId),
+          Database.getInstance().<FCAAttribute> get(relation.mapping.get(iobjectId)));
     }
 
-    Domain domain = new Domain(relation.name, relation.description, matrix,
-        Database.getInstance().getUserByExternalUID(relation.externalUID),
-        false);
+    Domain domain = new Domain(relation.name, relation.description, matrix, Database.getInstance()
+        .getUserByExternalUID(relation.externalUID), false);
     Database.getInstance().put(domain);
     Database.getInstance().putAll(domain.getFormalContext().getConcepts());
-    Course course = Database.getInstance().getCourseByExternalID(
-        relation.externalCourseID);
+    Course course = Database.getInstance().getCourseByExternalID(relation.externalCourseID);
     if (course == null) {
-      course = new Course(relation.courseName, "", Database.getInstance()
-          .getUserByExternalUID(relation.externalUID).getId(),
-          relation.externalCourseID);
+      course = new Course(relation.courseName, "", Database.getInstance().getUserByExternalUID(relation.externalUID)
+          .getId(), relation.externalCourseID);
     }
     course.addDomain(domain);
     Database.getInstance().put(course);
@@ -548,10 +528,8 @@ public class FCAService {
   @Produces(MediaType.TEXT_PLAIN)
   public String restSyntax() {
     Method[] methods = FCAService.class.getDeclaredMethods();
-    StringBuffer hlp = new StringBuffer(String.format("%-20s", "Return Type"))
-        .append(String.format("%-8s", "HTTP"))
-        .append(String.format("%-26s", "PATH"))
-        .append(String.format("%-26s", "Return MediaType"))
+    StringBuffer hlp = new StringBuffer(String.format("%-20s", "Return Type")).append(String.format("%-8s", "HTTP"))
+        .append(String.format("%-26s", "PATH")).append(String.format("%-26s", "Return MediaType"))
         .append(String.format("%-20s", "Parameters")).append("\n\n");
 
     System.out.println(methods.length);
@@ -563,8 +541,7 @@ public class FCAService {
         hlp.append(String.format("%-20s", m.getReturnType().getSimpleName()));
         for (Annotation a : annotations) {
           if (!(a instanceof Consumes)) {
-            StringTokenizer stAnnotaion = new StringTokenizer(a.toString(),
-                "@.=()");
+            StringTokenizer stAnnotaion = new StringTokenizer(a.toString(), "@.=()");
             String token = "";
             while (stAnnotaion.hasMoreTokens())
               token = stAnnotaion.nextToken();
@@ -582,16 +559,14 @@ public class FCAService {
           if (a.length > 0)
             for (Annotation ann : a) {
 
-              StringTokenizer stAnnotaion = new StringTokenizer(ann.toString(),
-                  "@.=()");
+              StringTokenizer stAnnotaion = new StringTokenizer(ann.toString(), "@.=()");
               stAnnotaion.nextToken();
               stAnnotaion.nextToken();
               stAnnotaion.nextToken();
               hlp.append(String.format("%-20s", stAnnotaion.nextToken()));
               stAnnotaion.nextToken();
               try {
-                hlp.append(String.format("%-20s",
-                    "\"" + stAnnotaion.nextToken() + "\""));
+                hlp.append(String.format("%-20s", "\"" + stAnnotaion.nextToken() + "\""));
               } catch (Exception e) {
               }
               // hlp.append("\"");
@@ -614,8 +589,7 @@ public class FCAService {
     for (LearningObject lo : obj.getLearningObjects()) {
       LearningObject dbLo = Database.getInstance().get(lo.getId());
       if (dbLo == null)
-        dbLo = new LearningObject(lo.getName(), lo.getDescription(),
-            lo.getData(), lo.getOwner());
+        dbLo = new LearningObject(lo.getName(), lo.getDescription(), lo.getData(), lo.getOwner());
       else {
         dbLo.setName(lo.getName());
         dbLo.setDescription(lo.getDescription());

@@ -8,7 +8,7 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 /**
  * Wrapper user for (de-)serializing a domain from/to JSON
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class DomainWrapper extends AbstractWrapper {

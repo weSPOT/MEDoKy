@@ -5,7 +5,7 @@ import at.tugraz.kmi.medokyservice.fca.db.FCAAbstract;
 /**
  * An FCA Attribute -- a purely semantic class
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class FCAAttribute extends FCAAbstract {

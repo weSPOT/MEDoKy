@@ -17,7 +17,7 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerConcept;
  * Wrapper class resembling a {@link Concept} or a {@link LearnerConcept} but
  * without cyclic or nested references used by {@link LatticeWrapper}.
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * @see LatticeWrapper
  * @see Concept
  */

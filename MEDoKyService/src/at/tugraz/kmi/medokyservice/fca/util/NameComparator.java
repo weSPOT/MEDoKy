@@ -7,7 +7,7 @@ import at.tugraz.kmi.medokyservice.fca.db.DataObject;
 /**
  * Compares DataObjects by name. If names are equal, their IDs are compared.
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  * @param <DataObject>
  */

@@ -14,7 +14,7 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Lattice;
  * a lattice its structure is defined through bidirectional relations of
  * {@link LearnerConcept}s.
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class LearnerLattice extends DataObject {
@@ -34,16 +34,15 @@ public class LearnerLattice extends DataObject {
    * @param user
    *          the user it belongs to
    */
-  public LearnerLattice(Lattice lattice, User user) {
+  public LearnerLattice(Lattice lattice) {
     super("Learner" + lattice.getName(), lattice.getDescription());
     concepts = Collections.synchronizedSet(new LinkedHashSet<LearnerConcept>());
     synchronized (concepts) {
-      user.addItems(lattice.getConcepts());
       HashMap<Long, LearnerConcept> registry = new HashMap<Long, LearnerConcept>();
-      bottom = new LearnerConcept(lattice.getBottom(), user);
+      bottom = new LearnerConcept(lattice.getBottom());
       concepts.add(bottom);
       if (lattice.getTop() != null) {
-        top = new LearnerConcept(lattice.getTop(), user);
+        top = new LearnerConcept(lattice.getTop());
         concepts.add(top);
       }
       registry.put(lattice.getBottom().getId(), bottom);
@@ -52,7 +51,7 @@ public class LearnerLattice extends DataObject {
       for (Concept c : lattice.getConcepts()) {
         LearnerConcept concept;
         if (!registry.containsKey(c.getId())) {
-          concept = new LearnerConcept(c, user);
+          concept = new LearnerConcept(c);
           concepts.add(concept);
           registry.put(c.getId(), concept);
         } else {
@@ -61,7 +60,7 @@ public class LearnerLattice extends DataObject {
         for (Concept s : c.getSuccessors()) {
           LearnerConcept suc;
           if (!registry.containsKey(s.getId())) {
-            suc = new LearnerConcept(s, user);
+            suc = new LearnerConcept(s);
             concepts.add(suc);
             registry.put(s.getId(), suc);
           } else {

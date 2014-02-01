@@ -14,7 +14,7 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerLattice;
  * serialized multiple times (roughly n(n+1)/2 times) leading to large amounts
  * of data transmitted (up to several megabytes).
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  * @see Lattice
  */

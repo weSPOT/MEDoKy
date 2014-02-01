@@ -8,7 +8,7 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.IncidenceMatrix;
  * A LearnerDomain based upon a {@link Domain} of the domain model. Contains
  * references to the domain it is based upon and a {@link LearnerLattice}.
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class LearnerDomain extends DataObject {
@@ -33,7 +33,7 @@ public class LearnerDomain extends DataObject {
     this.mapping = domain.getMapping();
     this.owner = owner;
     this.domainID = domain.getId();
-    this.formalContext = new LearnerLattice(domain.getFormalContext(), owner);
+    this.formalContext = new LearnerLattice(domain.getFormalContext());
   }
 
   public LearnerLattice getFormalContext() {

@@ -6,7 +6,7 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 /**
  * Wrapper class to create {@link LearningObject}s
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class LearningObjectWrapper extends AbstractWrapper {

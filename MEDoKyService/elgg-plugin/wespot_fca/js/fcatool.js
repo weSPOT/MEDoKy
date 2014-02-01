@@ -180,24 +180,26 @@ backend = {
   },
 
   update_attribute : function(payload, callback) {
-    $.ajax({
-      cache : false,
-      type : "POST",
-      url : backend.url + backend.path_update_attribute,
-      data : payload,
-      dataType : "json",
-      contentType : "application/json; charset=utf-8",
-      success : function(obj) {
-        callback(obj);
-      }
-    });
+    $
+        .ajax({
+          cache : false,
+          type : "POST",
+          url : backend.url +"domain/"+ state.domain.id + "/"
+              + backend.path_update_attribute,
+          data : payload,
+          dataType : "json",
+          contentType : "application/json; charset=utf-8",
+          success : function(obj) {
+            callback(obj);
+          }
+        });
   },
 
   update_object : function(payload, callback) {
     $.ajax({
       cache : false,
       type : "POST",
-      url : backend.url + backend.path_update_object,
+      url : backend.url +"domain/"+ state.domain.id + "/" + backend.path_update_object,
       data : payload,
       dataType : "json",
       contentType : "application/json; charset=utf-8",
@@ -705,6 +707,7 @@ logic = {
     $(prefix + index).prop("value", item.name).data(key, item);
     index = -1;
     util.filter_items(entityType);
+    $("body").removeData("item");
   },
 
   create_mapping : function(name, description) {
@@ -1332,7 +1335,10 @@ ui = {
         : $("#sel_set_obj");
 
     sel.blur(function() {
-      $(this).val($("body").data("item").name);
+      try {
+        $(this).val($("body").data("item").name);
+      } catch (not_an_error) {
+      }
     });
     sel.click(function() {
       $(this).val("");
@@ -1711,6 +1717,7 @@ ui = {
   },
 
   prepare_item_edit : function(entityType, clear) {
+    console.debug(entityType + ", " + clear);
     if (clear) {
       $(".div_lo").empty();
       $(".text_description").val("");
@@ -1741,6 +1748,8 @@ ui = {
     btn.val(elgg.echo('wespot_fca:save'));
     btn.click(function() {
       var item = $("body").data("item");
+      console.debug("item:");
+      console.debug(item);
       $("body").removeData("item");
       if (!item) {
         var item = {

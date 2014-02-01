@@ -10,7 +10,7 @@ import com.google.gson.JsonObject;
  * Root Class of all FCA related classes providing a {@link Long} id to store it
  * inside the {@link Database} and a {@link String} name and description.
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public abstract class DataObject implements Comparable<DataObject>, Serializable {

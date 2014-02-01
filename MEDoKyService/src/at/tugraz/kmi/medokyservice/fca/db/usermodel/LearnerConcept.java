@@ -1,7 +1,7 @@
 package at.tugraz.kmi.medokyservice.fca.db.usermodel;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +16,7 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
 /**
  * A LearnerConcept linked to a {@link Concept} of the domain model.
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class LearnerConcept extends DataObject {
@@ -28,10 +28,8 @@ public class LearnerConcept extends DataObject {
   private Set<LearnerConcept> predecessors;
   private Set<LearnerConcept> successors;
   private Set<LearnerConcept> taxonomySuccessors;
-  private Set<FCAObject> objects;
-  private Set<FCAAttribute> attributes;
-  @JsonIgnore
-  private User learner;
+  private HashMap<FCAObject, Float> objects;
+  private HashMap<FCAAttribute, Float> attributes;
 
   /**
    * Creates a new LearnerConcept based upon a {@link Concept} of the domain
@@ -43,20 +41,18 @@ public class LearnerConcept extends DataObject {
    *          the user this concept belongs to
    */
   @SuppressWarnings("rawtypes")
-  public LearnerConcept(Concept c, User user) {
+  public LearnerConcept(Concept c) {
     super(c.getName(), c.getDescription());
     domainConceptId = c.getId();
-    this.learner = user;
-    objects = new LinkedHashSet<FCAObject>();
-    attributes = new LinkedHashSet<FCAAttribute>();
+    objects = new HashMap<FCAObject, Float>();
+    attributes = new HashMap<FCAAttribute, Float>();
 
     for (Comparable o : c.getObjects()) {
-      objects.add((FCAObject) o);
-
+      objects.put((FCAObject) o, 0f);
     }
 
     for (Comparable a : c.getAttributes()) {
-      attributes.add((FCAAttribute) a);
+      attributes.put((FCAAttribute) a, 0f);
     }
 
     predecessors = new LinkedHashSet<LearnerConcept>();
@@ -95,12 +91,7 @@ public class LearnerConcept extends DataObject {
    * @return the objects of this concept with valuations mapped to them
    */
   public Map<FCAObject, Float> getObjects() {
-    LinkedHashMap<FCAObject, Float> result = new LinkedHashMap<FCAObject, Float>();
-    Map<FCAObject, Float> obj = learner.getLearnerObjects();
-    for (FCAObject o : objects) {
-      result.put(o, obj.get(o));
-    }
-    return result;
+    return objects;
   }
 
   /**
@@ -109,12 +100,7 @@ public class LearnerConcept extends DataObject {
    * @return the attributes of this concept with valuations mapped to them
    */
   public Map<FCAAttribute, Float> getAttributes() {
-    LinkedHashMap<FCAAttribute, Float> result = new LinkedHashMap<FCAAttribute, Float>();
-    Map<FCAAttribute, Float> attr = learner.getLearnerAttributes();
-    for (FCAAttribute a : attributes) {
-      result.put(a, attr.get(a));
-    }
-    return result;
+    return attributes;
   }
 
   /**

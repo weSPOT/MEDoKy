@@ -3,7 +3,7 @@ package at.tugraz.kmi.medokyservice.fca.db;
 /**
  * Singelton generating sequential unique {@link Long} ids starting at -(2^50)
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class IDGenerator {

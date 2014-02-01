@@ -24,6 +24,7 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Course;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Domain;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
+import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAItemMetadata;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
@@ -40,7 +41,7 @@ import com.sun.istack.logging.Logger;
  * {@link BlockingDeque}s containing the results to ensure thread-safety. Since
  * only references are stored inside a deque the objects itself are mutable.
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class Database implements Serializable {
@@ -91,6 +92,8 @@ public class Database implements Serializable {
         Collections.synchronizedMap(new HashMap<Long, Concept>()));
     typeMap.put(User.class,
         Collections.synchronizedMap(new HashMap<Long, User>()));
+    typeMap.put(FCAItemMetadata.class,
+        Collections.synchronizedMap(new HashMap<Long, FCAItemMetadata>()));
 
   }
 

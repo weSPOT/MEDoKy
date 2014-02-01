@@ -1,6 +1,6 @@
 /**
  * Collection of utility classes for FCA
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  *
  */
 package at.tugraz.kmi.medokyservice.fca.util;

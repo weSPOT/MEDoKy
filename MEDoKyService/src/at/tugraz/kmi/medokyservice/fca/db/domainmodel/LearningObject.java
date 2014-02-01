@@ -6,7 +6,7 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 /**
  * A Learning object referencing an external resource
  * 
- * @author Bernd Prünster <bernd.pruenster@gmail.com>
+ * @author Bernd Prünster <mail@berndpruenster.org>
  * 
  */
 public class LearningObject extends DataObject {
