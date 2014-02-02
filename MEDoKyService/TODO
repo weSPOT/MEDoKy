@@ -1,8 +1,0 @@
- - come up with UML
- - think about how often a data update is necessary? frequency
- - how many comments for one post - ask jose
- - refactor Intervention
- - update wiki medoky 
-
-1 - implement json to student info
-2 - think about how to initialize all pages - maybe work with load all courses - each course loads all students - each student loads its studentInfo

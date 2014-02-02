@@ -19,6 +19,12 @@ public class FCAItemMetadata extends DataObject {
     this.learningObjects = Collections.synchronizedSet(new LinkedHashSet<LearningObject>(obj.getLearningObjects()));
   }
 
+  public FCAItemMetadata(String description, long itemID, Set<LearningObject> learningObjects) {
+    super(null, description);
+    this.itemID = itemID;
+    this.learningObjects = Collections.synchronizedSet(new LinkedHashSet<LearningObject>(learningObjects));
+  }
+
   public long getItemID() {
     return itemID;
   }

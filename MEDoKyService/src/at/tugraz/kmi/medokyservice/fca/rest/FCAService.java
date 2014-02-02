@@ -271,7 +271,6 @@ public class FCAService {
     T domainObject = Database.getInstance().get(obj.getId());
 
     domainObject.setName(obj.getName());
-    domainObject.setDescription(obj.getDescription());
     updateLearningObject(obj);
     domainObject.setLearningObjects(obj.getLearningObjects());
     domain.getMapping().storeMetadata(obj);
@@ -284,6 +283,7 @@ public class FCAService {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    domainObject.setDescription(obj.getDescription());
     return domainObject;
   }
 
@@ -294,7 +294,7 @@ public class FCAService {
    * to be updated and returned to ensure current data.
    * 
    * @param concept
-   *          the concept to update -- wrapped i a helper class reducing
+   *          the concept to update -- wrapped in a helper class reducing
    *          overhead
    * @return the updated domain this concept belongs to
    * @throws NullPointerException

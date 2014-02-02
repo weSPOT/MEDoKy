@@ -242,7 +242,7 @@ public class IncidenceMatrix extends DataObject {
     }
   }
 
-  private Map<Long, FCAItemMetadata> getItemMetadata() {
+  public Map<Long, FCAItemMetadata> getItemMetadata() {
     return itemMetadata;
   }
 

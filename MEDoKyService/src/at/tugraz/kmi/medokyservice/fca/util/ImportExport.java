@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import at.tugraz.kmi.medokyservice.fca.db.FCAAbstract;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Course;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Domain;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
+import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAItemMetadata;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.IncidenceMatrix;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
@@ -44,9 +46,11 @@ public class ImportExport {
   private static final String SECTION_A = "attributes";
   private static final String SECTION_U = "users";
   private static final String SECTION_D = "domains";
+  private static final String SECTION_M = "metadata";
   private static final String SECTION_C = "courses";
 
   private static final String ID = "id";
+  private static final String O_ID = "objectId";
   private static final String E_UID = "externalUid";
   private static final String E_CID = "externalCourseid";
   private static final String CID = "creationId";
@@ -101,8 +105,7 @@ public class ImportExport {
   }
 
   private JsonElement learningObjects2JSON() {
-    BlockingDeque<LearningObject> lobjects = Database.getInstance().getAll(
-        LearningObject.class);
+    BlockingDeque<LearningObject> lobjects = Database.getInstance().getAll(LearningObject.class);
     JsonObject block = new JsonObject();
     for (LearningObject o : lobjects) {
       JsonObject jso = prepare(o);
@@ -138,6 +141,23 @@ public class ImportExport {
     return abstracts2JSon(FCAAttribute.class);
   }
 
+  private JsonElement metadata2JSON() {
+    BlockingDeque<FCAItemMetadata> lobjects = Database.getInstance().getAll(FCAItemMetadata.class);
+    JsonObject block = new JsonObject();
+    for (FCAItemMetadata o : lobjects) {
+      JsonObject jso = prepare(o);
+      jso.addProperty(O_ID, o.getItemID());
+      LinkedList<Long> loIds = new LinkedList<Long>();
+      for (LearningObject lo : o.getLearningObjects()) {
+        loIds.add(lo.getId());
+      }
+      jso.add(SECTION_LO, gson.toJsonTree(loIds, new TypeToken<List<Long>>() {
+      }.getType()));
+      block.add(Long.toString(o.getId()), jso);
+    }
+    return block;
+  }
+
   private JsonElement domains2JSON() {
     BlockingDeque<Domain> domains = Database.getInstance().getAll(Domain.class);
     JsonArray jsD = new JsonArray();
@@ -145,6 +165,11 @@ public class ImportExport {
       IncidenceMatrix mat = d.getMapping();
       Map<FCAObject, Set<FCAAttribute>> mapping = mat.getObjects();
       JsonObject jso = prepare(d);
+      JsonObject jsM = new JsonObject();
+      for (long mId : mat.getItemMetadata().keySet()) {
+        jsM.addProperty(Long.toString(mId), mat.getItemMetadata().get(mId).getId());
+      }
+      jso.add(SECTION_M, jsM);
       jso.addProperty(OWNER, d.getOwner().getId());
       jso.addProperty(GLOBAL, d.isGlobal());
       JsonObject jsMapping = new JsonObject();
@@ -153,9 +178,8 @@ public class ImportExport {
         for (FCAAttribute a : mapping.get(o)) {
           aIds.add(a.getId());
         }
-        jsMapping.add(Long.toString(o.getId()),
-            gson.toJsonTree(aIds, new TypeToken<List<Long>>() {
-            }.getType()));
+        jsMapping.add(Long.toString(o.getId()), gson.toJsonTree(aIds, new TypeToken<List<Long>>() {
+        }.getType()));
       }
       jso.add(MAPPING, jsMapping);
       jsD.add(jso);
@@ -170,7 +194,7 @@ public class ImportExport {
       JsonObject jso = prepare(o);
       Set<Domain> domains = o.getDomains();
       LinkedList<Long> dIds = new LinkedList<Long>();
-      for(Domain d: domains)
+      for (Domain d : domains)
         dIds.add(d.getId());
 
       jso.add(SECTION_D, gson.toJsonTree(dIds, new TypeToken<List<Long>>() {
@@ -182,9 +206,8 @@ public class ImportExport {
       for (User u : o.getParticipants())
         participants.add(u.getId());
 
-      jso.add(PARTICIPANTS,
-          gson.toJsonTree(participants, new TypeToken<List<Long>>() {
-          }.getType()));
+      jso.add(PARTICIPANTS, gson.toJsonTree(participants, new TypeToken<List<Long>>() {
+      }.getType()));
 
       jsC.add(jso);
     }
@@ -202,6 +225,8 @@ public class ImportExport {
 
     output.add(SECTION_A, attributes2JSON());
 
+    output.add(SECTION_M, metadata2JSON());
+
     output.add(SECTION_D, domains2JSON());
 
     output.add(SECTION_C, courses2JSON());
@@ -216,15 +241,14 @@ public class ImportExport {
     Set<Entry<String, JsonElement>> entries = block.entrySet();
     for (Entry<String, JsonElement> u : entries) {
       JsonObject jsUser = u.getValue().getAsJsonObject();
-      User user = new User(jsUser.get(E_UID).getAsString(), jsUser.get(NAME)
-          .getAsString(), jsUser.get(DESCRIPTION).getAsString());
+      User user = new User(jsUser.get(E_UID).getAsString(), jsUser.get(NAME).getAsString(), jsUser.get(DESCRIPTION)
+          .getAsString());
       users.put(Long.parseLong(u.getKey()), user);
     }
     return users;
   }
 
-  private Map<Long, LearningObject> json2LearningObjects(JsonObject json,
-      Map<Long, User> users) {
+  private Map<Long, LearningObject> json2LearningObjects(JsonObject json, Map<Long, User> users) {
     HashMap<Long, LearningObject> learningObjects = new HashMap<Long, LearningObject>();
     JsonObject block = json.get(SECTION_LO).getAsJsonObject();
 
@@ -232,9 +256,8 @@ public class ImportExport {
     for (Entry<String, JsonElement> lo : entries) {
       JsonObject jsLo = lo.getValue().getAsJsonObject();
       User owner = users.get(Long.parseLong(jsLo.get(OWNER).getAsString()));
-      LearningObject learningObject = new LearningObject(jsLo.get(NAME)
-          .getAsString(), jsLo.get(DESCRIPTION).getAsString(), jsLo.get(DATA)
-          .getAsString(), owner);
+      LearningObject learningObject = new LearningObject(jsLo.get(NAME).getAsString(), jsLo.get(DESCRIPTION)
+          .getAsString(), jsLo.get(DATA).getAsString(), owner);
       learningObjects.put(Long.parseLong(lo.getKey()), learningObject);
     }
     return learningObjects;
@@ -261,11 +284,9 @@ public class ImportExport {
       } else
         creationId = jsO.get(CID).getAsString();
       if (type == FCAObject.class)
-        object = (E) new FCAObject(jsO.get(NAME).getAsString(), jsO.get(
-            DESCRIPTION).getAsString(), creationId);
+        object = (E) new FCAObject(jsO.get(NAME).getAsString(), jsO.get(DESCRIPTION).getAsString(), creationId);
       else
-        object = (E) new FCAAttribute(jsO.get(NAME).getAsString(), jsO.get(
-            DESCRIPTION).getAsString(), creationId);
+        object = (E) new FCAAttribute(jsO.get(NAME).getAsString(), jsO.get(DESCRIPTION).getAsString(), creationId);
       Iterator<JsonElement> lOs = jsO.getAsJsonArray(SECTION_LO).iterator();
       Set<LearningObject> lObjs = new HashSet<LearningObject>();
       while (lOs.hasNext()) {
@@ -278,49 +299,71 @@ public class ImportExport {
     return objects;
   }
 
-  private Map<Long, FCAObject> json2Objects(JsonObject json,
-      Map<Long, LearningObject> learningObjects) {
+  private Map<Long, FCAObject> json2Objects(JsonObject json, Map<Long, LearningObject> learningObjects) {
     return json2Absctract(json, learningObjects, FCAObject.class);
   }
 
-  private Map<Long, FCAAttribute> json2Attributes(JsonObject json,
-      Map<Long, LearningObject> learningObjects) {
+  private Map<Long, FCAAttribute> json2Attributes(JsonObject json, Map<Long, LearningObject> learningObjects) {
     return json2Absctract(json, learningObjects, FCAAttribute.class);
   }
 
-  private Map<Long, Domain> json2Domains(JsonObject json,
-      Map<Long, FCAObject> objects, Map<Long, FCAAttribute> attributes,
-      Map<Long, User> users) {
+  private Map<Long, FCAItemMetadata> json2Metadata(JsonObject json, Map<Long, LearningObject> learningObjects) {
+    Map<Long, FCAItemMetadata> result = new HashMap<Long, FCAItemMetadata>();
+    JsonObject jsM = json.get(SECTION_M).getAsJsonObject();
+    for (Entry<String, JsonElement> entry : jsM.entrySet()) {
+      JsonObject val = entry.getValue().getAsJsonObject();
+      JsonArray arr = val.get(SECTION_LO).getAsJsonArray();
+      LinkedHashSet<LearningObject> l_objs = new LinkedHashSet<LearningObject>();
+      for (JsonElement loID : arr)
+        l_objs.add(learningObjects.get(loID.getAsLong()));
+      result.put(Long.parseLong(entry.getKey()), new FCAItemMetadata(val.get(DESCRIPTION).getAsString(), val.get(O_ID)
+          .getAsLong(), l_objs));
+    }
+    return result;
+  }
+
+  private Map<Long, Domain> json2Domains(JsonObject json, Map<Long, FCAObject> objects,
+      Map<Long, FCAAttribute> attributes, Map<Long, User> users, Map<Long, FCAItemMetadata> metadata) {
     Iterator<JsonElement> jsD = json.getAsJsonArray(SECTION_D).iterator();
     HashMap<Long, Domain> domains = new HashMap<Long, Domain>();
     while (jsD.hasNext()) {
       JsonObject d = jsD.next().getAsJsonObject();
-      IncidenceMatrix mat = new IncidenceMatrix(d.get(NAME).getAsString(), d
-          .get(DESCRIPTION).getAsString());
-      Set<Entry<String, JsonElement>> mapping = d.get(MAPPING)
-          .getAsJsonObject().entrySet();
+      IncidenceMatrix mat = new IncidenceMatrix(d.get(NAME).getAsString(), d.get(DESCRIPTION).getAsString());
+      Set<Entry<String, JsonElement>> mapping = d.get(MAPPING).getAsJsonObject().entrySet();
+      JsonObject objMeta = d.get(SECTION_M).getAsJsonObject();
       for (Entry<String, JsonElement> map : mapping) {
         FCAObject object = objects.get(Long.parseLong(map.getKey()));
+        FCAItemMetadata meta = metadata.get(objMeta.get(map.getKey()).getAsLong());
+        System.out.println(object.getName());
+        object.setLearningObjects(meta.getLearningObjects());
+        String descr = object.getDescription();
+        object.setDescription(meta.getDescription());
+        mat.storeMetadata(object);
+        object.setDescription(descr);
         Iterator<JsonElement> atts = map.getValue().getAsJsonArray().iterator();
         HashSet<FCAAttribute> attribs = new HashSet<FCAAttribute>();
         while (atts.hasNext()) {
-          attribs.add(attributes.get(atts.next().getAsLong()));
+          long id = atts.next().getAsLong();
+          FCAAttribute attr = attributes.get(id);
+          attribs.add(attr);
+          meta = metadata.get(objMeta.get(Long.toString(id)).getAsLong());
+          attr.setLearningObjects(meta.getLearningObjects());
+          descr = attr.getDescription();
+          attr.setDescription(meta.getDescription());
+          mat.storeMetadata(attr);
+          attr.setDescription(descr);
         }
         mat.add(object, attribs);
       }
-      boolean global = (d.get(GLOBAL) == null) ? false : d.get(GLOBAL)
-          .getAsBoolean();
-      domains.put(
-          d.get(ID).getAsLong(),
-          new Domain(mat.getName(), mat.getDescription(), mat, users.get(d.get(
-              OWNER).getAsLong()), global));
+      boolean global = (d.get(GLOBAL) == null) ? false : d.get(GLOBAL).getAsBoolean();
+      domains.put(d.get(ID).getAsLong(),
+          new Domain(mat.getName(), mat.getDescription(), mat, users.get(d.get(OWNER).getAsLong()), global));
 
     }
     return domains;
   }
 
-  private Set<Course> json2Courses(JsonObject json, Map<Long, Domain> domains,
-      Map<Long, User> users) {
+  private Set<Course> json2Courses(JsonObject json, Map<Long, Domain> domains, Map<Long, User> users) {
     Set<Course> courses = new HashSet<Course>();
     Iterator<JsonElement> jsC = json.getAsJsonArray(SECTION_C).iterator();
     while (jsC.hasNext()) {
@@ -338,8 +381,8 @@ public class ImportExport {
         User u = users.get(userIds.next().getAsLong());
         uusers.add(u);
       }
-      Course course = new Course(c.get(NAME).getAsString(), c.get(DESCRIPTION)
-          .getAsString(), c.get(OWNER).getAsLong(), c.get(E_CID).getAsString());
+      Course course = new Course(c.get(NAME).getAsString(), c.get(DESCRIPTION).getAsString(), c.get(OWNER).getAsLong(),
+          c.get(E_CID).getAsString());
       for (Domain d : ddomains)
         course.addDomain(d);
       for (User u : uusers)
@@ -355,8 +398,7 @@ public class ImportExport {
     Map<Long, User> users = json2Users(json);
     Database.getInstance().putAll(users.values());
 
-    Map<Long, LearningObject> learningObjects = json2LearningObjects(json,
-        users);
+    Map<Long, LearningObject> learningObjects = json2LearningObjects(json, users);
     Database.getInstance().putAll(learningObjects.values());
 
     Map<Long, FCAObject> objects = json2Objects(json, learningObjects);
@@ -365,9 +407,13 @@ public class ImportExport {
     Map<Long, FCAAttribute> attributes = json2Attributes(json, learningObjects);
     Database.getInstance().putAll(attributes.values());
 
-    Map<Long, Domain> domains = json2Domains(json, objects, attributes, users);
-    for (Domain domain : domains.values())
+    Map<Long, FCAItemMetadata> metadata = json2Metadata(json, learningObjects);
+    Database.getInstance().putAll(metadata.values());
+
+    Map<Long, Domain> domains = json2Domains(json, objects, attributes, users, metadata);
+    for (Domain domain : domains.values()) {
       Database.getInstance().putAll(domain.getFormalContext().getConcepts());
+    }
     Database.getInstance().putAll(domains.values());
 
     Database.getInstance().putAll(json2Courses(json, domains, users));

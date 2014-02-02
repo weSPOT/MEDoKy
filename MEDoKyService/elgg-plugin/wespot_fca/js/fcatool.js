@@ -180,26 +180,26 @@ backend = {
   },
 
   update_attribute : function(payload, callback) {
-    $
-        .ajax({
-          cache : false,
-          type : "POST",
-          url : backend.url +"domain/"+ state.domain.id + "/"
-              + backend.path_update_attribute,
-          data : payload,
-          dataType : "json",
-          contentType : "application/json; charset=utf-8",
-          success : function(obj) {
-            callback(obj);
-          }
-        });
+    $.ajax({
+      cache : false,
+      type : "POST",
+      url : backend.url + "domain/" + state.domain.id + "/"
+          + backend.path_update_attribute,
+      data : payload,
+      dataType : "json",
+      contentType : "application/json; charset=utf-8",
+      success : function(obj) {
+        callback(obj);
+      }
+    });
   },
 
   update_object : function(payload, callback) {
     $.ajax({
       cache : false,
       type : "POST",
-      url : backend.url +"domain/"+ state.domain.id + "/" + backend.path_update_object,
+      url : backend.url + "domain/" + state.domain.id + "/"
+          + backend.path_update_object,
       data : payload,
       dataType : "json",
       contentType : "application/json; charset=utf-8",
@@ -644,7 +644,7 @@ logic = {
     $("#dia_set_lo").dialog("close");
     logic.save_item(data.object, data.o);
   },
-  save_item : function(object, entityType) {
+  save_item : function(object, entityType, hideDialog) {
 
     var items = state.backend_objects;
     var new_items = state.new_objects;
@@ -668,10 +668,15 @@ logic = {
           obj.learningObjects[l].owner.attributes = {};
         }
       }
-      updatefunc(JSON.stringify(obj), function(resp) {
-        items[object.id] = resp;
+      if (state.domain.id) {
+        updatefunc(JSON.stringify(obj), function(resp) {
+          items[object.id] = resp;
+          if (!hideDialog)
+            ui.set_item(index, entityType, object.id);
+        });
+      } else {
         ui.set_item(index, entityType, object.id);
-      });
+      }
     } else {
       var obj = new_items[object.id];
       obj.name = object.name;
@@ -786,13 +791,22 @@ logic = {
       domain.externalUID = state.user.guid.toString();
       domain.externalCourseID = state.gid;
       domain.courseName = state.g_name;
-      backend.create_domain(JSON.stringify(domain), function(obj) {
+      backend.create_domain(JSON.stringify(domain),
+          function(obj) {
 
-        $("#dia_create_domain").dialog("close");
-        alert("Domain successfully saved!");
-        state.domain = obj;
-        ui.display_lattice();
-      });
+            $("#dia_create_domain").dialog("close");
+            alert("Domain successfully saved!");
+            state.domain = obj;
+            for ( var obj in state.backend_objects) {
+              logic.save_item(state.backend_objects[obj], entity_types.object,
+                  true);
+            }
+            for ( var obj in state.backend_attributes) {
+              logic.save_item(state.backend_attributes[obj],
+                  entity_types.attribute, true);
+            }
+            ui.display_lattice();
+          });
     });
   },
 
