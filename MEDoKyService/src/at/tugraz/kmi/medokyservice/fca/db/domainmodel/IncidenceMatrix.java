@@ -91,7 +91,7 @@ public class IncidenceMatrix extends DataObject {
   public void storeMetadata(FCAAbstract obj) {
     FCAItemMetadata metadata = new FCAItemMetadata(obj);
     itemMetadata.put(obj.getId(), metadata);
-    Database.getInstance().put(metadata);
+    Database.getInstance().put(metadata,false);
   }
 
   public Set<FCAAttribute> getAttributes(FCAObject obj) {

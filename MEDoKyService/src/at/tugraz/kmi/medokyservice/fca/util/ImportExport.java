@@ -396,27 +396,27 @@ public class ImportExport {
     Database.getInstance().clear();
 
     Map<Long, User> users = json2Users(json);
-    Database.getInstance().putAll(users.values());
+    Database.getInstance().putAll(users.values(),false);
 
     Map<Long, LearningObject> learningObjects = json2LearningObjects(json, users);
-    Database.getInstance().putAll(learningObjects.values());
+    Database.getInstance().putAll(learningObjects.values(),false);
 
     Map<Long, FCAObject> objects = json2Objects(json, learningObjects);
-    Database.getInstance().putAll(objects.values());
+    Database.getInstance().putAll(objects.values(),false);
 
     Map<Long, FCAAttribute> attributes = json2Attributes(json, learningObjects);
-    Database.getInstance().putAll(attributes.values());
+    Database.getInstance().putAll(attributes.values(),false);
 
     Map<Long, FCAItemMetadata> metadata = json2Metadata(json, learningObjects);
-    Database.getInstance().putAll(metadata.values());
+    Database.getInstance().putAll(metadata.values(),false);
 
     Map<Long, Domain> domains = json2Domains(json, objects, attributes, users, metadata);
     for (Domain domain : domains.values()) {
-      Database.getInstance().putAll(domain.getFormalContext().getConcepts());
+      Database.getInstance().putAll(domain.getFormalContext().getConcepts(),false);
     }
-    Database.getInstance().putAll(domains.values());
+    Database.getInstance().putAll(domains.values(),false);
 
-    Database.getInstance().putAll(json2Courses(json, domains, users));
+    Database.getInstance().putAll(json2Courses(json, domains, users),false);
     Database.getInstance().save();
 
   }

@@ -66,34 +66,21 @@ public class Database implements Serializable {
 
   @SuppressWarnings("rawtypes")
   private Database() {
-    usersByExtrnalUID = Collections
-        .synchronizedMap(new HashMap<String, User>());
-    coursesByExternalID = Collections
-        .synchronizedMap(new HashMap<String, Course>());
-    fcaItemsBycreationID = Collections
-        .synchronizedMap(new HashMap<String, FCAAbstract>());
-    learningObjectsByURL = Collections
-        .synchronizedMap(new HashMap<String, LearningObject>());
+    usersByExtrnalUID = Collections.synchronizedMap(new HashMap<String, User>());
+    coursesByExternalID = Collections.synchronizedMap(new HashMap<String, Course>());
+    fcaItemsBycreationID = Collections.synchronizedMap(new HashMap<String, FCAAbstract>());
+    learningObjectsByURL = Collections.synchronizedMap(new HashMap<String, LearningObject>());
     registry = Collections.synchronizedMap(new HashMap<Long, DataObject>());
     typeMap = Collections.synchronizedMap(new HashMap<Class, Map>());
-    typeMap.put(FCAObject.class,
-        Collections.synchronizedMap(new HashMap<Long, FCAObject>()));
-    typeMap.put(FCAAttribute.class,
-        Collections.synchronizedMap(new HashMap<Long, FCAAttribute>()));
-    typeMap.put(LearningObject.class,
-        Collections.synchronizedMap(new HashMap<Long, LearningObject>()));
-    typeMap.put(LearnerDomain.class,
-        Collections.synchronizedMap(new HashMap<Long, LearnerDomain>()));
-    typeMap.put(Domain.class,
-        Collections.synchronizedMap(new HashMap<Long, Domain>()));
-    typeMap.put(Course.class,
-        Collections.synchronizedMap(new HashMap<Long, Course>()));
-    typeMap.put(Concept.class,
-        Collections.synchronizedMap(new HashMap<Long, Concept>()));
-    typeMap.put(User.class,
-        Collections.synchronizedMap(new HashMap<Long, User>()));
-    typeMap.put(FCAItemMetadata.class,
-        Collections.synchronizedMap(new HashMap<Long, FCAItemMetadata>()));
+    typeMap.put(FCAObject.class, Collections.synchronizedMap(new HashMap<Long, FCAObject>()));
+    typeMap.put(FCAAttribute.class, Collections.synchronizedMap(new HashMap<Long, FCAAttribute>()));
+    typeMap.put(LearningObject.class, Collections.synchronizedMap(new HashMap<Long, LearningObject>()));
+    typeMap.put(LearnerDomain.class, Collections.synchronizedMap(new HashMap<Long, LearnerDomain>()));
+    typeMap.put(Domain.class, Collections.synchronizedMap(new HashMap<Long, Domain>()));
+    typeMap.put(Course.class, Collections.synchronizedMap(new HashMap<Long, Course>()));
+    typeMap.put(Concept.class, Collections.synchronizedMap(new HashMap<Long, Concept>()));
+    typeMap.put(User.class, Collections.synchronizedMap(new HashMap<Long, User>()));
+    typeMap.put(FCAItemMetadata.class, Collections.synchronizedMap(new HashMap<Long, FCAItemMetadata>()));
 
   }
 
@@ -115,25 +102,19 @@ public class Database implements Serializable {
       if (in.exists()) {
         ObjectInputStream objIn = null;
         try {
-          objIn = new ObjectInputStream(new BufferedInputStream(
-              new FileInputStream(in)));
+          objIn = new ObjectInputStream(new BufferedInputStream(new FileInputStream(in)));
           Database db = (Database) objIn.readObject();
           instance = db;
           IDGenerator.getInstance().lastId = objIn.readLong();
-          Logger.getLogger(Database.class).log(Level.INFO,
-              "Database laded from file " + in.getAbsolutePath());
+          Logger.getLogger(Database.class).log(Level.INFO, "Database laded from file " + in.getAbsolutePath());
         } catch (ClassNotFoundException e) {
-          Logger.getLogger(Database.class).log(Level.WARNING,
-              "Incomaptible Databse found");
+          Logger.getLogger(Database.class).log(Level.WARNING, "Incomaptible Databse found");
         } catch (InvalidClassException e) {
-          Logger.getLogger(Database.class).log(Level.WARNING,
-              "Incomaptible Databse found");
+          Logger.getLogger(Database.class).log(Level.WARNING, "Incomaptible Databse found");
         } catch (FileNotFoundException e) {
-          Logger.getLogger(Database.class)
-              .log(Level.INFO, "No Database fround");
+          Logger.getLogger(Database.class).log(Level.INFO, "No Database fround");
         } catch (IOException e) {
-          Logger.getLogger(Database.class).log(Level.WARNING,
-              "IO ERROR! Can't Read DB");
+          Logger.getLogger(Database.class).log(Level.WARNING, "IO ERROR! Can't Read DB");
           e.printStackTrace();
         } finally {
           try {
@@ -142,14 +123,12 @@ public class Database implements Serializable {
             e.printStackTrace();
           }
           if (instance == null) {
-            Logger.getLogger(Database.class).log(Level.INFO,
-                "Creating Empty Database at " + in.getAbsolutePath());
+            Logger.getLogger(Database.class).log(Level.INFO, "Creating Empty Database at " + in.getAbsolutePath());
             instance = new Database();
           }
         }
       } else {
-        Logger.getLogger(Database.class).log(Level.INFO,
-            "Creating Empty Database at " + in.getAbsolutePath());
+        Logger.getLogger(Database.class).log(Level.INFO, "Creating Empty Database at " + in.getAbsolutePath());
         instance = new Database();
       }
     }
@@ -190,8 +169,7 @@ public class Database implements Serializable {
    * @return a BlockingDeque containing all objects of the specified type
    */
   @SuppressWarnings("unchecked")
-  public synchronized <E extends DataObject> BlockingDeque<E> getAll(
-      Class<E> type) {
+  public synchronized <E extends DataObject> BlockingDeque<E> getAll(Class<E> type) {
     Map<Long, E> map;
     synchronized (typeMap) {
       map = typeMap.get(type);
@@ -247,8 +225,7 @@ public class Database implements Serializable {
    * @return a BlockingDeque containing all objects matched
    */
   @SuppressWarnings("unchecked")
-  public synchronized <E extends DataObject> BlockingDeque<E> get(
-      Collection<Long> ids) {
+  public synchronized <E extends DataObject> BlockingDeque<E> get(Collection<Long> ids) {
     synchronized (registry) {
       LinkedBlockingDeque<E> result = new LinkedBlockingDeque<E>();
       for (long l : ids)
@@ -264,8 +241,9 @@ public class Database implements Serializable {
    * @param obj
    *          the object to store inside the database
    */
+
   @SuppressWarnings("unchecked")
-  public synchronized void put(DataObject obj) {
+  public synchronized void put(DataObject obj, boolean save) {
     synchronized (registry) {
       if (!typeMap.containsKey(obj.getClass()))
         typeMap.put(obj.getClass(), createMap());
@@ -275,14 +253,12 @@ public class Database implements Serializable {
         if (obj instanceof User)
           usersByExtrnalUID.put(((User) obj).getExternalUid(), (User) obj);
         else if (obj instanceof Course)
-          coursesByExternalID.put(((Course) obj).getExternalCourseID(),
-              (Course) obj);
+          coursesByExternalID.put(((Course) obj).getExternalCourseID(), (Course) obj);
         else if (obj instanceof FCAAbstract)
-          fcaItemsBycreationID.put(((FCAAbstract) obj).getCreationId(),
-              (FCAAbstract) obj);
+          fcaItemsBycreationID.put(((FCAAbstract) obj).getCreationId(), (FCAAbstract) obj);
         else if (obj instanceof LearningObject)
-          learningObjectsByURL.put(((LearningObject) obj).getData(),
-              (LearningObject) obj);
+          learningObjectsByURL.put(((LearningObject) obj).getData(), (LearningObject) obj);
+        if(save)
         try {
           save();
         } catch (FileNotFoundException e) {
@@ -294,6 +270,8 @@ public class Database implements Serializable {
     }
   }
 
+  
+  
   /**
    * Stores the provided objects in the database. If an object already exists it
    * is overwritten
@@ -302,7 +280,7 @@ public class Database implements Serializable {
    *          the objects to store inside the database
    */
   @SuppressWarnings("unchecked")
-  public synchronized <E extends DataObject> void putAll(Collection<E> objs) {
+  public synchronized <E extends DataObject> void putAll(Collection<E> objs, boolean save) {
     synchronized (registry) {
       for (DataObject obj : objs) {
         if (!typeMap.containsKey(obj.getClass()))
@@ -313,16 +291,14 @@ public class Database implements Serializable {
           if (obj instanceof User)
             usersByExtrnalUID.put(((User) obj).getExternalUid(), (User) obj);
           else if (obj instanceof Course)
-            coursesByExternalID.put(((Course) obj).getExternalCourseID(),
-                (Course) obj);
+            coursesByExternalID.put(((Course) obj).getExternalCourseID(), (Course) obj);
           else if (obj instanceof FCAAbstract)
-            fcaItemsBycreationID.put(((FCAAbstract) obj).getCreationId(),
-                (FCAAbstract) obj);
+            fcaItemsBycreationID.put(((FCAAbstract) obj).getCreationId(), (FCAAbstract) obj);
           else if (obj instanceof LearningObject)
-            learningObjectsByURL.put(((LearningObject) obj).getData(),
-                (LearningObject) obj);
+            learningObjectsByURL.put(((LearningObject) obj).getData(), (LearningObject) obj);
         }
       }
+      if(save)
       try {
         save();
       } catch (FileNotFoundException e) {
@@ -343,17 +319,14 @@ public class Database implements Serializable {
    */
   public synchronized void save() throws FileNotFoundException, IOException {
     if (!testing) {
-      ObjectOutputStream outO = new ObjectOutputStream(
-          new BufferedOutputStream(new FileOutputStream(DBConfig.DB_DIR
-              + DBConfig.DB_PATH)));
+      ObjectOutputStream outO = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(DBConfig.DB_DIR
+          + DBConfig.DB_PATH)));
       outO.writeObject(this);
       outO.writeLong(IDGenerator.getInstance().lastId);
       outO.close();
-      Logger.getLogger(Database.class).log(Level.INFO,
-          "Database " + DBConfig.DB_DIR + DBConfig.DB_PATH + " Saved");
+      Logger.getLogger(Database.class).log(Level.INFO, "Database " + DBConfig.DB_DIR + DBConfig.DB_PATH + " Saved");
     } else {
-      Logger.getLogger(Database.class).log(Level.WARNING,
-          "Test mode, nothing will be written to disk!");
+      Logger.getLogger(Database.class).log(Level.WARNING, "Test mode, nothing will be written to disk!");
     }
   }
 

@@ -32,6 +32,8 @@ public interface RestConfig {
   public static final String PATH_UPDATECONCEPT = "updateConcept";
   public static final String PATH_UPDATEATTRIBUTE = KEY_DOMAIN + "/{" + KEY_DOMAINID + "}/updateAttribute";
   public static final String PATH_UPDATEOBJECT = KEY_DOMAIN + "/{" + KEY_DOMAINID + "}/updateObject";
+  public static final String PATH_UPDATEATTRIBUTES = KEY_DOMAIN + "/{" + KEY_DOMAINID + "}/updateAttributes";
+  public static final String PATH_UPDATEOBJECTS = KEY_DOMAIN + "/{" + KEY_DOMAINID + "}/updateObjects";
   public static final String PATH_UPDATEVALUATIONS = "updateValuations";
 
 }

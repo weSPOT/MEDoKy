@@ -46,6 +46,8 @@ backend = {
   path_get_learner_domain : "getLearnerDomain",
   path_update_object : "updateObject",
   path_update_attribute : "updateAttribute",
+  path_update_objects : "updateObjects",
+  path_update_attributes : "updateAttributes",
   path_update_concept : "updateConcept",
   path_update_valuation : "updateValuations",
   path_identify : "identify",
@@ -164,7 +166,6 @@ backend = {
   },
 
   create_domain : function(payload, callback) {
-
     $.ajax({
       cache : false,
       type : "POST",
@@ -200,6 +201,36 @@ backend = {
       type : "POST",
       url : backend.url + "domain/" + state.domain.id + "/"
           + backend.path_update_object,
+      data : payload,
+      dataType : "json",
+      contentType : "application/json; charset=utf-8",
+      success : function(obj) {
+        callback(obj);
+      }
+    });
+  },
+
+  update_attributes : function(payload, callback) {
+    $.ajax({
+      cache : false,
+      type : "POST",
+      url : backend.url + "domain/" + state.domain.id + "/"
+      + backend.path_update_attributes,
+      data : payload,
+      dataType : "json",
+      contentType : "application/json; charset=utf-8",
+      success : function(obj) {
+        callback(obj);
+      }
+    });
+  },
+  
+  update_objects : function(payload, callback) {
+    $.ajax({
+      cache : false,
+      type : "POST",
+      url : backend.url + "domain/" + state.domain.id + "/"
+      + backend.path_update_objects,
       data : payload,
       dataType : "json",
       contentType : "application/json; charset=utf-8",
@@ -683,7 +714,33 @@ logic = {
       obj.description = object.description;
       ui.set_item(index, entityType, object.id);
     }
+  },
 
+  save_items : function(entityType) {
+    var items = state.backend_objects;
+    var updatefunc = backend.update_objects;
+    if (entityType == 1) {
+      items = state.backend_attributes;
+      updatefunc = backend.update_attributes;
+    }
+    var objects = [];
+    for ( var i in items) {
+      var obj = items[i];
+      obj.name = items[i].name;
+      obj.description = items[i].description;
+      for ( var l in obj.learningObjects) {
+        // check yourself before you wreck yourself
+        if (obj.learningObjects[l].owner) {
+          obj.learningObjects[l].owner.objects = {}; // cannot parse
+          obj.learningObjects[l].owner.attributes = {};
+        }
+      }
+      objects.push(obj);
+    }
+    updatefunc(JSON.stringify(objects), function(resp) {
+      for ( var i in resp)
+        items[resp[i].id] = resp[i];
+    });
   },
 
   choose_item : function(entityType) {
@@ -791,22 +848,15 @@ logic = {
       domain.externalUID = state.user.guid.toString();
       domain.externalCourseID = state.gid;
       domain.courseName = state.g_name;
-      backend.create_domain(JSON.stringify(domain),
-          function(obj) {
+      backend.create_domain(JSON.stringify(domain), function(obj) {
 
-            $("#dia_create_domain").dialog("close");
-            alert("Domain successfully saved!");
-            state.domain = obj;
-            for ( var obj in state.backend_objects) {
-              logic.save_item(state.backend_objects[obj], entity_types.object,
-                  true);
-            }
-            for ( var obj in state.backend_attributes) {
-              logic.save_item(state.backend_attributes[obj],
-                  entity_types.attribute, true);
-            }
-            ui.display_lattice();
-          });
+        $("#dia_create_domain").dialog("close");
+        alert("Domain successfully saved!");
+        state.domain = obj;
+        logic.save_items(entity_types.object);
+        logic.save_items(entity_types.attribute);
+        ui.display_lattice();
+      });
     });
   },
 
@@ -981,14 +1031,16 @@ ui = {
       height : 320,
       width : 510,
       resizable : false,
-      modal : true
+      modal : true,
+      beforeClose : ui.clear_dialog
     });
     $("#dia_set_attr").dialog({
       autoOpen : false,
       height : 320,
       width : 510,
       resizable : false,
-      modal : true
+      modal : true,
+      beforeClose : ui.clear_dialog
     });
     $("#dia_set_dom").dialog({
       autoOpen : false,
@@ -1081,6 +1133,10 @@ ui = {
       });
     }
 
+  },
+
+  clear_dialog : function() {
+    $("body").removeData("item");
   },
 
   setup_btn_hover : function() {
@@ -1242,9 +1298,6 @@ ui = {
   },
 
   set_item : function(index, entityType, id) {
-    ui.prepare_dialog(entityType);
-    (entityType == entity_types.attribute) ? state.attr_index = index
-        : state.obj_index = index;
 
     var sel = $("#sel_set_obj");
     var key = logic.key_obj;
@@ -1256,6 +1309,11 @@ ui = {
       inited = state.inited_attr;
       sel = $("#sel_set_attr");
     }
+    sel.val("");
+    ui.prepare_dialog(entityType);
+    (entityType == entity_types.attribute) ? state.attr_index = index
+        : state.obj_index = index;
+
     state.item_id = undefined;
 
     if (!id && data.data(key))
@@ -1288,7 +1346,7 @@ ui = {
       }
 
       sel.autocomplete({
-        // this is needebe because of the old jQueryUI version used
+        // this is needed because of the old jQueryUI version used
         source : function(request, response) {
           var results = $.ui.autocomplete.filter(items, request.term);
           results.splice(0, 0, {
@@ -1311,7 +1369,8 @@ ui = {
           .dialog("open") : $("#dia_set_obj").dialog("open");
 
     }
-    sel.blur();
+    if (id)
+      sel.blur();
   },
 
   prepare_dialog : function(entityType) {

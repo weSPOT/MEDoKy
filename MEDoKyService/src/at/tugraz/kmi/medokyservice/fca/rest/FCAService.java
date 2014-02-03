@@ -6,6 +6,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -224,7 +225,7 @@ public class FCAService {
       return new DomainWrapper(domain.getLearnerDomains().get(learner.getId()));
     LearnerDomain dom = new LearnerDomain(Database.getInstance().<User> get(learner.getId()), domain);
     domain.addLearnerDomain(learner.getId(), dom);
-    Database.getInstance().put(dom);
+    Database.getInstance().put(dom, false);
     Database.getInstance().save();
     return new DomainWrapper(dom);
   }
@@ -245,7 +246,39 @@ public class FCAService {
   public FCAObject updateObject(@PathParam(RestConfig.KEY_DOMAINID) long domainID, FCAObject obj) {
     log("updateObject");
     Domain d = Database.getInstance().get(domainID);
-    return updateItem(obj, d);
+    FCAObject result = updateItem(obj, d);
+    try {
+      Database.getInstance().save();
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return result;
+  }
+
+  @POST
+  @Path(RestConfig.PATH_UPDATEOBJECTS)
+  @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
+  @Produces(MediaType.APPLICATION_JSON)
+  public Set<FCAObject> updateObjects(@PathParam(RestConfig.KEY_DOMAINID) long domainID, Set<FCAObject> obj) {
+    log("updateObject");
+    Domain d = Database.getInstance().get(domainID);
+    Set<FCAObject> result = new HashSet<FCAObject>(obj.size());
+    for (FCAObject o : obj)
+      result.add(updateItem(o, d));
+    try {
+      Database.getInstance().save();
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return result;
   }
 
   /**
@@ -264,16 +297,7 @@ public class FCAService {
   public FCAAttribute updateAttribute(@PathParam(RestConfig.KEY_DOMAINID) long domainID, FCAAttribute obj) {
     log("updateAttribute");
     Domain d = Database.getInstance().get(domainID);
-    return updateItem(obj, d);
-  }
-
-  private <T extends FCAAbstract> T updateItem(T obj, Domain domain) {
-    T domainObject = Database.getInstance().get(obj.getId());
-
-    domainObject.setName(obj.getName());
-    updateLearningObject(obj);
-    domainObject.setLearningObjects(obj.getLearningObjects());
-    domain.getMapping().storeMetadata(obj);
+    FCAAttribute result = updateItem(obj, d);
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {
@@ -283,6 +307,38 @@ public class FCAService {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    return result;
+  }
+
+  @POST
+  @Path(RestConfig.PATH_UPDATEATTRIBUTES)
+  @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
+  @Produces(MediaType.APPLICATION_JSON)
+  public Set<FCAAttribute> updateAttributes(@PathParam(RestConfig.KEY_DOMAINID) long domainID, Set<FCAAttribute> obj) {
+    log("updateAttribute");
+    Domain d = Database.getInstance().get(domainID);
+    Set<FCAAttribute> result = new HashSet<FCAAttribute>(obj.size());
+    for (FCAAttribute o : obj)
+      result.add(updateItem(o, d));
+    try {
+      Database.getInstance().save();
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return result;
+  }
+
+  private <T extends FCAAbstract> T updateItem(T obj, Domain domain) {
+    T domainObject = Database.getInstance().get(obj.getId());
+
+    domainObject.setName(obj.getName());
+    updateLearningObject(obj);
+    domainObject.setLearningObjects(obj.getLearningObjects());
+    domain.getMapping().storeMetadata(obj);
     domainObject.setDescription(obj.getDescription());
     return domainObject;
   }
@@ -373,7 +429,7 @@ public class FCAService {
       return;
     User u = new User(user.externalUID, user.name, user.description);
     log("New User " + u.getId() + ", " + u.getExternalUid() + ", " + u.getName() + ", " + u.getDescription());
-    Database.getInstance().put(u);
+    Database.getInstance().put(u, true);
   }
 
   /**
@@ -400,7 +456,16 @@ public class FCAService {
       }
       fcaObject.setLearningObjects(object.getLearningObjects());
       result.put(fcaObject.getId(), object);
-      Database.getInstance().put(fcaObject);
+      Database.getInstance().put(fcaObject, false);
+    }
+    try {
+      Database.getInstance().save();
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
     return result;
 
@@ -429,8 +494,17 @@ public class FCAService {
             .getInstance().getUserByExternalUID(object.externalUID));
         object.owner = Database.getInstance().getUserByExternalUID(object.externalUID);
         result.put(fcaObject.getId(), object);
-        Database.getInstance().put(fcaObject);
+        Database.getInstance().put(fcaObject, false);
       }
+    }
+    try {
+      Database.getInstance().save();
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
     return result;
 
@@ -462,7 +536,16 @@ public class FCAService {
       }
       fcaAttribute.setLearningObjects(attribute.getLearningObjects());
       result.put(fcaAttribute.getId(), attribute);
-      Database.getInstance().put(fcaAttribute);
+      Database.getInstance().put(fcaAttribute, false);
+    }
+    try {
+      Database.getInstance().save();
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
     return result;
 
@@ -496,15 +579,15 @@ public class FCAService {
 
     Domain domain = new Domain(relation.name, relation.description, matrix, Database.getInstance()
         .getUserByExternalUID(relation.externalUID), false);
-    Database.getInstance().put(domain);
-    Database.getInstance().putAll(domain.getFormalContext().getConcepts());
+    Database.getInstance().put(domain, false);
+    Database.getInstance().putAll(domain.getFormalContext().getConcepts(), false);
     Course course = Database.getInstance().getCourseByExternalID(relation.externalCourseID);
     if (course == null) {
       course = new Course(relation.courseName, "", Database.getInstance().getUserByExternalUID(relation.externalUID)
           .getId(), relation.externalCourseID);
     }
     course.addDomain(domain);
-    Database.getInstance().put(course);
+    Database.getInstance().put(course, false);
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {
@@ -595,7 +678,7 @@ public class FCAService {
         dbLo.setDescription(lo.getDescription());
         dbLo.setUri(lo.getData());
       }
-      Database.getInstance().put(dbLo);
+      Database.getInstance().put(dbLo, false);
     }
   }
 }
