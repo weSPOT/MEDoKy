@@ -56,7 +56,6 @@ public class LatticeWrapper extends AbstractWrapper {
     super.description = lattice.getDescription();
     super.id = lattice.getId();
     concepts = new LinkedList<ConceptWrapper>();
-    System.out.println(lattice.toString());
     for (LearnerConcept c : lattice.getConcepts()) {
       ConceptWrapper concept = new ConceptWrapper(c);
       concept.setSucessors(c.getSuccessors(), c.getTaxonomySuccessors());

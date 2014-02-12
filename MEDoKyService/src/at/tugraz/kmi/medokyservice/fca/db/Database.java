@@ -93,7 +93,6 @@ public class Database implements Serializable {
   public static synchronized Database getInstance() {
 
     if (instance == null) {
-      System.out.println("DB INIT");
       File dir = new File(DBConfig.DB_DIR);
       if (!dir.exists()) {
         dir.mkdir();
@@ -197,9 +196,7 @@ public class Database implements Serializable {
   }
 
   public synchronized LearningObject getLearningObjectsByURL(String url) {
-    System.out.println(url);
-    System.out.println(learningObjectsByURL);
-    if (!learningObjectsByURL.containsKey(url))
+       if (!learningObjectsByURL.containsKey(url))
       return null;
     LearningObject lo = learningObjectsByURL.get(url);
     return lo;

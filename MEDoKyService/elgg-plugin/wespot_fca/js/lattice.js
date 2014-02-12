@@ -493,7 +493,7 @@ lattice = {
     // Name txt
     tr.create("td", {
       style : "background-color: inherit; width: 174px"
-    }).append(elgg.echo('wespot_fca:name') + ":");
+    }).append(elgg.echo('wespot_fca:objs') + ":");
 
     // Edit icon
     var t_edit = tr.create("td", {
@@ -590,7 +590,7 @@ lattice = {
     tr.create("td", {
       style : "background-color: inherit",
       colspan : "2"
-    }).append(elgg.echo('wespot_fca:description') + ":");
+    }).append(elgg.echo('wespot_fca:attrs') + ":");
 
     // spacer
     tr.create("td", {
@@ -863,7 +863,6 @@ lattice = {
               id : "btn_concept_save",
               type : "button",
               "class" : "input",
-              style : "position: absolute; bottom: 0; left: 0; right: 0; margin-bottom: 10px",
               value : elgg.echo('wespot_fca:save'),
               onclick : "lattice.update_concept(" + c + ")"
             }).hide();

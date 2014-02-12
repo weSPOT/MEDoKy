@@ -31,8 +31,6 @@ public abstract class Updater {
    */
   public static synchronized LearnerLattice update(LearnerDomain domain, Map<FCAObject, Float> objectValuationUpdates,
       Map<FCAAttribute, Float> attributeValuationUpdates) throws Exception {
-    System.out.println(objectValuationUpdates.size());
-    System.out.println(attributeValuationUpdates.size());
 
     for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
       FCAAttribute[] domainAttrs = c.getAttributes().keySet().toArray(new FCAAttribute[c.getAttributes().size()]);

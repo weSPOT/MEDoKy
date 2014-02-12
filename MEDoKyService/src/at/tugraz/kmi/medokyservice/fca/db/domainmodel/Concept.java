@@ -179,7 +179,6 @@ public class Concept extends DataObject {
       return false;
     } else {
       if (objects == null || attributes == null) {
-        System.out.println("WARNING");
         return false;
       }
       return (objects.equals(((Concept) object).objects) && attributes

@@ -50,7 +50,6 @@ public final class GsonHandler implements MessageBodyWriter<Object>,
       Annotation[] annotations, MediaType mediaType,
       MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
       throws IOException {
-    System.out.println(genericType.toString());
     InputStreamReader in = new InputStreamReader(entityStream,
         Charset.forName("UTF-8"));
     if (type.equals(genericType))

@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,7 +66,7 @@ public class FCAService {
    * @return all FCAObjects mapped by their id
    */
   @GET
-  @Path(RestConfig.PATH_GETOBJECTS)
+  @Path(RestConfig.PATH_OBJECTS)
   @Produces(MediaType.APPLICATION_JSON)
   public Map<Long, FCAObject> getObjects() {
     log("getObjects");
@@ -83,7 +85,7 @@ public class FCAService {
    * @return all FCAAttributes mapped by their id
    */
   @GET
-  @Path(RestConfig.PATH_GETATTRIBUTES)
+  @Path(RestConfig.PATH_ATTRIBUTES)
   @Produces(MediaType.APPLICATION_JSON)
   public Map<Long, FCAAttribute> getAttributes() {
     log("getAttributes");
@@ -102,7 +104,7 @@ public class FCAService {
    * @return all LearningObjects mapped by their id
    */
   @GET
-  @Path(RestConfig.PATH_GETLEARNINGOBJECTS)
+  @Path(RestConfig.PATH_LEARNINGOBJECTS)
   @Produces(MediaType.APPLICATION_JSON)
   public Map<Long, LearningObject> getLearningObjects() {
     log("getLearningObjects");
@@ -121,7 +123,7 @@ public class FCAService {
    * @return all Domains mapped by their id
    */
   @GET
-  @Path(RestConfig.PATH_GETDOMAINS)
+  @Path(RestConfig.PATH_DOMAINS)
   @Produces(MediaType.APPLICATION_JSON)
   public Map<Long, Domain> getDomains() {
     log("getDomains");
@@ -140,19 +142,17 @@ public class FCAService {
    * @return all {@link DomainBlueprint}s mapped by their id
    */
   @GET
-  @Path(RestConfig.PATH_GETDOMAINHEADERS)
+  @Path(RestConfig.PATH_DOMAINHEADERS)
   @Produces(MediaType.APPLICATION_JSON)
   public Map<Long, CourseWrapper> getDomainHeaders(@QueryParam(RestConfig.KEY_ID) String externalCourseID) {
     log("getDomainHeaders");
     Set<Course> courses = new LinkedHashSet<Course>();
     LinkedHashMap<Long, CourseWrapper> result = new LinkedHashMap<Long, CourseWrapper>();
-    System.out.println("EXTERNALCourseID: " + externalCourseID);
 
     // This is a botch, fixme!
     Course course = new Course("", "", 0, "-1");
     for (Domain d : Database.getInstance().getAll(Domain.class)) {
       if (d.isGlobal()) {
-        System.out.println(d.getName());
         course.addDomain(d);
         break;
       }
@@ -160,10 +160,8 @@ public class FCAService {
     courses.add(course);
 
     if (externalCourseID.equals("-1")) {
-      System.out.println("ALL");
       courses.addAll(Database.getInstance().getAll(Course.class));
     } else {
-      System.out.println("ONE");
       Course c = Database.getInstance().getCourseByExternalID(externalCourseID);
       if (c != null)
         courses.add(c);
@@ -191,11 +189,11 @@ public class FCAService {
    * @return the requested Domain (wrapped)
    */
   @GET
-  @Path(RestConfig.PATH_GETDOMAIN)
+  @Path(RestConfig.PATH_DOMAIN)
   @Produces(MediaType.APPLICATION_JSON)
   public DomainWrapper getDomain(@QueryParam(RestConfig.KEY_ID) long id) {
     log("getDomain");
-    System.out.println(Database.getInstance().<Domain> get(id).getFormalContext().toString());
+
     Domain d = Database.getInstance().get(id);
     d.setMetadata();
     return new DomainWrapper(d);
@@ -213,14 +211,13 @@ public class FCAService {
    * @throws FileNotFoundException
    */
   @GET
-  @Path(RestConfig.PATH_GETLEARNERDOMAIN)
+  @Path(RestConfig.PATH_LEARNERDOMAIN)
   @Produces(MediaType.APPLICATION_JSON)
   public DomainWrapper getLearnerDomain(@QueryParam(RestConfig.KEY_ID) long id,
       @QueryParam(RestConfig.KEY_EXTERNALUID) String uid) throws FileNotFoundException, IOException {
     log("getLearnerDomain");
     Domain domain = Database.getInstance().<Domain> get(id);
     User learner = Database.getInstance().getUserByExternalUID(uid);
-    System.out.println(domain.getFormalContext().toString());
     if (domain.getLearnerDomains().containsKey(learner.getId()))
       return new DomainWrapper(domain.getLearnerDomains().get(learner.getId()));
     LearnerDomain dom = new LearnerDomain(Database.getInstance().<User> get(learner.getId()), domain);
@@ -358,7 +355,7 @@ public class FCAService {
    */
   // should be PUT, but MSIE screws this up!
   @POST
-  @Path(RestConfig.PATH_UPDATECONCEPT)
+  @Path(RestConfig.PATH_CONCEPT)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
   @Produces(MediaType.APPLICATION_JSON)
   public LatticeWrapper updateConcept(ConceptWrapper concept) throws NullPointerException {
@@ -392,7 +389,7 @@ public class FCAService {
    * @throws Exception
    */
   @POST
-  @Path(RestConfig.PATH_UPDATEVALUATIONS)
+  @Path(RestConfig.PATH_VALUATIONS)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
   @Produces(MediaType.APPLICATION_JSON)
   public LatticeWrapper updateValuations(ValuationWrapper valuations) throws Exception {
@@ -400,11 +397,11 @@ public class FCAService {
     HashMap<FCAObject, Float> objectValuations = new HashMap<FCAObject, Float>();
     HashMap<FCAAttribute, Float> attributeValuations = new HashMap<FCAAttribute, Float>();
     for (Long id : valuations.objectValuations.keySet()) {
-      System.out.println("Long O " + id + ", " + valuations.objectValuations.get(id));
+
       objectValuations.put(Database.getInstance().<FCAObject> get(id), valuations.objectValuations.get(id));
     }
     for (Long id : valuations.attributeValuations.keySet()) {
-      System.out.println("Long A: " + id + ", " + valuations.attributeValuations.get(id));
+
       attributeValuations.put(Database.getInstance().<FCAAttribute> get(id), valuations.attributeValuations.get(id));
     }
     LearnerDomain domain = Database.getInstance().get(valuations.id);
@@ -441,7 +438,7 @@ public class FCAService {
    * @return a mapping of valid IDs to objects with invalid (but unique) IDs
    */
   @POST
-  @Path(RestConfig.PATH_CREATEOBJECTS)
+  @Path(RestConfig.PATH_OBJECTS)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
   @Produces(MediaType.APPLICATION_JSON)
   public Map<Long, FCAObject> createObjects(Set<FCAObject> objects) {
@@ -480,7 +477,7 @@ public class FCAService {
    * @return a mapping of valid IDs to objects with invalid (but unique) IDs
    */
   @POST
-  @Path(RestConfig.PATH_CREATELEARNINGOBJECTS)
+  @Path(RestConfig.PATH_LEARNINGOBJECTS)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
   @Produces(MediaType.APPLICATION_JSON)
   public Map<Long, LearningObjectWrapper> createLearningObjects(Set<LearningObjectWrapper> objects) {
@@ -488,7 +485,7 @@ public class FCAService {
 
     HashMap<Long, LearningObjectWrapper> result = new HashMap<Long, LearningObjectWrapper>();
     for (LearningObjectWrapper object : objects) {
-      System.out.println("URL: " + object.data);
+
       if (Database.getInstance().getLearningObjectsByURL(object.data) == null) {
         LearningObject fcaObject = new LearningObject(object.name, object.description, object.data, Database
             .getInstance().getUserByExternalUID(object.externalUID));
@@ -520,7 +517,7 @@ public class FCAService {
    * @return a mapping of valid IDs to attributes with invalid (but unique) IDs
    */
   @POST
-  @Path(RestConfig.PATH_CREATEATTRIBUTES)
+  @Path(RestConfig.PATH_ATTRIBUTES)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
   @Produces(MediaType.APPLICATION_JSON)
   public Map<Long, FCAAttribute> createAttributes(Set<FCAAttribute> attributes) {
@@ -561,7 +558,7 @@ public class FCAService {
    * @return a new domain based on the domain wrapper provided
    */
   @POST
-  @Path(RestConfig.PATH_CREATEDOMAIN)
+  @Path(RestConfig.PATH_DOMAIN)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
   @Produces(MediaType.APPLICATION_JSON)
   public DomainWrapper createDomain(DomainBlueprint relation) {
@@ -611,14 +608,26 @@ public class FCAService {
   @Produces(MediaType.TEXT_PLAIN)
   public String restSyntax() {
     Method[] methods = FCAService.class.getDeclaredMethods();
+    Arrays.sort(methods, new Comparator<Method>() {
+      @Override
+      public int compare(Method o1, Method o2) {
+        Path a1 = o1.getAnnotation(Path.class);
+        Path a2 = o2.getAnnotation(Path.class);
+        if (a1 == null || a2 == null) // null checks
+          return 0;
+        int cmp = a1.value().compareTo(a2.value());
+        if (cmp == 0) {
+          cmp = o1.getAnnotation(GET.class) == null ? 1 : -1;
+        }
+        return cmp;
+      }
+    });
     StringBuffer hlp = new StringBuffer(String.format("%-20s", "Return Type")).append(String.format("%-8s", "HTTP"))
-        .append(String.format("%-26s", "PATH")).append(String.format("%-26s", "Return MediaType"))
+        .append(String.format("%-30s", "PATH")).append(String.format("%-26s", "Return MediaType"))
         .append(String.format("%-20s", "Parameters")).append("\n\n");
 
-    System.out.println(methods.length);
     for (Method m : methods) {
       if (m.isAnnotationPresent(Path.class)) {
-        System.out.println(m.getName());
         Annotation[] annotations = m.getDeclaredAnnotations();
         int i = 0;
         hlp.append(String.format("%-20s", m.getReturnType().getSimpleName()));
@@ -628,10 +637,9 @@ public class FCAService {
             String token = "";
             while (stAnnotaion.hasMoreTokens())
               token = stAnnotaion.nextToken();
-            i = i > 0 ? 26 : 8;
+            i = i > 0 ? 30 : 8;
             hlp.append(String.format("%-" + i + "s", token));
             i++;
-            System.out.println(token + "\t " + i);
           }
         }
         hlp.append("( ");
@@ -652,7 +660,6 @@ public class FCAService {
                 hlp.append(String.format("%-20s", "\"" + stAnnotaion.nextToken() + "\""));
               } catch (Exception e) {
               }
-              // hlp.append("\"");
             }
           hlp.append(String.format("%-20s", param.getSimpleName()));
 

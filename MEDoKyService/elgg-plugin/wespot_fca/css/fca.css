@@ -41,6 +41,15 @@
 #dia_ie_warn {
   background: #F55;
 }
+
+#btn_concept_save {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-bottom: 10px;
+  width: 100%
+}
 /*---------------------------------------*/
 /*---------------------------------------*/
 textarea {

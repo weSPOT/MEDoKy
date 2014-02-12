@@ -112,7 +112,7 @@ public class TestDatabaseAdvanced {
           for (int n = val * partition; n < (val * partition) + partition; ++n)
             try {
 
-              instance.put(objs[n]);
+              instance.put(objs[n],false);
             } catch (Exception e) {
               e.printStackTrace();
               System.out.println("n: " + n + "; size: " + objs.length);

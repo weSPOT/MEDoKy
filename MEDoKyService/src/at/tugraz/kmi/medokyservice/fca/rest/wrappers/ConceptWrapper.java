@@ -141,7 +141,6 @@ public class ConceptWrapper extends AbstractWrapper {
     successors = new HashSet<ConceptWrapper>();
     taxonomySuccessors = new HashSet<ConceptWrapper>();
     valuations = concept.getPercentagedValuations();
-    System.out.println(valuations[0] + ", " + valuations[1]);
   }
 
   /**

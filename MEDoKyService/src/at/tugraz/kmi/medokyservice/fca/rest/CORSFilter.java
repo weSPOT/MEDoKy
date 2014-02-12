@@ -3,8 +3,6 @@ package at.tugraz.kmi.medokyservice.fca.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.MediaType;
-
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 import com.sun.jersey.spi.container.ContainerResponse;
@@ -26,7 +24,6 @@ public class CORSFilter implements ContainerResponseFilter, ContainerRequestFilt
   @Override
   public ContainerResponse filter(ContainerRequest arg0, ContainerResponse arg1) {
     String origin = arg0.getHeaderValue("Origin");
-    System.out.println("CORS " + arg0.getAbsolutePath());
     if (origin != null)
       arg1.getHttpHeaders().add("Access-Control-Allow-Origin", origin);
     List ach = arg1.getHttpHeaders().get("Access-Control-Allow-Headers");

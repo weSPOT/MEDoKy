@@ -88,29 +88,27 @@ public class TestFCA {
 
     final LearningObject[] lobjs = new LearningObject[part * part];
     for (int i = 0; i < (part * part); ++i) {
-      lobjs[i] = new LearningObject("LearningObject " + i, "test" + i * i
-          + "http:// test", "", new User("FCA Tester", "", ""));
-      Database.getInstance().put(lobjs[i]);
+      lobjs[i] = new LearningObject("LearningObject " + i, "test" + i * i + "http:// test", "", new User("FCA Tester",
+          "", ""));
+      Database.getInstance().put(lobjs[i],false);
 
     }
 
     final FCAObject[] objs = new FCAObject[(part * part)];
     for (int i = 0; i < part * part; ++i) {
-      objs[i] = (new FCAObject("Object " + i, i * i + " test",Double.toHexString(1000*Math.random())));
+      objs[i] = (new FCAObject("Object " + i, i * i + " test", Double.toHexString(1000 * Math.random())));
       for (int n = 0; n < Math.random() * (part / 4); ++n) {
-        objs[i].getLearningObjects().add(
-            lobjs[((int) (Math.random() * (part * part)))]);
-        Database.getInstance().put(objs[i]);
+        objs[i].getLearningObjects().add(lobjs[((int) (Math.random() * (part * part)))]);
+        Database.getInstance().put(objs[i], false);
       }
     }
 
     final FCAAttribute[] attrs = new FCAAttribute[(part * part)];
     for (int i = 0; i < part * part; ++i) {
-      attrs[i] = (new FCAAttribute("Attr " + i, i * i + " test",Double.toHexString(1000*Math.random())));
+      attrs[i] = (new FCAAttribute("Attr " + i, i * i + " test", Double.toHexString(1000 * Math.random())));
       for (int n = 0; n < Math.random() * (part / 4); ++n) {
-        attrs[i].getLearningObjects().add(
-            lobjs[((int) (Math.random() * (part * part)))]);
-        Database.getInstance().put(attrs[i]);
+        attrs[i].getLearningObjects().add(lobjs[((int) (Math.random() * (part * part)))]);
+        Database.getInstance().put(attrs[i], false);
       }
     }
 
@@ -130,11 +128,9 @@ public class TestFCA {
               }
               mat.add(objs[((int) (Math.random() * (part)))], a);
             }
-            domains[val] = (new Domain("dom" + val, "", mat, new User(" ", " ",
-                " "), false));
-            Database.getInstance().put(domains[val]);
-            Database.getInstance().putAll(
-                domains[val].getFormalContext().getConcepts());
+            domains[val] = (new Domain("dom" + val, "", mat, new User(" ", " ", " "), false));
+            Database.getInstance().put(domains[val], false);
+            Database.getInstance().putAll(domains[val].getFormalContext().getConcepts(), false);
           }
         };
         threads.add(t);

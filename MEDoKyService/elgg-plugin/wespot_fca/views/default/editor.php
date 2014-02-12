@@ -302,26 +302,10 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest
     <input id="btn_choose_attr_cancel" type="button" class="input_pad"
       value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" onclick="$('#dia_set_attr').dialog('close')" /> <input
       id="btn_choose_attr_ok" class="input_pad" type="button" value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
-      onclick="logic.choose_item(entity_types.object)" />
+      onclick="logic.choose_item(entity_types.attribute)" />
   </div>
 </div>
-<!-- 
-<div id="dia_set_lo" title="<?php echo elgg_echo('wespot_fca:l_objs:add'); ?>">
-  <div id="dia_set_lo_content">
-  <?php echo elgg_echo('wespot_fca:l_obj:sel'); ?><select id="sel_set_lo" class="select_basic"
-      onchange="ui.display_description(this, entity_types.learningobject)" onmousedown="ui.enable_options(this)"
-      onkeydown="ui.disable_options(this)"></select>
-    <p class="item_description"></p>
-  </div>
-  <hr>
-  <div class="choice">
-    <input id="btn_choose_lo_cancel" type="button" class="input_pad"
-      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" onclick="$('#dia_set_lo').dialog('close')" /> <input
-      id="btn_choose_lo_ok" class="input_pad" type="button" value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
-      onclick="logic.set_lo()" />
-  </div>
-</div>
--->
+
 <div id="dia_set_lo" title="<?php echo elgg_echo('wespot_fca:l_objs:add'); ?>">
   <div id="dia_set_lo_content">
   <?php echo elgg_echo('wespot_fca:l_obj:sel'); ?><select id="sel_set_lo" class="select_basic"
