@@ -289,19 +289,19 @@ lattice = {
       if (node.data.objActive) {
         ctx.strokeStyle = lattice.color_bg_active;
         ctx.font = "bold 10pt sans-serif";
-        ctx.strokeText(node.data.obj, pt.x, pt.y - 1.5 * w - 3);
+        ctx.strokeText(node.data.obj, pt.x, pt.y + 10 + 1.5 * w);
         ctx.fillStyle = "rgba(0,0,0,1)";
 
         ctx.fillStyle = "black";
-        ctx.fillText(node.data.obj, pt.x, pt.y - 1.5 * w - 3);
+        ctx.fillText(node.data.obj, pt.x, pt.y + 10 + 1.5 * w);
       }
       if (node.data.attrActive) {
         ctx.strokeStyle = lattice.color_bg_active;
         ctx.font = "bold 10pt sans-serif";
-        ctx.strokeText(node.data.attr, pt.x, pt.y + 10 + 1.5 * w);
+        ctx.strokeText(node.data.attr, pt.x, pt.y - 1.5 * w - 3);
         ctx.fillStyle = "rgba(0,0,0,1)";
         ctx.fillStyle = "black";
-        ctx.fillText(node.data.attr, pt.x, pt.y + 10 + 1.5 * w);
+        ctx.fillText(node.data.attr, pt.x, pt.y - 1.5 * w - 3);
       }
       if (w != 2) {
         ctx.beginPath();

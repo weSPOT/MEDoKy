@@ -22,11 +22,7 @@ foreach ( $files as $file ) {
 ?>
 <link type="text/css" href="<?php echo $basedir; ?>css/smoothness/jquery-ui.css" rel="Stylesheet" />
 <link type="text/css" href="<?php echo $basedir; ?>css/fca.css" rel="Stylesheet" />
-<!--
-<script src="<?php echo $basedir; ?>js/jquery-1.9.1.js"></script>
-<script src="<?php echo $basedir; ?>js/jquery-ui.js"></script>
 
--->
 <script src="<?php echo $basedir; ?>js/jquery-create.js"></script>
 <script type="text/javascript" src="<?php echo $basedir; ?>js/fcatool.js"></script>
 <script type="text/javascript" src="<?php echo $basedir; ?>js/arbor/arbor.js"></script>
@@ -34,8 +30,8 @@ foreach ( $files as $file ) {
 <script type="text/javascript" src="<?php echo $basedir; ?>js/jquery.dialogextend.js"></script>
 <script>
 $(function(){
-logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
-//logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
+//logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
+logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
 });
 </script>
 <table id="toolbar">
