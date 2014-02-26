@@ -31,7 +31,7 @@ foreach ( $files as $file ) {
 <script>
 $(function(){
 //logic.init("<?php echo $basedir; ?>","http://192.168.1.1:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
-logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
+logic.init("<?php echo $basedir; ?>","http://berndpruenster.org/weapps/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>);
 });
 </script>
 <table id="toolbar">
@@ -330,7 +330,7 @@ logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at:8080/MEDoKyServic
       value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" onclick="$('#dia_set_dom').dialog('close')" /> <input
       id="btn_choose_dom_ok" class="input_pad" class="input_pad" type="button"
       value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
-      onclick="logic.load(JSON.parse($('#sel_set_dom').get(0).options[$('#sel_set_dom').get(0).selectedIndex].value).id)" />
+      onclick="logic.load(JSON.parse($('#sel_set_dom').get(0).options[$('#sel_set_dom').get(0).selectedIndex].value).id, state.teacher)" />
   </div>
 </div>
 <div id="dia_rem_obj" title="<?php echo elgg_echo('wespot_fca:obj:rem'); ?>">

@@ -36,7 +36,7 @@ entity_types = {
 };
 
 backend = {
-  url : "", //set in init function
+  url : "", // set in init function
   path_object : "object",
   path_objects : "objects",
   path_attribute : "attribute",
@@ -616,14 +616,17 @@ logic = {
 
     var los = [];
     for ( var f in state.files) {
-      var lo = {
-        "name" : state.files[f].name,
-        "description" : state.files[f].description.replace(/(<([^>]+)>)/ig, ""),
-        "data" : state.files[f].data,
-        "id" : Date.now(),
-        "externalUID" : state.user.guid
-      };
-      los.push(lo);
+      if (state.files[f].name && (state.files[f].name.trim() != "")) {
+        var lo = {
+          "name" : state.files[f].name,
+          "description" : state.files[f].description.replace(/(<([^>]+)>)/ig,
+              ""),
+          "data" : state.files[f].data,
+          "id" : Date.now(),
+          "externalUID" : state.user.guid
+        };
+        los.push(lo);
+      }
     }
 
     backend
