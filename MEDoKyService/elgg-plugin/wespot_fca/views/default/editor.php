@@ -44,7 +44,7 @@ logic.init("<?php echo $basedir; ?>","http://berndpruenster.org/webapps/MEDoKySe
       onclick="backend.get_domains('-1', ui.list_domains)" /></td>
     <td class="toolbar"><input type="image" class="input" src="<?php echo $basedir; ?>img/save.svg" width="48px"
       height="48px" alt="Save" title="<?php echo elgg_echo('wespot_fca:domain:save'); ?>" id="btn_save"
-      onclick="$('#dia_create_domain').dialog('open')" /></td>
+      onclick="logic.check_save()" /></td>
     <td class="toolbar" style="width: 100%; vertical-align: middle; padding-left: 2em"><h1 id="h_domain_name"></h1></td>
   </tr>
 </table>

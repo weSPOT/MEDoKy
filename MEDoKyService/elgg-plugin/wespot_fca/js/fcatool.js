@@ -911,10 +911,10 @@ logic = {
     });
   },
 
-  save : function(callback) {
+  check_save : function(){
     var currentObjects = $(".btn_obj");
     for (var i = 0; i < currentObjects.length; ++i) {
-      if (!$.hasData(currentObjects[i])) {
+      if (!$(currentObjects[i]).data(logic.key_obj)) {
         alert("Some objects are undefined!");
         return false;
       }
@@ -922,11 +922,15 @@ logic = {
 
     currentObjects = $(".btn_attr");
     for (var i = 0; i < currentObjects.length; ++i) {
-      if (!$.hasData(currentObjects[i])) {
+      if (!$(currentObjects[i]).data(logic.key_attr)) {
         alert("Some attributes are undefined!");
         return false;
       }
     }
+    $('#dia_create_domain').dialog('open');
+  },
+  
+  save : function(callback) {
 
     var objects = [];
     for ( var i in state.new_objects)
@@ -1500,13 +1504,12 @@ ui = {
           type : "button",
           id : "attr_" + id,
           class : "input btn_attr col",
-          value : elgg.echo('wespot_fca:obj:dummy') + " " + (id + 1),
+          value : elgg.echo('wespot_fca:attr:dummy') + " " + (id + 1),
           onclick : "ui.set_item(" + id + ",entity_types.attribute)"
         });
         td.insertBefore($(tails[elem]));
         ui.setup_hover_attr($("#attr_" + id));
       } else if (i < len - 1) {
-
         $("<td></td>").insertBefore($(tails[elem]));
         cb = $(tails[elem]).prev();
         var obj_index = cb.parent().prop("id").split("_")[2];
@@ -1516,7 +1519,6 @@ ui = {
           "class" : "input check",
           "id" : "obj_" + obj_index + "_attr_" + id
         });
-
       } else if (i == len - 1) {
         $("<td class=\"td_attr_" + id + "\"></td>")
             .insertBefore($(tails[elem]));
