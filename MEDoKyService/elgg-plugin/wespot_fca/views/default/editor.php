@@ -45,7 +45,9 @@ logic.init("<?php echo $basedir; ?>","http://berndpruenster.org/webapps/MEDoKySe
     <td class="toolbar"><input type="image" class="input" src="<?php echo $basedir; ?>img/save.svg" width="48px"
       height="48px" alt="Save" title="<?php echo elgg_echo('wespot_fca:domain:save'); ?>" id="btn_save"
       onclick="logic.check_save()" /></td>
-    <td class="toolbar" style="width: 100%; vertical-align: middle; padding-left: 2em"><h1 id="h_domain_name"></h1></td>
+    <td class="toolbar" style="vertical-align: middle; padding-left: 2em"><h1 id="h_domain_name"></h1></td>
+    <td class="toolbar fca_help"><input type="image" class="input btn_fca_help" src="<?php echo $basedir; ?>img/help.svg"
+      width="48px" height="48px" onclick="ui.display_help()"></td>
   </tr>
 </table>
 <hr />

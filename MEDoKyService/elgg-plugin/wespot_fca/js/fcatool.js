@@ -327,7 +327,7 @@ util = {
   parse_params : function() {
     var params = window.location.search.replace("?", "").split("&");
     if (params.length < 3)
-      window.alert("Error! Please Launch the FCA from a group!");
+      window.alert("Error! Please Launch the FCA Tool from a group!");
     for ( var i in params) {
       var param = params[i].split("=");
       if (param[0] == "gid")
@@ -336,11 +336,45 @@ util = {
         state.g_name = param[1];
       else if (param[0] == "uid")
         state.owner_id = parseInt(param[1]);
-      else if (param[0] == "blank")
+
+      else if (param[0] == "did")
+        state.load_domain = parseInt(param[1]);
+    }
+    for ( var i in params) {
+      var param = params[i].split("=");
+      if (param[0] == "blank")
         state.load_domain = false;
     }
     if (state.owner_id == state.user.guid)
       state.teacher = true;
+  },
+
+  init_state : function() {
+    window.history.pushState("FCA", "FCA", location.href);
+  },
+
+  set_state : function(id) {
+    console.debug("STATE: " + id);
+    console.trace();
+    var url = window.location.href;
+    var param_str = window.location.search;
+    var new_url = url.substring(0, url.length - param_str.length + 1);
+    var params = window.location.search.replace("?", "").split("&");
+    for ( var i in params) {
+      var param = params[i].split("=");
+      if (param[0] == "did") {
+        // params[i]="did="+id;
+        for ( var h in params) {
+          if (h != i)
+            new_url = new_url + params[h] + "&";
+        }
+        new_url += "did=" + id;
+        window.history.replaceState("FCA", "FCA", new_url);
+        return;
+      }
+    }
+    window.history.replaceState("FCA", "FCA", url + "&did=" + id);
+
   },
 
   setup_msie : function() {
@@ -592,6 +626,7 @@ logic = {
     state.files = files;
     state.user = elgg.get_logged_in_user_entity();
     util.parse_params();
+    util.init_state();
 
     backend.url = backend_url;
     $(window).resize(function() {
@@ -870,6 +905,7 @@ logic = {
         $("#dia_create_domain").dialog("close");
         alert("Domain successfully saved!");
         state.domain = obj;
+        $("#h_domain_name").empty().create("txt", obj.name);
         logic.save_items(entity_types.object);
         logic.save_items(entity_types.attribute);
         ui.display_lattice();
@@ -911,7 +947,7 @@ logic = {
     });
   },
 
-  check_save : function(){
+  check_save : function() {
     var currentObjects = $(".btn_obj");
     for (var i = 0; i < currentObjects.length; ++i) {
       if (!$(currentObjects[i]).data(logic.key_obj)) {
@@ -929,7 +965,7 @@ logic = {
     }
     $('#dia_create_domain').dialog('open');
   },
-  
+
   save : function(callback) {
 
     var objects = [];
@@ -1029,6 +1065,7 @@ logic = {
   },
 
   load : function(domainid, teacher) {
+    util.set_state(domainid);
     $("#dia_set_dom").dialog("close");
     if (state.teacher) {
       backend.get_domain(domainid, function(domain) {
@@ -1154,6 +1191,11 @@ ui = {
       });
     }
 
+  },
+
+  display_help : function() {
+    window.open("http://www.youtube.com/watch?v=yrjsM_X0u5s", "FCA_HELP",
+        "width=800,height=600");
   },
 
   clear_dialog : function() {
@@ -1596,7 +1638,10 @@ ui = {
 
     $(".item_description").empty();
     $("#span_rem_attr").empty();
-
+    if (!$("#attr_" + index).data(logic.key_attr)) {
+      logic.rem_attribute(index);
+      return;
+    }
     $("#span_rem_attr").create("txt", $("#attr_" + index).prop("value"));
     $("#btn_rem_attr_yes").click(function() {
       logic.rem_attribute(index);
@@ -1611,7 +1656,10 @@ ui = {
     }
     $(".item_description").empty();
     $("#span_rem_obj").empty();
-
+    if (!$("#obj_" + index).data(logic.key_obj)) {
+      logic.rem_object(index);
+      return;
+    }
     $("#span_rem_obj").create("txt", $("#obj_" + index).prop("value"));
     $("#btn_rem_obj_yes").click(function() {
       logic.rem_object(index);
@@ -1843,7 +1891,12 @@ ui = {
   },
 
   show_initial_domain : function(courses) {
+
     for ( var id in courses) {
+      if (state.load_domain in courses[id].domains) {
+        logic.load(state.load_domain, state.teacher);
+        return;
+      }
       if (courses[id].externalCourseID == state.gid) {
         for ( var d in courses[id].domains) {
           logic.load(d, state.teacher);
