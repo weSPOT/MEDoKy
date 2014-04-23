@@ -350,16 +350,18 @@ util = {
   },
 
   init_state : function() {
-    window.history.pushState("FCA", "FCA", location.href);
+    if (!window.history.state)
+      window.history.pushState("FCA", "FCA", location.href);
   },
 
   set_state : function(id) {
     console.debug("STATE: " + id);
     console.trace();
-    var url = window.location.href;
-    var param_str = window.location.search;
+    var url = window.location.href.replace("&blank=true", "");
+    var param_str = window.location.search.replace("&blank=true", "");
     var new_url = url.substring(0, url.length - param_str.length + 1);
-    var params = window.location.search.replace("?", "").split("&");
+    console.debug(new_url);
+    var params = param_str.replace("?", "").split("&");
     for ( var i in params) {
       var param = params[i].split("=");
       if (param[0] == "did") {
@@ -905,6 +907,7 @@ logic = {
         $("#dia_create_domain").dialog("close");
         alert("Domain successfully saved!");
         state.domain = obj;
+        util.set_state(obj.id);
         $("#h_domain_name").empty().create("txt", obj.name);
         logic.save_items(entity_types.object);
         logic.save_items(entity_types.attribute);

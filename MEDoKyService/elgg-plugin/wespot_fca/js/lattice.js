@@ -114,7 +114,7 @@ lattice = {
               lattice.enable_all();
             else
               lattice.enable_upper(lattice.sys.getEdgesFrom(dragged.node));
-      
+
             lattice.enable_lower(lattice.sys.getEdgesTo(dragged.node));
             dragged.node.data.objActive = true;
             dragged.node.data.attrActive = true;
@@ -266,7 +266,7 @@ lattice = {
       ctx.arc((pt.x), (pt.y - 0.5), w - 2, 0, Math.PI, true);
       ctx.fill();
       ctx.closePath();
-      
+
       col = "rgba(255,255,255,0.5)";
       if (node.data.active)
         col = "rgba(255,255,255,1)";
@@ -433,7 +433,7 @@ lattice = {
           elgg.echo('wespot_fca:lattice:tax') + " '" + state.domain.name + "'");
 
     }
-    
+
     if (!lattice.latticeview) {
       for ( var e in lattice.taxonomy_edges) {
         var pre = lattice.sys.getNode(lattice.taxonomy_edges[e].source);
@@ -442,11 +442,11 @@ lattice = {
           "active" : true,
           "enabled" : pre.data.enabled && post.data.enabled,
           "taxonomy" : true
-       
+
         });
       }
     }
-   
+
     lattice.renderer.redraw();
   },
 
@@ -856,16 +856,13 @@ lattice = {
     tr.create("td", {
       style : "background-color: inherit"
     }).append(elgg.echo('wespot_fca:lattice:part_of'));
-    $(lattice.info)
-        .create(
-            "input",
-            {
-              id : "btn_concept_save",
-              type : "button",
-              "class" : "input",
-              value : elgg.echo('wespot_fca:save'),
-              onclick : "lattice.update_concept(" + c + ")"
-            }).hide();
+    $(lattice.info).create("input", {
+      id : "btn_concept_save",
+      type : "button",
+      "class" : "input",
+      value : elgg.echo('wespot_fca:save'),
+      onclick : "lattice.update_concept(" + c + ")"
+    }).hide();
   },
 
   enable_editing : function() {
@@ -1025,37 +1022,56 @@ lattice = {
     lattice.sys.eachNode(function(node, pt) {
       lattice.sys.pruneNode(node);
     });
-   
+
     var concepts = state.domain.formalContext.concepts;
     var y = concepts.length > 10 ? 10 : 5;
 
     var first = true;
-    for ( var c in concepts) {
+    if (concepts.length == 1) {
+      var botnode = lattice.create_node(concepts[0], 2, y, 0.5, true);
+      botnode.fixed = true;
+      botnode.data.fixed = true;
 
-       if (first) {
-        var botnode = lattice.create_node(concepts[c], 2, y, 0.5,
-            concepts.length > 2);
-        botnode.data.fixed = concepts.length > 2;
+      botnode.data.color_obj = lattice.calc_color(concepts[0].valuations[0]);
+      botnode.data.color_attr = lattice.calc_color(concepts[0].valuations[1]);
 
-        botnode.data.color_obj = lattice.calc_color(concepts[c].valuations[0]);
-        botnode.data.color_attr = lattice.calc_color(concepts[c].valuations[1]);
+      lattice.node_bot = botnode;
+      lattice.node_top = botnode;
+      lattice.draw_node(concepts[0], y);
+    } else {
+      for ( var c in concepts) {
 
-        lattice.node_bot = botnode;
-      } else if (concepts[c].successors.length == 0) {
-        var topnode = lattice.create_node(concepts[c], 2, 0, 0.5,
-            concepts.length > 2);
-        topnode.data.fixed = concepts.length > 2;
+        if (first) {
+          var botnode = lattice.create_node(concepts[c], 2, y, 0.5,
+              concepts.length > 2);
+          botnode.data.fixed = concepts.length > 2;
 
-        topnode.data.color_obj = lattice.calc_color(concepts[c].valuations[0]);
-        topnode.data.color_attr = lattice.calc_color(concepts[c].valuations[1]);
+          botnode.data.color_obj = lattice
+              .calc_color(concepts[c].valuations[0]);
+          botnode.data.color_attr = lattice
+              .calc_color(concepts[c].valuations[1]);
 
-        lattice.node_top = topnode;
+          lattice.node_bot = botnode;
+        } else if (concepts[c].successors.length == 0) {
+          var topnode = lattice.create_node(concepts[c], 2, 0, 0.5,
+              concepts.length > 2);
+          topnode.data.fixed = concepts.length > 2;
+
+          topnode.data.color_obj = lattice
+              .calc_color(concepts[c].valuations[0]);
+          topnode.data.color_attr = lattice
+              .calc_color(concepts[c].valuations[1]);
+
+          lattice.node_top = topnode;
+        }
+        lattice.draw_node(concepts[c], y);
+
+        y -= 0.1;
+        first = false;
       }
-      lattice.draw_node(concepts[c], y);
 
-      y -= 0.1;
-      first = false;
     }
+
     y = concepts.length > 10 ? 10 : 5;
     for ( var c in concepts) {
       lattice.draw_edge(concepts[c], y);
