@@ -1,5 +1,6 @@
 package at.tugraz.kmi.medokyservice.bl;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -9,12 +10,30 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import at.tugraz.kmi.medokyservice.datapreprocessing.Course;
 import at.tugraz.kmi.medokyservice.datapreprocessing.Courses;
+import at.tugraz.kmi.medokyservice.io.StepUpIO;
+import at.tugraz.kmi.medokyservice.recommendations.Recommendation;
 import at.tugraz.kmi.medokyservice.recommendations.Recommendations;
 import at.tugraz.kmi.medokyservice.resources.Info;
 import at.tugraz.kmi.medokyservice.resources.LMSLayerIO;
 import at.tugraz.kmi.medokyservice.resources.RecommendationId;
 
 
+
+
+/**
+ * @author meins
+ * This class is implemented as a singleton. It is the container class that handles web-service requests, 
+ * the reading of data from the LMS and the Recommendation calculation.	
+ *
+ */
+/**
+ * @author meins
+ *
+ */
+/**
+ * @author meins
+ *
+ */
 public class CoreLogic {
 
 	private static CoreLogic coreLogic = null;
@@ -26,15 +45,22 @@ public class CoreLogic {
 	private CoreLogic(){
 		userRecommendations = new HashMap<String, Recommendations>();
 	    recommendation = new ReentrantReadWriteLock();
-	    courses = new Courses();
+	    //TODO: update data retrieval and init this. 
+	    //courses = new Courses();
 	    lmsFactory = new LMSFactory();
 	}
 	
 	// FIXME: find a good way to handle the multiple access to Courses -> update, get, ...
+	/**
+	 * @return a list of Courses information is available for
+	 */
 	public synchronized Courses getCourses(){
 		return this.courses;
 	}
 	
+	/**
+	 * @return the Core Logic object 
+	 */
 	public static CoreLogic getInstance(){
 		if (coreLogic == null){
 			coreLogic = new CoreLogic();
@@ -43,6 +69,10 @@ public class CoreLogic {
 	}
 
 	
+	/**
+	 * @return a generated UUID to identify the recommendation request. this id is given to enquirer and need to be passed in 
+	 * the next request.
+	 */
 	private String generateRecommendationId(){
 		String uuid = UUID.randomUUID().toString();
 		while (this.userRecommendations.containsKey(uuid))
@@ -51,14 +81,25 @@ public class CoreLogic {
 	}
 	
 	
-	public RecommendationId triggerUserClassification(String userId, String courseId, String environment) {
+	/**
+	 * @param userId 
+	 * @param courseId
+	 * @param number - the number of recommendations requested
+	 * @param environment - specifies the type of learning environment (mobile, desktop)
+	 * @return a unique id to identify the recommendation request in the next call
+	 */
+	public RecommendationId triggerUserClassification(String userId, String courseId, int number, String environment) {
 		String uuid = this.generateRecommendationId();
 		this.userRecommendations.put(uuid, new Recommendations());
-		new SimpleUserClassificationThread(userId, courseId, environment, uuid).start();
+		new SimpleUserClassificationThread(userId, courseId, number, environment, uuid).start();
 		return new RecommendationId(uuid);
 	}
 	
 	
+	/**
+	 * @param id
+	 * @param recommendations
+	 */
 	public void setRecommendation(String id, Recommendations recommendations){
 					
 		recommendation.writeLock().lock();
@@ -71,6 +112,10 @@ public class CoreLogic {
 	}
 
 	
+	/**
+	 * @param recId - the id that was returned by the method {@link triggerUserClassification(String userId, String courseId, int number, String environment)}
+	 * @return List of Recommendation objects calculated for a user
+	 */
 	public Recommendations getRecommendation(String recId) {
 		//FIXME: add courseId to request
 		Recommendations rec = new Recommendations();
@@ -96,6 +141,14 @@ public class CoreLogic {
 	}
 
 	
+	/**
+	 * A recommendation cycle is started that recalls the source identified by the given sourceId, after the user has been 
+	 * classified and useful recommendations identified. 
+	 * @param sourceId - specifies the system that will be recalled with the recommendations.
+	 * @param userId
+	 * @param courseId
+	 * @return a text that specifies whether the cycle has been started successfully or not
+	 */
 	public Info triggerRecommendationCycle(String sourceId, String userId, String courseId) {
 		//return "for source "+sourceId+" : "+triggerUserClassification(userId, courseId);
 		Info info = new Info();
@@ -112,6 +165,36 @@ public class CoreLogic {
 	
 	
 	public static void main(String[] args) throws Exception {
+	
+		CoreLogic logic = CoreLogic.getInstance();
+		RecommendationId id = logic.triggerUserClassification("10", "3", 3, "elgg");
+		
+		Recommendations recs = logic.getRecommendation(id.getRecommendationId());
+		
+		
+		for (Recommendation rec : recs.getRecommendations()){
+			System.out.println(rec.getRecommendation()+" because "+rec.getExplanation());
+		}
+		
+		RecommendationId secid = logic.triggerUserClassification("10", "20", 3, "mobile");
+		Recommendations r = new Recommendations();
+		ObjectMapper omapper = new ObjectMapper();
+		System.out.println("id = "+secid);
+		while (!r.getStatus().equals("complete")){
+			Thread.sleep(1000); 
+			r = logic.getRecommendation(secid.getRecommendationId());
+			System.err.println(omapper.writeValueAsString(r));
+		}	
+		
+		
+		System.out.println(omapper.writeValueAsString(r));
+		
+	/*	
+			StepUpIO io = new StepUpIO();
+			String param = URLEncoder.encode("http://wespot.kmi.open.ac.uk/profile/michellebachler", "UTF-8");
+
+			io.getStudentInfo("elgg", "test");
+		
 			CoreLogic logic = CoreLogic.getInstance();
 			//Course course = logic.courses.getCourses().get(0);
 			Course course = logic.courses.getCourse("chikul13");
@@ -121,7 +204,7 @@ public class CoreLogic {
 			//Info info =logic.triggerRecommendationCycle("TestLMS", studentName, course.name);
 			Info info =logic.triggerRecommendationCycle("TestLMS", studentName, "chikul13");
 			System.out.println(info.getInfo());
-			
+	*/		
 //			RecommendationId id = logic.triggerUserClassification(studentName, course.name, "mobile");
 //			Recommendations r = new Recommendations();
 //			System.out.println("id = "+id);

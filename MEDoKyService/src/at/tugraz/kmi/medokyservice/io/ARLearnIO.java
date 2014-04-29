@@ -60,5 +60,5 @@ public class ARLearnIO implements LMSLayerIO {
 		String output = response.getEntity(String.class);
 		System.out.println(output);
 		return output;	
-	}
+	}	
 }

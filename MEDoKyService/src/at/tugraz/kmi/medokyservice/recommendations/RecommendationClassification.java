@@ -25,14 +25,14 @@ package at.tugraz.kmi.medokyservice.recommendations;
 
 
 /**
- * The Enumeration InterventionClassification defines four classes of interventions, namely: clarification, emotional, motivational and competence related.
+ * The Enumeration RecommendationClassification defines four classes of recommendations, namely: learning resource, learning activity and learning peer.
  * 
  * @author Simone Kopeinik <simone.kopeinik@tugraz.at>
  * 
  */
 public enum RecommendationClassification {
 	
- /** The Motivation. */
- Motivation 
- 
-}
+ LearningResource,
+ LearningActivity, 
+ LearningPeer
+ }

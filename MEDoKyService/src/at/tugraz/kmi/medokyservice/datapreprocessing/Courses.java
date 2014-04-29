@@ -73,7 +73,15 @@ public class Courses {
 						if ("context".equals(fieldname)) {
 							course = new Course();
 							jp.nextToken();
-							course.name = (jp.getText());
+							String name = jp.getText();
+							int start = name.indexOf(":");
+							int end = name.indexOf(",");
+							System.out.println("all "+name+" start: "+start+" end "+end);
+							if (start!=-1 && end!=-1){
+								name = name.substring(start+2, end-1);	
+							}
+							course.name = name;						
+							System.out.println("NAAME ::: !!!! "+course.name);
 						}
 						else if ("full_count".equals(fieldname)){
 							jp.nextToken();

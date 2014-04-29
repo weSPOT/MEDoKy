@@ -18,11 +18,12 @@ public class TriggerMedoky{
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("trigger/userId/{userId}/courseId/{courseId}/environment/{environment}")
-	public RecommendationId trigger(@DefaultValue("1") @PathParam("userId") String userId, @DefaultValue("1") @PathParam("courseId") String courseId, @DefaultValue("textBased") @PathParam("environment") String environment, @DefaultValue("application/json") @HeaderParam("Accept") String accept) {
+	@Path("trigger/userId/{userId}/courseId/{courseId}/number/{number}/environment/{environment}")
+	public RecommendationId trigger(@DefaultValue("1") @PathParam("userId") String userId, @DefaultValue("1") @PathParam("courseId") String courseId, @DefaultValue("3") @PathParam("number") String number,@DefaultValue("textBased") @PathParam("environment") String environment, @DefaultValue("application/json") @HeaderParam("Accept") String accept) {
 		//RecommendationId id = new RecommendationId("test");
 		//return id;
-		return CoreLogic.getInstance().triggerUserClassification(userId, courseId, environment);
+		int intNumber = Integer.valueOf(number);
+		return CoreLogic.getInstance().triggerUserClassification(userId, courseId, intNumber, environment);
 	}
 		
 	
