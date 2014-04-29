@@ -327,7 +327,7 @@ util = {
   parse_params : function() {
     var params = window.location.search.replace("?", "").split("&");
     if (params.length < 3)
-      window.alert("Error! Please Launch the FCA Tool from a group!");
+      window.alert(elgg.echo("wespot_fca:err_launch"));
     for ( var i in params) {
       var param = params[i].split("=");
       if (param[0] == "gid")
@@ -355,8 +355,7 @@ util = {
   },
 
   set_state : function(id) {
-    console.debug("STATE: " + id);
-    console.trace();
+
     var url = window.location.href.replace("&blank=true", "");
     var param_str = window.location.search.replace("&blank=true", "");
     var new_url = url.substring(0, url.length - param_str.length + 1);
@@ -711,7 +710,7 @@ logic = {
     var sel = $("#sel_set_lo").empty();
 
     sel.create("option").prop("disabled", true).create("txt",
-        "<New " + elgg.echo("wespot_fca:l_obj") + ">");
+        elgg.echo("wespot_fca:new", [elgg.echo("wespot_fca:l_obj")]));
     for ( var i in l_objs) {
       sel.create("option", {
         value : JSON.stringify(l_objs[i])
@@ -905,7 +904,7 @@ logic = {
       backend.create_domain(JSON.stringify(domain), function(obj) {
 
         $("#dia_create_domain").dialog("close");
-        alert("Domain successfully saved!");
+        alert(elgg.echo("wespot_fca:info_saved"));
         state.domain = obj;
         util.set_state(obj.id);
         $("#h_domain_name").empty().create("txt", obj.name);
@@ -954,7 +953,8 @@ logic = {
     var currentObjects = $(".btn_obj");
     for (var i = 0; i < currentObjects.length; ++i) {
       if (!$(currentObjects[i]).data(logic.key_obj)) {
-        alert("Some objects are undefined!");
+        alert(elgg.echo("wespot_fca:err_undefined", [elgg
+            .echo("wespot_fca:objs")]));
         return false;
       }
     }
@@ -962,7 +962,8 @@ logic = {
     currentObjects = $(".btn_attr");
     for (var i = 0; i < currentObjects.length; ++i) {
       if (!$(currentObjects[i]).data(logic.key_attr)) {
-        alert("Some attributes are undefined!");
+        alert(elgg.echo("wespot_fca:err_undefined", [elgg
+            .echo("wespot_fca:attrs")]));
         return false;
       }
     }
@@ -1635,7 +1636,7 @@ ui = {
 
   rem_attribute : function(index) {
     if ($(".td_attr").length == 1) {
-      alert("Cannot remove the only Attribute!");
+      alert(elgg.echo("wespot_fca:err_rem_only", [elgg.echo("wespot_fca:attr")]));
       return;
     }
 
@@ -1654,7 +1655,7 @@ ui = {
 
   rem_object : function(index) {
     if ($(".btn_del_obj").length == 1) {
-      alert("Cannot remove the only Object!");
+      alert(elgg.echo("wespot_fca:err_rem_only", [elgg.echo("wespot_fca:pbj")]));
       return;
     }
     $(".item_description").empty();
