@@ -11,6 +11,7 @@ public class LearningObject extends UserClassification {
 		recommendation.setType(RecommendationClassification.LearningResource);
 		recommendation.setRecommendation("Take a look at this learning material");
 		recommendation.setExplanation("This is to improve guide you through information");
+		recommendation.setLink("http://www.derstandard.at");
 		return recommendation;
 	}
 

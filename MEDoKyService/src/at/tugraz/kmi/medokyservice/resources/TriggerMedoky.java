@@ -12,7 +12,7 @@ import at.tugraz.kmi.medokyservice.bl.CoreLogic;
 import at.tugraz.kmi.medokyservice.recommendations.Recommendations;
 
 
-//@Path("/")
+@Path("/")
 public class TriggerMedoky{
 	
 	

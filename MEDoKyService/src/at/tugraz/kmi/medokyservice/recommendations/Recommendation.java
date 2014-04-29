@@ -6,9 +6,9 @@ public class Recommendation{
     private RecommendationClassification type;
     private String recommendationText;
     private String explanation;
+    private String link;
     
-    
-    public Recommendation (){}
+	public Recommendation (){}
     
     Recommendation(String text){
     	this.recommendationText = text;
@@ -24,7 +24,7 @@ public class Recommendation{
 
     public void setRecommendation(String recommendation) {
         this.recommendationText = recommendation;
-}	
+    }	
     
     public String getRecommendation() {
             return recommendationText;
@@ -33,10 +33,16 @@ public class Recommendation{
     public void setExplanation(String explanation){
     	this.explanation = explanation;
     }
-
     
     public String getExplanation(){
     	return explanation;
     }
    
+    public void setLink(String link) {
+		this.link = link;
+	}
+    
+    public String getLink() {
+		return link;
+	}
 }
