@@ -12,6 +12,7 @@ lattice = {
   node_top : {},
   node_bot : {},
   lo_shown : false,
+  suspended : false,
   color_bg_active : "rgba(255,255,255,1)",
   color_bg_inactive : "rgba(230,230,230,0.5)",
 
@@ -49,7 +50,6 @@ lattice = {
   },
 
   init_renderer : function() {
-    var ctx = lattice.canvas.getContext("2d");
     var particleSystem;
 
     lattice.renderer = {
@@ -61,12 +61,25 @@ lattice = {
       },
 
       redraw : function() {
+        var ctx = lattice.canvas.getContext("2d");
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, lattice.canvas.width, lattice.canvas.height);
         try {
+          if (lattice.suspended) {
 
-          particleSystem.eachEdge(lattice.paint_edge);
-          particleSystem.eachNode(lattice.paint_node);
+            ctx.textAlign = 'center';
+            ctx.strokeStyle = lattice.color_bg_active;
+            ctx.font = "bold 10pt sans-serif";
+            var x = ($(lattice.canvas).width() / 2) | 0;
+            var y = ($(lattice.canvas).height() / 2) | 0;
+            ctx.strokeText("This domain contains only a single concept!", x, y);
+
+            ctx.fillStyle = "black";
+            ctx.fillText("This domain contains only a single concept!", x, y);
+          } else {
+            particleSystem.eachEdge(lattice.paint_edge);
+            particleSystem.eachNode(lattice.paint_node);
+          }
         } catch (not_inited) {
         }
       },
@@ -89,6 +102,8 @@ lattice = {
     var dragged = null;
     var handler = {
       clicked : function(e) {
+        if (lattice.suspended)
+          return;
         var pos = $(lattice.canvas).offset();
         _mouseP = arbor.Point(e.pageX - pos.left, e.pageY - pos.top);
         dragged = lattice.sys.nearest(_mouseP);
@@ -137,6 +152,8 @@ lattice = {
         }
       },
       dragged : function(e) {
+        if (lattice.suspended)
+          return;
         var pos = $(lattice.canvas).offset();
         var s = arbor.Point(e.pageX - pos.left, e.pageY - pos.top);
         if (dragged && dragged.node !== null) {
@@ -147,6 +164,8 @@ lattice = {
         return false;
       },
       dropped : function(e) {
+        if (lattice.suspended)
+          return;
         if (dragged === null || dragged.node === undefined)
           return;
 
@@ -1028,18 +1047,11 @@ lattice = {
 
     var first = true;
     if (concepts.length == 1) {
-//      var botnode = lattice.create_node(concepts[0], 2, y, 0.5, true);
-//      botnode.fixed = true;
-//      botnode.data.fixed = true;
-//
-//      botnode.data.color_obj = lattice.calc_color(concepts[0].valuations[0]);
-//      botnode.data.color_attr = lattice.calc_color(concepts[0].valuations[1]);
-//
-//      lattice.node_bot = botnode;
-//      lattice.node_top = botnode;
-//      lattice.draw_node(concepts[0], y);
-        lattice.update_info(0);
+      lattice.suspended = true;
+      lattice.update_info(0);
+
     } else {
+      lattice.suspended = false;
       for ( var c in concepts) {
 
         if (first) {
