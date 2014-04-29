@@ -30,6 +30,7 @@ public class StepUpIO implements LALayerIO {
 			response = this.performPost("http://ariadne.cs.kuleuven.be/wespot-dev-ws/rest/getCourses", input);
 			if (response.length()<=2)
 				break;
+			
 			courses.add(response);
 			page++;
 		}
@@ -59,6 +60,10 @@ public class StepUpIO implements LALayerIO {
 		String response;
 		ArrayList<String> studentInfos = new ArrayList<String>();
 		studentName = studentName.replace(" ", "%20");
+		if (studentName.contains("http")){
+			System.out.println(studentName);
+			return studentInfos; 
+		}	
 		int page = 0;
 		while (true){
 			input = "{\"pag\":\""+page+"\"}";
@@ -78,11 +83,14 @@ public class StepUpIO implements LALayerIO {
         clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING,Boolean.TRUE);
         ClientResponse response = null;
         try{
+        	System.err.println("web address "+address);
         	WebResource webResource = client.resource(address);
 			response = webResource.type("application/json").post(ClientResponse.class, input);
 		}
 		catch(Exception e){
-			System.err.println("web address"+address);
+			
+			System.err.println("Exception web address "+address);
+			e.printStackTrace();
 			return "";
 		}
 		

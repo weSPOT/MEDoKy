@@ -41,7 +41,7 @@ public class Recommendations extends Beans{
     	this.recommendations.add(new Recommendation(text));
     }
     
-    public void setRecommencations(List<Recommendation> recommendations){
+    public void setRecommendations(List<Recommendation> recommendations){
     	this.recommendations = recommendations;
     }
     
