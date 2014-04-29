@@ -1028,16 +1028,17 @@ lattice = {
 
     var first = true;
     if (concepts.length == 1) {
-      var botnode = lattice.create_node(concepts[0], 2, y, 0.5, true);
-      botnode.fixed = true;
-      botnode.data.fixed = true;
-
-      botnode.data.color_obj = lattice.calc_color(concepts[0].valuations[0]);
-      botnode.data.color_attr = lattice.calc_color(concepts[0].valuations[1]);
-
-      lattice.node_bot = botnode;
-      lattice.node_top = botnode;
-      lattice.draw_node(concepts[0], y);
+//      var botnode = lattice.create_node(concepts[0], 2, y, 0.5, true);
+//      botnode.fixed = true;
+//      botnode.data.fixed = true;
+//
+//      botnode.data.color_obj = lattice.calc_color(concepts[0].valuations[0]);
+//      botnode.data.color_attr = lattice.calc_color(concepts[0].valuations[1]);
+//
+//      lattice.node_bot = botnode;
+//      lattice.node_top = botnode;
+//      lattice.draw_node(concepts[0], y);
+        lattice.update_info(0);
     } else {
       for ( var c in concepts) {
 
