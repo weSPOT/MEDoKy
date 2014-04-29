@@ -11,6 +11,7 @@ public class LearningPeer extends UserClassification {
 			recommendation.setType(RecommendationClassification.LearningPeer);
 			recommendation.setRecommendation("Why don't you discuss your topic with xyz ");
 			recommendation.setExplanation("This is to get help from other students");
+			recommendation.setLink("http://www.tugraz.at");
 		return recommendation;
 	}
 
