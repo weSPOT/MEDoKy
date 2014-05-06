@@ -19,6 +19,10 @@
   font-weight: bold;
 }
 
+.medoky_main {
+  display:none;
+}
+
 .pointy {
   cursor: pointer;
 }
@@ -142,7 +146,7 @@
 
 
 
- 
+
 
 
 
@@ -214,7 +218,7 @@
 
 
 
- 
+
 
 
 
@@ -238,7 +242,7 @@
 
 
 
- 
+
 
 
 

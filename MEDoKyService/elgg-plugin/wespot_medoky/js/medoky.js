@@ -1,4 +1,4 @@
-function MEDoKyRecommendation(type, text, link, description, id) {
+function MEDoKyRecommendation(type, text, link, linkTitle, description, id) {
   this.getIcon = function() {
     if (type == MEDoKyRecommendation.TYPE_ACTIVITY)
       return "img/activity.svg";
@@ -27,6 +27,10 @@ function MEDoKyRecommendation(type, text, link, description, id) {
   this.getLink = function() {
     return link;
   };
+
+  this.getLinkTitle = function() {
+    return linkTitle;
+  };
 }
 MEDoKyRecommendation.TYPE_ACTIVITY = "LearningActivity";
 MEDoKyRecommendation.TYPE_PEER = "LearningPeer";
@@ -50,6 +54,8 @@ var medoky_recommendation_state = {
 
 var medoky_ui = {
   prepareDialogs : function() {
+    if(!medoky_recommendation_state.gid)
+    return;
     $("#dia_medoky_detail").dialog({
       autoOpen : false,
       height : 350,
@@ -218,7 +224,7 @@ var medoky_ui = {
             class : "pointy bold",
             onclick : "window.open(\"" + recommendation.getLink()
                 + "\", \"Learning Object\", \"width=800,height=600\")"
-          }).create("txt", "<Missing Title>");
+          }).create("txt", recommendation.getLinkTitle());
       detail.create("br");
     }
 
@@ -230,7 +236,12 @@ var medoky_ui = {
 };
 
 var medoky_backend = {
+
   init : function(backend_url) {
+    if(!medoky_recommendation_state.gid)
+    return;
+    else
+    $(".medoky_main").removeClass("medoky_main");
     medoky_backend.url = backend_url;
   },
 
@@ -271,7 +282,7 @@ var medoky_backend = {
           for ( var i in obj.recommendations) {
             var rec = obj.recommendations[i];
             recommendations.push(medoky_util.createRecommendation(rec.type,
-                rec.recommendationText, rec.link, rec.explanation));
+                rec.recommendationText, rec.link, rec.linkTitle, rec.explanation));
           }
           callback(recommendations);
         }
@@ -291,6 +302,8 @@ var medoky = {
   },
 
   getRecommendations : function(callback) {
+    if(!medoky_recommendation_state.gid)
+    return;
     medoky_backend
         .trigger(
             medoky_recommendation_state.user.id,
@@ -318,9 +331,9 @@ var medoky = {
 var medoky_util = {
   lastId : -90000000,
 
-  createRecommendation : function(type, text, link, description) {
+  createRecommendation : function(type, text, link, linkTitle, description) {
     var id = ++(medoky_util.lastId);
-    return new MEDoKyRecommendation(type, text, link, description, id);
+    return new MEDoKyRecommendation(type, text, link, linkTitle, description, id);
   },
 
   queueRecommendation : function(id) {
@@ -371,14 +384,14 @@ var medoky_util = {
         });
 
     /*
-     * 
+     *
      * medoky_recommendation_state.recommendations.splice(id, 1); var newId =
      * Math.ceil(id + Math.random() * 99); while (newId in
      * medoky_recommendation_state.recommendations) { newId = Math.ceil(id +
      * Math.random() * 99); } console.debug(newId);
      * medoky_util.createRecommendation(MEDoKyRecommendation.TYPE_PEER, "Peer
      * Recommendation " + newId, "", "Lorem ipsum,...", newId);
-     * 
+     *
      */
     var newId = medoky_util.queueRecommendation(id);
     medoky_ui.addRecommendationDetail($("#medoky_recommendation_detail_top3"),

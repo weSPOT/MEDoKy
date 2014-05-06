@@ -13,20 +13,20 @@ $(function(){
   medoky.getRecommendations(medoky.displayInitialRecommendations);
  });
 </script>
-<div class="elgg-module  elgg-module-aside elgg-menu-owner-block">
-  <div class="elgg-head">
+<div class="elgg-module  elgg-module-aside elgg-menu-owner-block medoky_main">
+  <div class="elgg-head medoky_main">
     <h3>
-      <a class="pointy" onclick="medoky_ui.showRecommendations()">Your Recommendations</a>
+      <a class="pointy medoky_main" onclick="medoky_ui.showRecommendations()">Your Recommendations</a>
     </h3>
   </div>
-  <ul class="elgg-menu" id="medoky_sidebar_recommendations">
+  <ul class="elgg-menu medoky_main" id="medoky_sidebar_recommendations">
   </ul>
 </div>
-<div id="dia_medoky_detail" title="Your Recommendations">
-  <div id="medoky_recommmendation_detail_header"></div>
+<div id="dia_medoky_detail" class="medoky_main" title="Your Recommendations">
+  <div id="medoky_recommmendation_detail_header" class="medoky_main"></div>
   <hr>
-  <ul id="medoky_recommendation_detail_top3"></ul>
-  <div id="medoky_recommendation_detail_footer"></div>
+  <ul id="medoky_recommendation_detail_top3" class="medoky_main"></ul>
+  <div id="medoky_recommendation_detail_footer" class="medoky_main"></div>
 </div>
 <!--
   <a href="<?php echo $CONFIG->url?>medoky">MEDOKY</a>
