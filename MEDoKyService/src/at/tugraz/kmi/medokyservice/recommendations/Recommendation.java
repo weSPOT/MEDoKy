@@ -7,6 +7,7 @@ public class Recommendation{
     private String recommendationText;
     private String explanation;
     private String link;
+    private String linkTitle;
     
 	public Recommendation (){}
     
@@ -45,4 +46,12 @@ public class Recommendation{
     public String getLink() {
 		return link;
 	}
+    
+    public void setLinkTitle(String linkTitle) {
+		this.linkTitle = linkTitle;
+	}
+    
+    public String getLinkTitle() {
+		return linkTitle;
+	} 
 }
