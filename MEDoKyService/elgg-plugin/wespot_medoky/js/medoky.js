@@ -88,6 +88,13 @@ var medoky_ui = {
     footer
         .create("txt",
             " you can find an overview of recommendations that interested you in the past.");
+    try{
+      //initial test
+      post_to_stepup(window.location.href, "view recommendations", {course : gid}, "dummy");
+    }catch(error){
+      console.log(error);
+    }
+
     $("#dia_medoky_detail").dialog("open");
   },
 

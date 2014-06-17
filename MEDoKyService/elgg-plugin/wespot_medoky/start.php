@@ -1,7 +1,7 @@
 <?php
 elgg_register_event_handler('init', 'system', 'medoky_init');
 function medoky_init() {
-
+elgg_load_js('wespot_stepup');
 elgg_register_page_handler('medoky', 'medoky_page_handler');
 elgg_extend_view('page/elements/sidebar','wespot_medoky/sidebar');
 }
