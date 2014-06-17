@@ -32,6 +32,7 @@ function MEDoKyRecommendation(type, text, link, linkTitle, description, id) {
     return linkTitle;
   };
 }
+
 MEDoKyRecommendation.TYPE_ACTIVITY = "LearningActivity";
 MEDoKyRecommendation.TYPE_PEER = "LearningPeer";
 MEDoKyRecommendation.TYPE_RESOURCE = "LearningResource";
@@ -89,8 +90,9 @@ var medoky_ui = {
         .create("txt",
             " you can find an overview of recommendations that interested you in the past.");
     try{
-      //initial test
-      post_to_stepup(window.location.href, "view recommendations", {course : gid}, "dummy");
+      //initial test 
+      //[Simone] changed gid to medoky_recommendation_state.gid, phase: 0 == general, subphase: widget name
+      post_to_stepup(window.location.href, "viewRecommendations", {course : medoky_recommendation_state.gid, phase : "0", subphase : "wespot_medoky"}, "dummy");
     }catch(error){
       console.log(error);
     }
