@@ -7,32 +7,34 @@ import at.tugraz.kmi.medokyservice.recommendations.Recommendation;
 public class ClassificationManager {
 
 
-	public static ArrayList<UserClassification> getClassifications(){
+	public static ArrayList<UserClassification> getClassifications(String userId){
 		ArrayList<UserClassification> classifications= new ArrayList<UserClassification>();
-		classifications.add(new Communication());
-		classifications.add(new Badges());
+	//	classifications.add(new Communication());
+	//	classifications.add(new Badges());
 		return classifications;
 	}
 
-	public static ArrayList<UserClassification> getDummyClassifications(
-			int number) {
+	public static ArrayList<UserClassification> getDummyClassifications(int number, String userId) {
 		ArrayList<UserClassification> classifications= new ArrayList<UserClassification>();
 		
 		
-		int i=0;
+		int count=0;
 		
-		while (i<number){
+		while (count<number){
 			System.out.println();
-			int rnd = (int) (Math.random() * ( 3 - 0));
-			System.out.println(rnd);
-			switch (rnd) {
-	            case 0:  classifications.add(new LearningActivity());
-	                     break; 
-	            case 1: classifications.add(new LearningObject());
+			//int rnd = 0; //(int) (Math.random() * ( 3 - 0));
+			//System.out.println(rnd);
+			switch (count) {
+	            case 0: classifications.add(new LearningObject(userId));
+	                    break; 
+	            case 1: classifications.add(new LearningActivity(userId));
 	            		break;
-	            case 2: classifications.add(new LearningPeer());
+	            case 2: classifications.add(new LearningPeer(userId));
+	            		break;
+	            default:classifications.add(new LearningObject(userId));
+	            		break;
 			 }
-			i++;
+			count++;
 		}
 		return classifications;
 	}

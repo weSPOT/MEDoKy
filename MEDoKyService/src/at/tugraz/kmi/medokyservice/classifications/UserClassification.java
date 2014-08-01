@@ -1,14 +1,17 @@
 package at.tugraz.kmi.medokyservice.classifications;
 
 import at.tugraz.kmi.medokyservice.recommendations.Recommendation;
+import at.tugraz.kmi.medokyservice.recommendations.RecommendationClassification;
 
 public abstract class UserClassification {
 	
-	private Recommendation recommendation;
+	protected Recommendation recommendation;
+	protected String userId;
 	
-	public UserClassification(){
-		this.recommendation = new Recommendation();
+	public UserClassification(String userId, RecommendationClassification type){
+		this.userId = userId;
+		this.recommendation = new Recommendation(userId, type);
 	}
 	
-	public abstract Recommendation calculate(String courseId, String userId); 
+	public abstract Recommendation calculate(String courseId); 
 }

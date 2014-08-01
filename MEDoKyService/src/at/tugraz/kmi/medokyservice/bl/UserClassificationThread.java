@@ -30,11 +30,11 @@ public  class UserClassificationThread extends Thread{
 		 */
 		public void run(){
 			// FIXME change to exceptions for errors
-			ArrayList<UserClassification> classifications = ClassificationManager.getClassifications();
+			ArrayList<UserClassification> classifications = ClassificationManager.getClassifications(this.userId);
 			for (UserClassification classification : classifications){
-				Recommendation recommendation = classification.calculate(this.courseId, this.userId);
+				Recommendation recommendation = classification.calculate(this.courseId);
 				if (recommendation != null)
-					this.recommendations.addRecommendation(classification.calculate(this.courseId, this.userId));
+					this.recommendations.addRecommendation(classification.calculate(this.courseId));
 			}		
 			this.recommendations.setComplete();
 			this.lmsLayerIO.sendRecommendation(this.courseId, this.userId, this.recommendations);

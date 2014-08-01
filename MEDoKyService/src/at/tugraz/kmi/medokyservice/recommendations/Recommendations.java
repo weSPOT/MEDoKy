@@ -37,14 +37,15 @@ public class Recommendations extends Beans{
     	this.recommendations.add(recommendation);
     }
     
-    public void addRecommendation(String text){
+    /*public void addRecommendation(String text){
     	this.recommendations.add(new Recommendation(text));
-    }
+    }*/
     
     public void setRecommendations(List<Recommendation> recommendations){
     	this.recommendations = recommendations;
     }
     
+   
     @XmlElement 
     public List<Recommendation> getRecommendations(){
     	return this.recommendations;

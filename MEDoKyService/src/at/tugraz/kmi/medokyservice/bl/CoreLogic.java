@@ -167,7 +167,7 @@ public class CoreLogic {
 	public static void main(String[] args) throws Exception {
 	
 		CoreLogic logic = CoreLogic.getInstance();
-		RecommendationId id = logic.triggerUserClassification("10", "3", 3, "elgg");
+		RecommendationId id = logic.triggerUserClassification("10", "3", 7, "elgg");
 		
 		Recommendations recs = logic.getRecommendation(id.getRecommendationId());
 		
@@ -176,7 +176,7 @@ public class CoreLogic {
 			System.out.println(rec.getRecommendation()+" because "+rec.getExplanation());
 		}
 		
-		RecommendationId secid = logic.triggerUserClassification("10", "20", 3, "mobile");
+		RecommendationId secid = logic.triggerUserClassification("10", "20", 6, "mobile");
 		Recommendations r = new Recommendations();
 		ObjectMapper omapper = new ObjectMapper();
 		System.out.println("id = "+secid);
@@ -188,6 +188,7 @@ public class CoreLogic {
 		
 		
 		System.out.println(omapper.writeValueAsString(r));
+		
 		
 	/*	
 			StepUpIO io = new StepUpIO();

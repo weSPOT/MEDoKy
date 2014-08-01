@@ -32,9 +32,9 @@ public class SimpleUserClassificationThread extends Thread{
 		 * @see java.lang.Thread#run()
 		 */
 		public void run(){
-			ArrayList<UserClassification> classifications = ClassificationManager.getDummyClassifications(number);
+			ArrayList<UserClassification> classifications = ClassificationManager.getDummyClassifications(number, userId);
 			for (UserClassification classification : classifications){
-				Recommendation recommendation = classification.calculate(this.courseId, this.userId);
+				Recommendation recommendation = classification.calculate(this.courseId);
 				if (recommendation != null)
 					this.recommendations.addRecommendation(recommendation);
 			}

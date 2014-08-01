@@ -5,12 +5,13 @@ import at.tugraz.kmi.medokyservice.recommendations.RecommendationClassification;
 
 public class LearningActivity extends UserClassification {
 
+	public LearningActivity(String userId) {
+		super(userId, RecommendationClassification.LearningActivity);
+	}
+
 	@Override
-	public Recommendation calculate(String courseId, String userId) {
+	public Recommendation calculate(String courseId) {
 		// TODO Auto-generated method stub
-		Recommendation recommendation = new Recommendation();
-		recommendation.setType(RecommendationClassification.LearningActivity);
-		
 		int rnd = (int) (Math.random() * ( 3 - 0));
 		switch (rnd) {
             case 0: recommendation.setRecommendation("Be sure to consider Data from different sources!");

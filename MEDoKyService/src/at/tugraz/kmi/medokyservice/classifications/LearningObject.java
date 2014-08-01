@@ -5,10 +5,13 @@ import at.tugraz.kmi.medokyservice.recommendations.RecommendationClassification;
 
 public class LearningObject extends UserClassification {
 
+	public LearningObject(String userId){
+		super(userId, RecommendationClassification.LearningResource);
+	}
+	
 	@Override
-	public Recommendation calculate(String courseId, String userId) {
-		Recommendation recommendation = new Recommendation();
-		recommendation.setType(RecommendationClassification.LearningResource);
+	public Recommendation calculate(String courseId) {
+		//Recommendation recommendation = new Recommendation();
 		recommendation.setRecommendation("Take a look at this resource");
 		recommendation.setExplanation("This article is related to a concept in your learning context you have not learned yet.");
 		

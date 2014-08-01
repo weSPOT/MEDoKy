@@ -9,17 +9,18 @@ import at.tugraz.kmi.medokyservice.datapreprocessing.Courses;
 import at.tugraz.kmi.medokyservice.datapreprocessing.Student;
 import at.tugraz.kmi.medokyservice.datapreprocessing.Students;
 import at.tugraz.kmi.medokyservice.recommendations.Recommendation;
+import at.tugraz.kmi.medokyservice.recommendations.RecommendationClassification;
 
 public class Badges extends UserClassification{
 
-	Recommendation recommendation;
-	
-	public Badges(){
-		this.recommendation = new Recommendation();
+
+	public Badges(String userId){
+		//FIXME: ADD PROPER TYPE
+		super(userId, RecommendationClassification.LearningActivity);
 	}
 	
 	@Override
-	public Recommendation calculate(String courseId, String userId) {
+	public Recommendation calculate(String courseId) {
 		Courses courses = CoreLogic.getInstance().getCourses();
 		Students allStudents = courses.getStudents();
 		Course course = courses.getCourse(courseId);
