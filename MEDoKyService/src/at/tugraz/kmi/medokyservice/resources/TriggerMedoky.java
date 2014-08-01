@@ -46,8 +46,9 @@ public class TriggerMedoky{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("getTagRecommendations/userId/{userId}/courseId/{courseId}")
-	public String getTagRecommendations(@DefaultValue("1") @PathParam("userId") String userId, @DefaultValue("1") @PathParam("courseId") String courseId, @DefaultValue("application/json") @HeaderParam("Accept") String accept) {
-		return "tag1, tag2, tag3, tag4, tag5";
+	public TagRecommendations getTagRecommendations(@DefaultValue("1") @PathParam("userId") String userId, @DefaultValue("1") @PathParam("courseId") String courseId, @DefaultValue("application/json") @HeaderParam("Accept") String accept) {
+		return CoreLogic.getInstance().getTagRecommendations(userId, courseId);
+		//"tag1, tag2, tag3, tag4, tag5";
 		//return CoreLogic.getInstance().getTagRecommendations(userId, courseId);
 	 }
 }

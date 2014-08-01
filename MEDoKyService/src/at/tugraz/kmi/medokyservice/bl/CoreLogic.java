@@ -16,6 +16,7 @@ import at.tugraz.kmi.medokyservice.recommendations.Recommendations;
 import at.tugraz.kmi.medokyservice.resources.Info;
 import at.tugraz.kmi.medokyservice.resources.LMSLayerIO;
 import at.tugraz.kmi.medokyservice.resources.RecommendationId;
+import at.tugraz.kmi.medokyservice.resources.TagRecommendations;
 
 
 
@@ -162,6 +163,14 @@ public class CoreLogic {
 		info.setInfo("User Classification for user "+userId+" in course "+courseId+" started.");
 		return info;
 	}
+
+	public TagRecommendations getTagRecommendations(String userId,
+			String courseId) {
+		// TODO Auto-generated method stub
+		TagRecommendations tr = new TagRecommendations();
+		tr.setRecommendations();
+		return tr;
+	}
 	
 	
 	public static void main(String[] args) throws Exception {
@@ -189,6 +198,8 @@ public class CoreLogic {
 		
 		System.out.println(omapper.writeValueAsString(r));
 		
+		TagRecommendations tr = logic.getTagRecommendations("n", "e");
+		System.out.println(omapper.writeValueAsString(tr));
 		
 	/*	
 			StepUpIO io = new StepUpIO();
@@ -284,4 +295,6 @@ public class CoreLogic {
 //			System.out.println(recommendation);
 //			System.out.println(recommendationTwo);
 	}
+
+
 }
