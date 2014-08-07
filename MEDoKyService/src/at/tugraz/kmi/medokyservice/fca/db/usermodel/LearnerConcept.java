@@ -23,16 +23,17 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
  */
 public class LearnerConcept extends DataObject {
 
-  private static final long serialVersionUID = -1379190857847955644L;
-  private long domainConceptId;
+  private static final long            serialVersionUID = -1379190857847955644L;
+  private long                         domainConceptId;
 
   @JsonIgnore
-  private Set<LearnerConcept> predecessors;
-  private Set<LearnerConcept> successors;
-  private Set<LearnerConcept> taxonomySuccessors;
-  private HashMap<FCAObject, Float> objects;
+  private Set<LearnerConcept>          predecessors;
+  private Set<LearnerConcept>          successors;
+  private Set<LearnerConcept>          taxonomySuccessors;
+  private HashMap<FCAObject, Float>    objects;
   private HashMap<FCAAttribute, Float> attributes;
-  private Set<LearningObject> clickedLearningObjects;
+  private Set<LearningObject>          clickedLearningObjects;
+  private boolean                     viewed;
 
   /**
    * Creates a new LearnerConcept based upon a {@link Concept} of the domain
@@ -46,7 +47,8 @@ public class LearnerConcept extends DataObject {
   @SuppressWarnings("rawtypes")
   public LearnerConcept(Concept c) {
     super(c.getName(), c.getDescription());
-    clickedLearningObjects=new HashSet<>();
+    viewed = false;
+    clickedLearningObjects = new HashSet<>();
     domainConceptId = c.getId();
     objects = new HashMap<FCAObject, Float>();
     attributes = new HashMap<FCAAttribute, Float>();
@@ -158,13 +160,21 @@ public class LearnerConcept extends DataObject {
   public String toString() {
     return Long.toString(getId());
   }
-  
-  public void addClickedLearningObject(LearningObject obj){
+
+  public void addClickedLearningObject(LearningObject obj) {
     clickedLearningObjects.add(obj);
   }
 
-  public Set<LearningObject> getClickedLearningObjects(){
+  public Set<LearningObject> getClickedLearningObjects() {
     return clickedLearningObjects;
   }
-  
+
+  public boolean isViewed() {
+    return viewed;
+  }
+
+  public void setViewed(boolean viewed) {
+    this.viewed = viewed;
+  }
+
 }
