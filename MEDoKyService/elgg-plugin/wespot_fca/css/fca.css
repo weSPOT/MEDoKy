@@ -42,6 +42,31 @@
   background: #F55;
 }
 
+#span_latticeview {
+  position: absolute;
+  text-align: left;
+  left: 0;
+  top: 0;
+  padding: 3px;
+  width: 100%;
+}
+
+#btn_taxonomy_selectall {
+  display: inline-block;
+  height: 25px;
+  border-radius: 15px;
+  background: #fff;
+  margin-right: 220px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#span_taxonomy_selectall {
+  width: 100%;
+  text-align: center;
+  display: inline-block;
+}
+
 #btn_concept_save {
   position: absolute;
   bottom: 0;
@@ -51,9 +76,58 @@
   width: 100%
 }
 
+#btn_show_learner_lattice {
+  margin-left: 10px;
+  display: inline-block;
+}
+
+#sel_show_learner_lattice {
+  margin-left: 10px;
+  display: inline-block;
+}
+
+#ifr_preview {
+  overflow: hidden;
+  height: 190px;
+  width: 420px;
+  border: 1px solid gray;
+  margin-top: 15px;
+}
+
 #h_domain_name {
   white-space: nowrap;
 }
+
+/****TABLE****/
+#matrix_attr_head {
+  max-width: 800px;
+}
+
+#matrix_obj_head {
+  max-height: 500px;
+}
+
+#matrix_main {
+  max-height: 520px;
+  max-width: 820px;
+  overflow: auto;
+  margin-bottom: -20px;
+  margin-right: -20px;
+}
+
+#matrix_attr_head,#matrix_obj_head {
+  overflow: hidden;
+}
+
+.vc {
+  vertical-align: top;
+}
+
+#tr_add_obj_btn {
+  vertical-align: top;
+  padding-top: 5px;
+}
+/****END TABLE****/
 /*---------------------------------------*/
 /*---------------------------------------*/
 textarea {
@@ -76,23 +150,11 @@ tr {
   height: 25px;
 }
 
-tr:nth-child(odd) {
+td table tr:nth-child(odd) {
   background: rgba(0, 0, 0, 0.05);
 }
 
-tr:last-child(even) {
-  background: rgba(1, 1, 1, 1);
-}
-
-tr:first-child {
-  background-color: #fff;
-}
-
-tr:last-child {
-  background-color: #fff;
-}
-
-col:nth-child(2n+3) {
+col:nth-child(2n+1) {
   background: #EEE
 }
 
@@ -100,8 +162,31 @@ input[type=checkbox] {
   width: 100%;
 }
 
+input {
+  color: black;
+}
+
+/*---------------------------------------*/
+/*---------------------------------------*/
 .ui-dialog {
   font-size: 100%;
+}
+
+.scaled-frame {
+  width: 840px;
+  height: 400px;
+  border: none;
+  overflow: hidden;
+}
+
+.scaled-frame {
+  /*zoom: 0.1;*/
+  -moz-transform: scale(0.5);
+  -moz-transform-origin: 0 0;
+  -o-transform: scale(0.5);
+  -o-transform-origin: 0 0;
+  -webkit-transform: scale(0.5);
+  -webkit-transform-origin: 0 0;
 }
 
 .msie_fca {
@@ -120,7 +205,7 @@ input[type=checkbox] {
   height: 16px;
   width: 40px;
   margin-left: 57px;
-  margin-top: 33px;
+  margin-top: 27px;
 }
 
 .btn_move_up {
@@ -129,7 +214,7 @@ input[type=checkbox] {
   display: none;
   height: 16px;
   width: 40px;
-  margin-top: 1px;
+  margin-top: -5px;
   margin-left: 57px;
 }
 
@@ -209,10 +294,22 @@ input[type=checkbox] {
 .btn_del_obj {
   z-index: 1;
   position: relative;
-  margin-left: -8px;
-  margin-top: -5px;
-  margin-bottom: -10px;
+  margin-right: -9px;
+  margin-bottom: 8px;
   border: none;
+}
+
+.lattice_lo {
+  background-color:rgba(255,255,255,0.6);
+}
+
+.lattice_lo_hover { 
+  background-color:white !important;
+  font-weight: bold;
+}
+
+.btn_lo_clicked {
+  background-color: lightgreen !important;;
 }
 
 .btn_add_lo {
@@ -292,6 +389,13 @@ input[type=checkbox] {
   z-index: 0;
   position: relative;
   width: 35px;
+}
+
+.cb_attr {
+  z-index: 0;
+  position: relative;
+  width: 35px;
+  height: 35px;
 }
 
 .td_lo {
@@ -401,18 +505,21 @@ input[type=checkbox] {
   height: 24px;
 }
 
+.obj_tail {
+  background-color: #fff !important;
+  height: 45px;
+}
+
 .tail {
   vertical-align: middle;
+  width: 35px;
 }
 
 .left {
   text-align: left;
   padding: 0px;
   margin: 0px;
-  margin-top: -10px;
-  margin-bottom: 8px;
   height: 35px;
-  margin-right: 8px;
   display: block;
 }
 
@@ -423,9 +530,11 @@ input[type=checkbox] {
 }
 
 .col_del {
+  background: #fff !important;
   height: 0px;
   padding: 0px;
   margin: 0px;
+  height: 0px;
 }
 
 .lattice_lo {

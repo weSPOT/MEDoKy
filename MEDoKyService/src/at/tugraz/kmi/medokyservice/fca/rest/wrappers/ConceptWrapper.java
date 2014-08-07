@@ -11,6 +11,7 @@ import at.tugraz.kmi.medokyservice.fca.db.Database;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
+import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerConcept;
 
 /**
@@ -25,22 +26,22 @@ public class ConceptWrapper extends AbstractWrapper {
   /**
    * ID of the domain the concept belongs to
    */
-  public long domainId;
+  public long                               domainId;
 
   /**
    * flag indicating whether the concept is part of the taxonomy
    */
-  public boolean partOfTaxonomy;
+  public boolean                            partOfTaxonomy;
 
   /**
    * flag indicating whether the concept is an object concept
    */
-  public boolean objectConcept;
+  public boolean                            objectConcept;
 
   /**
    * flag indicating whether the concept is an attribute concept
    */
-  public boolean attributeConcept;
+  public boolean                            attributeConcept;
 
   /**
    * attributes with valuations mapped to them
@@ -50,32 +51,34 @@ public class ConceptWrapper extends AbstractWrapper {
   /**
    * objects with valuations mapped to them
    */
-  public LinkedHashMap<FCAObject, Float> objects;
+  public LinkedHashMap<FCAObject, Float>    objects;
 
   /**
    * @see Concept
    */
-  public LinkedHashSet<FCAObject> uniqueObjects;
+  public LinkedHashSet<FCAObject>           uniqueObjects;
 
   /**
    * @see Concept
    */
-  public LinkedHashSet<FCAAttribute> uniqueAttributes;
+  public LinkedHashSet<FCAAttribute>        uniqueAttributes;
 
   /**
    * @see Concept
    */
-  public HashSet<ConceptWrapper> successors;
+  public HashSet<ConceptWrapper>            successors;
 
   /**
    * @see Concept
    */
-  public HashSet<ConceptWrapper> taxonomySuccessors;
+  public HashSet<ConceptWrapper>            taxonomySuccessors;
 
   /**
    * @see LearnerConcept
    */
-  public float[] valuations = { 0f, 0f };
+  public float[]                            valuations = { 0f, 0f };
+
+  public Set<Long>                          clickedLearningObjects;
 
   public ConceptWrapper() {
   }
@@ -97,25 +100,24 @@ public class ConceptWrapper extends AbstractWrapper {
     objectConcept = concept.isObjectConcept();
     attributeConcept = concept.isAttributeConcept();
 
-    attributes = new LinkedHashMap<FCAAttribute, Float>();
+    attributes = new LinkedHashMap<>();
     for (Comparable a : concept.getAttributes()) {
       attributes.put((FCAAttribute) a, 0.0f);
     }
 
-    objects = new LinkedHashMap<FCAObject, Float>();
+    objects = new LinkedHashMap<>();
     for (Comparable o : concept.getObjects()) {
       objects.put((FCAObject) o, 0.0f);
     }
-    uniqueAttributes = new LinkedHashSet<FCAAttribute>();
-    uniqueAttributes.addAll((Collection<? extends FCAAttribute>) concept
-        .getUniqueAttributes());
+    uniqueAttributes = new LinkedHashSet<>();
+    uniqueAttributes.addAll((Collection<? extends FCAAttribute>) concept.getUniqueAttributes());
 
-    uniqueObjects = new LinkedHashSet<FCAObject>();
-    uniqueObjects.addAll((Collection<? extends FCAObject>) concept
-        .getUniqueObjects());
+    uniqueObjects = new LinkedHashSet<>();
+    uniqueObjects.addAll((Collection<? extends FCAObject>) concept.getUniqueObjects());
 
-    successors = new HashSet<ConceptWrapper>();
-    taxonomySuccessors = new HashSet<ConceptWrapper>();
+    successors = new HashSet<>();
+    taxonomySuccessors = new HashSet<>();
+    clickedLearningObjects = new HashSet<>();
 
   }
 
@@ -131,16 +133,18 @@ public class ConceptWrapper extends AbstractWrapper {
     objects = new LinkedHashMap<FCAObject, Float>(concept.getObjects());
 
     uniqueAttributes = new LinkedHashSet<FCAAttribute>();
-    uniqueAttributes.addAll((Collection<? extends FCAAttribute>) c
-        .getUniqueAttributes());
+    uniqueAttributes.addAll((Collection<? extends FCAAttribute>) c.getUniqueAttributes());
 
     uniqueObjects = new LinkedHashSet<FCAObject>();
-    uniqueObjects
-        .addAll((Collection<? extends FCAObject>) c.getUniqueObjects());
+    uniqueObjects.addAll((Collection<? extends FCAObject>) c.getUniqueObjects());
 
     successors = new HashSet<ConceptWrapper>();
     taxonomySuccessors = new HashSet<ConceptWrapper>();
     valuations = concept.getPercentagedValuations();
+
+    clickedLearningObjects = new HashSet<>();
+    for (LearningObject clicked : concept.getClickedLearningObjects())
+      clickedLearningObjects.add(clicked.getId());
   }
 
   /**
@@ -153,8 +157,7 @@ public class ConceptWrapper extends AbstractWrapper {
    * @param taxonomySuccessors
    *          successors also part of the taxonomy
    */
-  <E extends DataObject> void setSucessors(Set<E> successors,
-      Set<E> taxonomySuccessors) {
+  <E extends DataObject> void setSucessors(Set<E> successors, Set<E> taxonomySuccessors) {
     for (E s : successors) {
       this.successors.add(new ConceptWrapper(s));
     }

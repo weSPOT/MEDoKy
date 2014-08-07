@@ -142,7 +142,7 @@ public class Concept extends DataObject {
   /**
    * Returns the set of attributes belonging to this concept.
    * 
-   * @return the set of attributes belonging to this concept.
+   * @return the set of attributes belonging to this concept
    */
   public ComparableSet getAttributes() {
     return attributes;
@@ -157,7 +157,7 @@ public class Concept extends DataObject {
   /**
    * Returns a string representation of this concept.
    * 
-   * @return a string representation of this concept.
+   * @return a string representation of this concept
    */
   public String toString() {
     return ("objects:" + objects.toString() + ", attributes:" + attributes

@@ -1,15 +1,23 @@
 package at.tugraz.kmi.medokyservice.fca.rest.wrappers;
 
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * Wrapper used to receive valuations
- * @author Bernd Prünster <mail@berndpruenster.org>
- *
- */
-public class ValuationWrapper extends AbstractWrapper {
+import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
 
-  public Map<Long,Float> objectValuations, attributeValuations;
-  public String externalUID;
-  
+public class ValuationWrapper {
+
+  public float[]   valuations;
+  public Set<Long> clickedLearningObjects;
+
+  public ValuationWrapper() {
+  }
+
+  public ValuationWrapper(float[] valuations, Set<LearningObject> clickedLearningObjects) {
+    this.valuations = valuations;
+    this.clickedLearningObjects = new HashSet<>();
+    for (LearningObject o : clickedLearningObjects) {
+      this.clickedLearningObjects.add(o.getId());
+    }
+  }
 }

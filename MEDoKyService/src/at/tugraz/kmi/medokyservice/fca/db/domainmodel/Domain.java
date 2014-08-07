@@ -3,6 +3,7 @@ package at.tugraz.kmi.medokyservice.fca.db.domainmodel;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
@@ -23,11 +24,12 @@ public class Domain extends DataObject {
   /**
    * 
    */
-  private static final long serialVersionUID = -9169088905113687870L;
-  private IncidenceMatrix mapping;
-  private Lattice formalContext;
-  private User owner;
-  private boolean global;
+  private static final long        serialVersionUID = -9169088905113687870L;
+  private IncidenceMatrix          mapping;
+  private Lattice                  formalContext;
+  private User                     owner;
+  private boolean                  global;
+  private boolean                  approved;
 
   @JsonIgnore
   private Map<Long, LearnerDomain> learnerDomains;
@@ -51,6 +53,7 @@ public class Domain extends DataObject {
     formalContext = new Lattice(matrix);
     this.owner = owner;
     this.global = global;
+    this.approved = false;
     this.learnerDomains = Collections.synchronizedMap(new HashMap<Long, LearnerDomain>());
   }
 
@@ -84,16 +87,41 @@ public class Domain extends DataObject {
     return learnerDomains;
   }
 
+  public boolean containsLearnerDomain(long userID) {
+    return learnerDomains.containsKey(userID);
+  }
+
+  public LearnerDomain getLearnerDomain(long userID) {
+    return learnerDomains.get(userID);
+  }
+
   public void addLearnerDomain(long userID, LearnerDomain domain) {
     learnerDomains.put(userID, domain);
+
+  }
+
+  public Set<Long> getLearnerIDs() {
+    return learnerDomains.keySet();
   }
 
   public boolean isGlobal() {
     return global;
   }
 
+  public boolean isApproved() {
+    return approved;
+  }
+
+  public void setApproved(boolean approved) {
+    this.approved = approved;
+  }
+
   public void setMetadata() {
     mapping.getAttributes();
+  }
+
+  public void updateLattice() {
+    formalContext = new Lattice(getMapping());
   }
 
 }

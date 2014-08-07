@@ -47,7 +47,7 @@ public class User extends DataObject {
   public void setExternalUid(String external_uid) {
     this.externalUid = external_uid;
   }
-
+/*
   public Set<Course> getCoursesOwned() {
     return coursesOwned;
   }
@@ -57,7 +57,7 @@ public class User extends DataObject {
    * the id of this teacher.
    * 
    * @param course
-   */
+   * /
   public void addCourseOwned(Course course) {
     coursesOwned.add(course);
     course.setOwnerId(id);
@@ -67,7 +67,7 @@ public class User extends DataObject {
     return coursesAttendingIDs;
   }
 
-  public void addCouserAttending(long id) {
+  public void addCousesAttending(long id) {
     coursesAttendingIDs.add(id);
-  }
+  }*/
 }

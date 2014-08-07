@@ -45,7 +45,7 @@ public class LearningObject extends DataObject {
     return data;
   }
 
-  public void setUri(String data) {
+  public void setData(String data) {
     this.data = data;
   }
 

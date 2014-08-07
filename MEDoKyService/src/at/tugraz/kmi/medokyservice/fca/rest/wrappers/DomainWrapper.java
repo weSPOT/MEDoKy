@@ -17,6 +17,7 @@ public class DomainWrapper extends AbstractWrapper {
   public LatticeWrapper formalContext;
   public IncidenceMatrix mapping;
   public boolean global;
+  public boolean approved;
 
   public DomainWrapper() {
   }
@@ -29,6 +30,7 @@ public class DomainWrapper extends AbstractWrapper {
     formalContext = new LatticeWrapper(domain.getFormalContext());
     mapping = domain.getMapping();
     global=domain.isGlobal();
+    approved=domain.isApproved();
     
   }
 

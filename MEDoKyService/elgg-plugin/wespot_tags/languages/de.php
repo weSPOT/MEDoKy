@@ -3,22 +3,14 @@
  * FCATool i18n
  */
 $german = array (
-
+    
     'wespot_fca' => "FCATool",
     'wespot_fca:group' => "Formale Konzeptanalyse",
     'wespot_fca:launch' => "Formale Konzeptanalyse starten",
     'wespot_fca:owner_block' => "Formal Concept Analysis",
-    'wespot_fca:displayhelp' => "Hilfe Snzeigen",
-    'wespot_fca:togroup' => "Zurück zum Inquiry",
-
-    'wespot_fca:err_launch' => "Fehler! Bitte rufen Sie das FCA Tool aus einer Gruppe auf!",
-    'wespot_fca:err_undefined' => "Eingie %s sind undefiniert!",
-    'wespot_fca:err_rem_only' => "Das einzige %s kann nicht entfernt werden!",
-    'wespot_fca:info_saved' => "Domäne erfolgreich gespeichert!",
-    'wespot_fca:new' => "<Neues %s>",
-
+    
     'wespot_fca:course' => "Kurs",
-
+    
     'wespot_fca:dummy' => "Dummy",
     'wespot_fca:name' => "Name",
     'wespot_fca:description' => "Beschreibung",
@@ -30,9 +22,6 @@ $german = array (
     'wespot_fca:move_up' => "Nach Oben",
     'wespot_fca:move_down' => "Nach Unten",
     
-    'wespot_fca:intent' => "Intension",
-    'wespot_fca:extent' => "Extension",
-
     'wespot_fca:attr' => "Merkmal",
     'wespot_fca:attrs' => "Merkmale",
     'wespot_fca:attr:add' => "Merkmal Hinzufügen",
@@ -42,7 +31,7 @@ $german = array (
     'wespot_fca:attr:sel' => "Merkmal:",
     'wespot_fca:attr:del' => "Merkmal Löschen",
     'wespot_fca:attr:dummy' => "Dummy Merkmal",
-
+    
     'wespot_fca:obj' => "Gegenstand",
     'wespot_fca:objs' => "Gegenstände",
     'wespot_fca:obj:add' => "Gegenstand Hinzufügen",
@@ -52,34 +41,30 @@ $german = array (
     'wespot_fca:obj:sel' => "Gegenstand:",
     'wespot_fca:obj:del' => "Gegenstand Löschen",
     'wespot_fca:obj:dummy' => "Dummy Gegenstand",
-
+    
     'wespot_fca:l_obj' => "Lernressource",
     'wespot_fca:l_objs' => "Lernressourcen",
     'wespot_fca:l_obj:add' => "Lernressource Hinzufügen",
     'wespot_fca:l_objs:add' => "Lernressourcen Hinzufügen",
     'wespot_fca:l_obj:sel' => "Lernressource:",
-
+    'wespot_fca:l_obj:preview' => "Lernressource Anzeigen",
+    
     'wespot_fca:lattice:tax' => "Taxonomie von",
-    'wespot_fca:lattice:lattice' => "Begriffssvrband für der Domäne",
-    'wespot_fca:lattice:show_full' => "Vollständigen Begriffsverband anzeigen",
-    'wespot_fca:lattice:show_user' => "Begriffsverband von Schülern anzeigen",
+    'wespot_fca:lattice:lattice' => "Verband für der Domäne",
+    'wespot_fca:lattice:show_full' => "Vollständigen Verband anzeigen",
     'wespot_fca:lattice:part_of' => "Teil der Taxonomie",
     'wespot_fca:lattice:select_node' => "Wählen Sie einen Knoten aus, um Informationen darüber anzuzeigen.",
-    'wespot_fca:lattice:single_concept' => "Diese Domäne besteht nur aus einem einzigen Kozept!",
-    'wespot_fca:lattice:selectall' => "Alle Konzepte auswählen",
-
+    
     'wespot_fca:domain' => "Domäne",
     'wespot_fca:domains' => "Domänen",
     'wespot_fca:domain:open' => "Vorhandene Domäne Öffnen",
-    'wespot_fca:domain:share' => "Domäne Teilen",
     'wespot_fca:domain:new' => "Neue Domäne",
-    'wespot_fca:domain:save' => "Domäne Speichern Unter...",
+    'wespot_fca:domain:from_existing' => "Neue Domäne Auf Basis Aktueller",
+    'wespot_fca:domain:save' => "Domäne Speichern",
+    'wespot_fca:domain:approve' => "Domäne Freigeben",
     'wespot_fca:domain:sel' => "Domäne:",
-
-    'wespot_fca:course:sel' => "Inquiry:",
-
-    'wespot_fca:created_by' => "erstellt von"
-)
-;
+    
+    'wespot_fca:created_by' => "erstellt von" 
+);
 
 add_translation ( "de", $german );

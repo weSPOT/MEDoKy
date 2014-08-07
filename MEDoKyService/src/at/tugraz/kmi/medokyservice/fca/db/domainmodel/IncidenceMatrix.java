@@ -91,9 +91,10 @@ public class IncidenceMatrix extends DataObject {
   public void storeMetadata(FCAAbstract obj) {
     FCAItemMetadata metadata = new FCAItemMetadata(obj);
     itemMetadata.put(obj.getId(), metadata);
-    Database.getInstance().put(metadata,false);
+    Database.getInstance().put(metadata, false);
   }
 
+  
   public Set<FCAAttribute> getAttributes(FCAObject obj) {
     Set<FCAAttribute> attrs = this.objects.get(obj) == null ? Collections.synchronizedSet(new HashSet<FCAAttribute>())
         : this.objects.get(obj);
@@ -250,6 +251,18 @@ public class IncidenceMatrix extends DataObject {
     for (FCAAbstract item : items) {
       item.setDescription(itemMetadata.get(item.getId()).getDescription());
       item.setLearningObjects(itemMetadata.get(item.getId()).getLearningObjects());
+    }
+  }
+
+  public void clear() {
+    synchronized (objects) {
+      synchronized (attributes) {
+        synchronized (itemMetadata) {
+          objects.clear();
+          attributes.clear();
+          itemMetadata.clear();
+        }
+      }
     }
   }
 }

@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -27,6 +28,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import at.tugraz.kmi.medokyservice.fca.bl.Updater;
+import at.tugraz.kmi.medokyservice.fca.db.DataObject;
 import at.tugraz.kmi.medokyservice.fca.db.Database;
 import at.tugraz.kmi.medokyservice.fca.db.FCAAbstract;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
@@ -36,6 +38,7 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.IncidenceMatrix;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerConcept;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 import at.tugraz.kmi.medokyservice.fca.rest.conf.RestConfig;
@@ -45,11 +48,10 @@ import at.tugraz.kmi.medokyservice.fca.rest.wrappers.DomainBlueprint;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.DomainWrapper;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.LatticeWrapper;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.LearningObjectWrapper;
+import at.tugraz.kmi.medokyservice.fca.rest.wrappers.UpdateWrapper;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.UserWrapper;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.ValuationWrapper;
 import at.tugraz.kmi.medokyservice.fca.util.NameComparator;
-
-import com.sun.istack.logging.Logger;
 
 /**
  * FCA REST interface
@@ -134,6 +136,21 @@ public class FCAService {
     return map;
   }
 
+  @GET
+  @Path(RestConfig.PATH_COURSE_DOMAINS)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Map<String, Set<Long>> getCourseDomains() {
+    HashMap<String, Set<Long>> result = new HashMap<>();
+    Deque<Course> courses = Database.getInstance().getAll(Course.class);
+    for (Course c : courses) {
+      Set<Long> dIds = new HashSet<Long>();
+      for (Domain d : c.getDomains())
+        dIds.add(d.getId());
+      result.put(c.getExternalCourseID(), dIds);
+    }
+    return result;
+  }
+
   /**
    * retrieves a Map of Courses containing their Domains as
    * {@link DomainBlueprint}s containing only id, name and description for all
@@ -171,9 +188,16 @@ public class FCAService {
       CourseWrapper wrapper = new CourseWrapper(c.getId(), c.getName(), c.getDescription(), c.getExternalCourseID());
       LinkedHashMap<Long, DomainBlueprint> map = new LinkedHashMap<Long, DomainBlueprint>();
       TreeSet<Domain> domains = new TreeSet<Domain>(new NameComparator());
-      domains.addAll(c.getDomains());
+      if (!externalCourseID.equals("-1")) {
+        for (Domain d : c.getDomains()) {
+          if (d.isApproved())
+            domains.add(d);
+        }
+      } else {
+        domains.addAll(c.getDomains());
+      }
       for (Domain d : c.getDomains()) {
-        map.put(d.getId(), new DomainBlueprint(d.getName(), d.getDescription(), d.getOwner()));
+        map.put(d.getId(), new DomainBlueprint(d.getName(), d.getDescription(), d.getOwner(), d.isApproved()));
       }
       wrapper.domains = map;
       result.put(c.getId(), wrapper);
@@ -217,6 +241,7 @@ public class FCAService {
       @QueryParam(RestConfig.KEY_EXTERNALUID) String uid) throws FileNotFoundException, IOException {
     log("getLearnerDomain");
     Domain domain = Database.getInstance().<Domain> get(id);
+    domain.setMetadata();
     User learner = Database.getInstance().getUserByExternalUID(uid);
     if (domain.getLearnerDomains().containsKey(learner.getId()))
       return new DomainWrapper(domain.getLearnerDomains().get(learner.getId()));
@@ -225,6 +250,79 @@ public class FCAService {
     Database.getInstance().put(dom, false);
     Database.getInstance().save();
     return new DomainWrapper(dom);
+  }
+
+  /**
+   * retrieves a single {@link LearnerDomain} by id
+   * 
+   * @param id
+   *          the id of the domain to retrieve
+   * @param uid
+   *          the learner id
+   * @return the requested LearnerDomain (wrapped)
+   * @throws IOException
+   * @throws FileNotFoundException
+   */
+  @GET
+  @Path(RestConfig.PATH_LEARNERLATTICE)
+  @Produces(MediaType.APPLICATION_JSON)
+  public LatticeWrapper getLearnerLattice(@QueryParam(RestConfig.KEY_ID) long id,
+      @QueryParam(RestConfig.KEY_EXTERNALUID) long uid) throws FileNotFoundException, IOException {
+    log("getLearnerDomain");
+    Domain domain = Database.getInstance().<Domain> get(id);
+    System.out.println(uid);
+    System.out.println(domain.getOwner().getId());
+    for (long d : domain.getLearnerDomains().keySet()) {
+      System.out.println("learnerID: " + d);
+      System.out.println("LearnerDomainId: " + domain.getLearnerDomains().get(d).getId());
+    }
+    // TODO: clean up
+    if (!(domain.getLearnerDomains().containsKey(uid)))
+      return new DomainWrapper(domain).formalContext;
+    return new DomainWrapper(domain.getLearnerDomains().get(uid)).formalContext;
+  }
+
+  /**
+   * retrieves a Domain's Learners by domain id
+   * 
+   * @param id
+   *          the id of the domain
+   * @return the learnes of the specified domain
+   * @throws IOException
+   * @throws FileNotFoundException
+   */
+  @GET
+  @Path(RestConfig.PATH_LEARNERS)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Set<User> getLearnersForDomain(@QueryParam(RestConfig.KEY_ID) long id) throws FileNotFoundException,
+      IOException {
+    log("getLearnerDomain");
+    Domain domain = Database.getInstance().<Domain> get(id);
+    Set<User> users = new TreeSet<User>(new Comparator<User>() {
+
+      @Override
+      public int compare(User o1, User o2) {
+        return o1.getName().compareTo(o2.getName());
+      }
+
+    });
+    for (long learnerId : domain.getLearnerIDs()) {
+      users.add((User) Database.getInstance().get(learnerId));
+    }
+    return users;
+  }
+
+  @GET
+  @Path(RestConfig.PATH_DOMAIN_VALUATIONS)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Map<Long, ValuationWrapper> getValuations(@PathParam(RestConfig.KEY_ID) long learnerDomaindId) {
+    log("getValuations");
+    Map<Long, ValuationWrapper> valuations = new HashMap<>();
+    LearnerDomain domain = Database.getInstance().get(learnerDomaindId);
+    for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
+      valuations.put(c.getId(), new ValuationWrapper(c.getPercentagedValuations(), c.getClickedLearningObjects()));
+    }
+    return valuations;
   }
 
   /**
@@ -242,14 +340,29 @@ public class FCAService {
   @Produces(MediaType.APPLICATION_JSON)
   public FCAObject updateObject(@PathParam(RestConfig.KEY_DOMAINID) long domainID, FCAObject obj) {
     log("updateObject");
-    Domain d = Database.getInstance().get(domainID);
-    FCAObject result = updateItem(obj, d);
+    Domain d;
+    DataObject o = Database.getInstance().get(domainID);
+    boolean update = false;
+    if (o instanceof Domain)
+      d = ((Domain) o);
+    else {
+      d = Database.getInstance().get(((LearnerDomain) o).getDomainID());
+      update = true;
+    }
+    FCAObject result = updateItem(d, obj, d);
+
     try {
+      if (update) {
+        Updater.update((LearnerDomain) Database.getInstance().get(domainID));
+      }
       Database.getInstance().save();
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     } catch (IOException e) {
+
+      e.printStackTrace();
+    } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -263,16 +376,17 @@ public class FCAService {
   public Set<FCAObject> updateObjects(@PathParam(RestConfig.KEY_DOMAINID) long domainID, Set<FCAObject> obj) {
     log("updateObject");
     Domain d = Database.getInstance().get(domainID);
+
     Set<FCAObject> result = new HashSet<FCAObject>(obj.size());
     for (FCAObject o : obj)
-      result.add(updateItem(o, d));
+      result.add(updateItem(d, o, d));
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     }
     return result;
@@ -293,15 +407,20 @@ public class FCAService {
   @Produces(MediaType.APPLICATION_JSON)
   public FCAAttribute updateAttribute(@PathParam(RestConfig.KEY_DOMAINID) long domainID, FCAAttribute obj) {
     log("updateAttribute");
-    Domain d = Database.getInstance().get(domainID);
-    FCAAttribute result = updateItem(obj, d);
+    Domain d;
+    DataObject o = Database.getInstance().get(domainID);
+    if (o instanceof Domain)
+      d = ((Domain) o);
+    else
+      d = Database.getInstance().get(((LearnerDomain) o).getDomainID());
+    FCAAttribute result = updateItem(d, obj, d);
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     }
     return result;
@@ -314,24 +433,29 @@ public class FCAService {
   public Set<FCAAttribute> updateAttributes(@PathParam(RestConfig.KEY_DOMAINID) long domainID, Set<FCAAttribute> obj) {
     log("updateAttribute");
     Domain d = Database.getInstance().get(domainID);
+
     Set<FCAAttribute> result = new HashSet<FCAAttribute>(obj.size());
     for (FCAAttribute o : obj)
-      result.add(updateItem(o, d));
+      result.add(updateItem(d, o, d));
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     }
     return result;
   }
 
-  private <T extends FCAAbstract> T updateItem(T obj, Domain domain) {
+  private <T extends FCAAbstract> T updateItem(Domain d, T obj, Domain domain) {
     T domainObject = Database.getInstance().get(obj.getId());
-
+    if (d.isApproved()
+        && (!(obj.getName().equals(domainObject.getName())) && !(obj.getDescription().equals(domainObject
+            .getDescription())))) {
+      throw new IllegalStateException("Cannot modify parts of an approved domain!");
+    }
     domainObject.setName(obj.getName());
     updateLearningObject(obj);
     domainObject.setLearningObjects(obj.getLearningObjects());
@@ -360,21 +484,24 @@ public class FCAService {
   @Produces(MediaType.APPLICATION_JSON)
   public LatticeWrapper updateConcept(ConceptWrapper concept) throws NullPointerException {
     log("updateConcept");
+    Domain d = Database.getInstance().get(concept.domainId);
+    if (d.isApproved()) {
+      throw new IllegalStateException("Cannot modify parts of an approved domain!");
+    }
     Concept c = Database.getInstance().get(concept.id);
     if (c == null)
       throw new NullPointerException();
     c.setPartOfTaxonomy(concept.partOfTaxonomy);
     c.setName(concept.name);
     c.setDescription(concept.description);
-    Domain d = Database.getInstance().get(concept.domainId);
     d.getFormalContext().updateTaxonomy();
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     }
     return new DomainWrapper(d).formalContext;
@@ -384,29 +511,20 @@ public class FCAService {
    * Triggers a valuation update based on the indicators provided
    * 
    * @param valuations
-   *          the valuatson/updates
-   * @return an updates version of the affected Domain's lattice
+   *          the valuation/updates
+   * @return an updated version of the affected Domain's Lattice's valuations
    * @throws Exception
    */
   @POST
   @Path(RestConfig.PATH_VALUATIONS)
   @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
   @Produces(MediaType.APPLICATION_JSON)
-  public LatticeWrapper updateValuations(ValuationWrapper valuations) throws Exception {
+  public Map<Long, ValuationWrapper> updateValuations(UpdateWrapper valuations) throws Exception {
     log("updateConcept");
-    HashMap<FCAObject, Float> objectValuations = new HashMap<FCAObject, Float>();
-    HashMap<FCAAttribute, Float> attributeValuations = new HashMap<FCAAttribute, Float>();
-    for (Long id : valuations.objectValuations.keySet()) {
 
-      objectValuations.put(Database.getInstance().<FCAObject> get(id), valuations.objectValuations.get(id));
-    }
-    for (Long id : valuations.attributeValuations.keySet()) {
-
-      attributeValuations.put(Database.getInstance().<FCAAttribute> get(id), valuations.attributeValuations.get(id));
-    }
     LearnerDomain domain = Database.getInstance().get(valuations.id);
-    Updater.update(domain, objectValuations, attributeValuations);
-    return new DomainWrapper(domain).formalContext;
+    Updater.update(domain, valuations.learningObjectId);
+    return getValuations(domain.getId());
   }
 
   /**
@@ -419,14 +537,17 @@ public class FCAService {
   @POST
   @Path(RestConfig.PATH_IDENTIFY)
   @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.WILDCARD)
-  public void identify(UserWrapper user) {
+  @Produces(MediaType.TEXT_PLAIN)
+  public String identify(UserWrapper user) {
     log("identify");
-    if (Database.getInstance().getUserByExternalUID(user.externalUID) != null)
-      return;
-    User u = new User(user.externalUID, user.name, user.description);
+    User u = Database.getInstance().getUserByExternalUID(user.externalUID);
+    if (u != null)
+      return Long.toString(u.getId());
+    u = new User(user.externalUID, user.name, user.description);
     log("New User " + u.getId() + ", " + u.getExternalUid() + ", " + u.getName() + ", " + u.getDescription());
     Database.getInstance().put(u, true);
+    return Long.toString(u.getId());
+
   }
 
   /**
@@ -458,10 +579,10 @@ public class FCAService {
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     }
     return result;
@@ -497,10 +618,10 @@ public class FCAService {
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     }
     return result;
@@ -538,10 +659,10 @@ public class FCAService {
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     }
     return result;
@@ -588,14 +709,94 @@ public class FCAService {
     try {
       Database.getInstance().save();
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
+
       e.printStackTrace();
     }
     return new DomainWrapper(domain);
 
+  }
+
+  @POST
+  @Path(RestConfig.PATH_UPDATEDOMAIN)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public DomainWrapper updateDomain(@PathParam(RestConfig.KEY_DOMAINID) long domainId, DomainBlueprint relation) {
+    log("updateDomain");
+    Domain d = Database.getInstance().get(domainId);
+    if (d.isApproved()) {
+      throw new IllegalStateException("Cannot modify parts of an approved domain!");
+    }
+    d.setName(relation.name);
+    d.setDescription(relation.description);
+
+    IncidenceMatrix matrix = d.getMapping();
+    matrix.setName(relation.name);
+    matrix.setDescription(relation.description);
+    matrix.clear();
+    Deque<FCAAttribute> attributes = Database.getInstance().get(relation.attributes);
+    matrix.initAttributes(attributes);
+    Deque<FCAObject> objs = Database.getInstance().get(relation.objects);
+    matrix.initObjects(objs);
+
+    for (Long iobjectId : relation.mapping.keySet()) {
+      matrix.add(Database.getInstance().<FCAObject> get(iobjectId),
+          Database.getInstance().<FCAAttribute> get(relation.mapping.get(iobjectId)));
+    }
+
+    Database.getInstance().removeAll(d.getFormalContext().getConcepts(), false);
+    d.updateLattice();
+    Database.getInstance().putAll(d.getFormalContext().getConcepts(), false);
+    Database.getInstance().put(d, false);
+
+    try {
+      Database.getInstance().save();
+    } catch (FileNotFoundException e) {
+
+      e.printStackTrace();
+    } catch (IOException e) {
+
+      e.printStackTrace();
+    }
+    return new DomainWrapper(d);
+  }
+
+  @POST
+  @Path(RestConfig.PATH_DOMAIN_SHARE)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Boolean shareDomain(@PathParam(RestConfig.KEY_DOMAINID) long domainID,
+      @PathParam(RestConfig.KEY_EXTERNALCOURSEID) String courseID, @PathParam(RestConfig.KEY_NAME) String courseName)
+      throws Exception {
+    Course c = Database.getInstance().getCourseByExternalID(courseID);
+    Domain d = Database.getInstance().get(domainID);
+    if (!d.isApproved())
+      throw new Exception("Domain is not approved");
+    if (c == null) {
+      c = new Course(courseName, "",
+          Database.getInstance().getUserByExternalUID(d.getOwner().getExternalUid()).getId(), courseID);
+      Database.getInstance().put(c, false);
+    }
+    c.addDomain(d);
+    Database.getInstance().save();
+    return true;
+  }
+
+  @POST
+  @Path(RestConfig.PATH_DOMAIN_APPROVE)
+  @Produces(MediaType.APPLICATION_JSON)
+  public DomainWrapper approveDomain(@PathParam(RestConfig.KEY_DOMAINID) long domainId) {
+    Domain d = Database.getInstance().get(domainId);
+    d.setApproved(true);
+    try {
+      Database.getInstance().save();
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return new DomainWrapper(d);
   }
 
   /**
@@ -672,7 +873,7 @@ public class FCAService {
   }
 
   private void log(String str) {
-    Logger.getLogger(FCAService.class).log(Level.INFO, str);
+    Logger.getLogger("FCAService").log(Level.INFO, str);
   }
 
   private void updateLearningObject(FCAAbstract obj) {
@@ -683,7 +884,7 @@ public class FCAService {
       else {
         dbLo.setName(lo.getName());
         dbLo.setDescription(lo.getDescription());
-        dbLo.setUri(lo.getData());
+        dbLo.setData(lo.getData());
       }
       Database.getInstance().put(dbLo, false);
     }

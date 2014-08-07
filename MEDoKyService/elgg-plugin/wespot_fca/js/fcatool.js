@@ -12,7 +12,7 @@ state = {
   obj_index : -1,
   attr_index : -1,
   item_id : undefined,
-  domain : [],
+  domain : undefined,
   inited_attr : false,
   inited_obj : false,
   msie : false,
@@ -25,7 +25,9 @@ state = {
   load_domain : true,
   current_item : undefined,
   edit_current_item : true,
-  select_do_create : false
+  select_do_create : false,
+  type : undefined,
+  learner_lattice_learner : undefined
 };
 
 entity_types = {
@@ -45,9 +47,12 @@ backend = {
   path_domain : "domain",
   path_domainheaders : "domainHeaders",
   path_learner_domain : "learnerDomain",
+  path_learner_lattice : "learnerLattice",
   path_concept : "concept",
   path_valuation : "valuations",
+  path_course_domains : "courseDomains",
   path_identify : "identify",
+  path_learners_for_domain : "learners",
 
   identify : function(payload, callback) {
     $.ajax({
@@ -57,54 +62,70 @@ backend = {
       data : payload,
       dataType : "json",
       contentType : "application/json; charset=utf-8",
-      success : callback
+      success : function(obj) {
+        if (callback)
+          callback(obj);
+      }
+    });
+  },
+
+  get_valuations : function(callback) {
+    $.ajax({
+      cache : false,
+      type : "GET",
+      url : backend.url + backend.path_learner_domain + "/" + state.domain.id + "/" + backend.path_valuation,
+      success : function(obj) {
+        if (callback)
+          callback(obj);
+      },
+      error : function(obj) {
+        console.error(JSON.stringify(obj));
+      }
     });
   },
 
   get_objects : function(callback) {
-    $
-        .ajax({
-          cache : false,
-          type : "GET",
-          url : backend.url + backend.path_objects,
-          success : function(obj) {
-            for ( var id in obj) {
-              obj[id].id = id;
-              state.backend_objects[id] = obj[id];
-              for ( var i in obj[id].learningObjects) {
-                state.active_l_objects[obj[id].learningObjects[i].id] = obj[id].learningObjects[i];
-              }
-            }
-            if (callback)
-              callback();
-          },
-          error : function(obj) {
-            console.error(JSON.stringify(obj));
+    $.ajax({
+      cache : false,
+      type : "GET",
+      url : backend.url + backend.path_objects,
+      success : function(obj) {
+        for ( var id in obj) {
+          obj[id].id = id;
+          state.backend_objects[id] = obj[id];
+          for ( var i in obj[id].learningObjects) {
+            state.active_l_objects[obj[id].learningObjects[i].id] = obj[id].learningObjects[i];
           }
-        });
+        }
+        if (callback)
+          callback();
+      },
+      error : function(obj) {
+        console.error(JSON.stringify(obj));
+      }
+    });
   },
 
   get_attributes : function(callback) {
-    $
-        .ajax({
-          cache : false,
-          type : "GET",
-          url : backend.url + backend.path_attributes,
-          success : function(obj) {
-            for ( var id in obj) {
-              obj[id].id = id;
-              state.backend_attributes[id] = obj[id];
-              for ( var i in obj[id].learningObjects) {
-                state.active_l_objects[obj[id].learningObjects[i].id] = obj[id].learningObjects[i];
-              }
-            }
-            if (callback)
-              callback();
-          },
-          error : function(obj) {
-            console.error(JSON.stringify(obj));
+    $.ajax({
+      cache : false,
+      type : "GET",
+      url : backend.url + backend.path_attributes,
+      success : function(obj) {
+        for ( var id in obj) {
+          obj[id].id = id;
+          state.backend_attributes[id] = obj[id];
+          for ( var i in obj[id].learningObjects) {
+            state.active_l_objects[obj[id].learningObjects[i].id] = obj[id].learningObjects[i];
           }
-        });
+        }
+        if (callback)
+          callback();
+      },
+      error : function(obj) {
+        console.error(JSON.stringify(obj));
+      }
+    });
   },
 
   get_l_objects : function(callback) {
@@ -119,6 +140,47 @@ backend = {
         }
         if (callback)
           callback();
+      },
+      error : function(obj) {
+        console.error(JSON.stringify(obj));
+      }
+    });
+  },
+
+  get_domain_learners : function(callback) {
+    $.ajax({
+      cache : false,
+      type : "GET",
+      data : {
+        id : state.domain.id
+      },
+      dataType : "json",
+      contentType : "application/json; charset=utf-8",
+      url : backend.url + backend.path_learners_for_domain,
+      success : function(obj) {
+        if (callback)
+          callback(obj);
+      },
+      error : function(obj) {
+        console.error(JSON.stringify(obj));
+      }
+    });
+  },
+
+  get_learner_lattice : function(learnerId, callback) {
+    $.ajax({
+      cache : false,
+      type : "GET",
+      data : {
+        id : state.domain.id,
+        externalUID : learnerId
+      },
+      dataType : "json",
+      contentType : "application/json; charset=utf-8",
+      url : backend.url + backend.path_learner_lattice,
+      success : function(obj) {
+        if (callback)
+          callback(obj);
       },
       error : function(obj) {
         console.error(JSON.stringify(obj));
@@ -174,15 +236,54 @@ backend = {
         callback(obj);
       }
     });
+  },
 
+  update_domain : function(payload, callback) {
+    $.ajax({
+      cache : false,
+      type : "POST",
+      url : backend.url + backend.path_domain + "/" + state.domain.id,
+      data : payload,
+      dataType : "json",
+      contentType : "application/json; charset=utf-8",
+      success : function(obj) {
+        callback(obj);
+      }
+    });
+  },
+
+  approve_domain : function(payload, callback) {
+    $.ajax({
+      cache : false,
+      type : "POST",
+      dataType : "json",
+      contentType : "application/json; charset=utf-8",
+      url : backend.url + backend.path_domain + "/" + payload + "/approve",
+      success : function(obj) {
+        callback(obj);
+      }
+    });
+  },
+
+  share_domain : function(payload, callback) {
+    $.ajax({
+      cache : false,
+      type : "POST",
+      dataType : "json",
+      contentType : "application/json; charset=utf-8",
+      url : backend.url + backend.path_domain + "/" + state.domain.id + "/shareTo/" + payload.id + "/"
+          + encodeURIComponent(payload.name),
+      success : function(obj) {
+        callback(obj);
+      }
+    });
   },
 
   update_attribute : function(payload, callback) {
     $.ajax({
       cache : false,
       type : "POST",
-      url : backend.url + backend.path_domain + "/" + state.domain.id + "/"
-          + backend.path_attribute,
+      url : backend.url + backend.path_domain + "/" + state.domain.id + "/" + backend.path_attribute,
       data : payload,
       dataType : "json",
       contentType : "application/json; charset=utf-8",
@@ -196,8 +297,7 @@ backend = {
     $.ajax({
       cache : false,
       type : "POST",
-      url : backend.url + backend.path_domain + "/" + state.domain.id + "/"
-          + backend.path_object,
+      url : backend.url + backend.path_domain + "/" + state.domain.id + "/" + backend.path_object,
       data : payload,
       dataType : "json",
       contentType : "application/json; charset=utf-8",
@@ -211,8 +311,7 @@ backend = {
     $.ajax({
       cache : false,
       type : "POST",
-      url : backend.url + backend.path_domain + "/" + state.domain.id + "/"
-          + backend.path_attributes,
+      url : backend.url + backend.path_domain + "/" + state.domain.id + "/" + backend.path_attributes,
       data : payload,
       dataType : "json",
       contentType : "application/json; charset=utf-8",
@@ -226,8 +325,7 @@ backend = {
     $.ajax({
       cache : false,
       type : "POST",
-      url : backend.url + backend.path_domain + "/" + state.domain.id + "/"
-          + backend.path_objects,
+      url : backend.url + backend.path_domain + "/" + state.domain.id + "/" + backend.path_objects,
       data : payload,
       dataType : "json",
       contentType : "application/json; charset=utf-8",
@@ -265,7 +363,33 @@ backend = {
     });
   },
 
+  get_course_domains : function(callback) {
+    $.ajax({
+      cache : false,
+      type : "GET",
+      url : backend.url + backend.path_course_domains,
+      success : function(obj) {
+        callback(obj);
+      },
+      error : function(obj) {
+        console.error(JSON.stringify(obj));
+      }
+    });
+  },
+
   get_domains : function(id, callback) {
+
+    // TODO: move where it belongs
+    try {
+      // browser bugs
+      $(".scaled-frame").attr("src", "");
+      while ($(".scaled-frame").length != 0)
+        $(".scaled-frame").remove();
+      while ($("#ifr_preview").length != 0)
+        $("#ifr_preview").remove();
+    } catch (not_an_error) {
+    }
+
     var payload = {
       "id" : id
     };
@@ -327,7 +451,7 @@ util = {
   parse_params : function() {
     var params = window.location.search.replace("?", "").split("&");
     if (params.length < 3)
-      window.alert(elgg.echo("wespot_fca:err_launch"));
+      window.alert(elgg.echo('wespot_fca:err_launch'));
     for ( var i in params) {
       var param = params[i].split("=");
       if (param[0] == "gid")
@@ -336,17 +460,19 @@ util = {
         state.g_name = param[1];
       else if (param[0] == "uid")
         state.owner_id = parseInt(param[1]);
-
-      else if (param[0] == "did")
-        state.load_domain = parseInt(param[1]);
+      else if (param[0] == "blank")
+        state.load_domain = false;
     }
     for ( var i in params) {
       var param = params[i].split("=");
-      if (param[0] == "blank")
-        state.load_domain = false;
+      if ((state.load_domain) && (param[0] == "did"))
+        state.load_domain = param[1];
     }
     if (state.owner_id == state.user.guid)
       state.teacher = true;
+
+    $("#btn_to_group")
+        .attr("onclick", "window.location='" + elgg.get_site_url() + "/groups/profile/" + state.gid + "'");
   },
 
   init_state : function() {
@@ -355,11 +481,9 @@ util = {
   },
 
   set_state : function(id) {
-
     var url = window.location.href.replace("&blank=true", "");
     var param_str = window.location.search.replace("&blank=true", "");
     var new_url = url.substring(0, url.length - param_str.length + 1);
-    console.debug(new_url);
     var params = param_str.replace("?", "").split("&");
     for ( var i in params) {
       var param = params[i].split("=");
@@ -377,7 +501,6 @@ util = {
     window.history.replaceState("FCA", "FCA", url + "&did=" + id);
 
   },
-
   setup_msie : function() {
     if ($(".msie_fca").length > 0)
       state.msie = true;
@@ -387,48 +510,46 @@ util = {
     }
     // IE COMPAT taken from https://github.com/jaubourg/ajaxHooks
     if (state.msie) {
-      jQuery
-          .ajaxTransport(function(s) {
-            if (s.crossDomain && s.async) {
-              if (s.timeout) {
-                s.xdrTimeout = s.timeout;
-                delete s.timeout;
+      jQuery.ajaxTransport(function(s) {
+        if (s.crossDomain && s.async) {
+          if (s.timeout) {
+            s.xdrTimeout = s.timeout;
+            delete s.timeout;
+          }
+          var xdr;
+          return {
+            send : function(_, complete) {
+              function callback(status, statusText, responses, responseHeaders) {
+                xdr.onload = xdr.onerror = xdr.ontimeout = jQuery.noop;
+                xdr = undefined;
+                complete(status, statusText, responses, responseHeaders);
               }
-              var xdr;
-              return {
-                send : function(_, complete) {
-                  function callback(status, statusText, responses,
-                      responseHeaders) {
-                    xdr.onload = xdr.onerror = xdr.ontimeout = jQuery.noop;
-                    xdr = undefined;
-                    complete(status, statusText, responses, responseHeaders);
-                  }
-                  xdr = new XDomainRequest();
-                  xdr.onload = function() {
-                    callback(200, "OK", {
-                      text : xdr.responseText
-                    }, "Content-Type: " + xdr.contentType);
-                  };
-                  xdr.onerror = function() {
-                    callback(404, "Not Found");
-                  };
-                  xdr.onprogress = jQuery.noop;
-                  xdr.ontimeout = function() {
-                    callback(0, "timeout");
-                  };
-                  xdr.timeout = s.xdrTimeout || Number.MAX_VALUE;
-                  xdr.open(s.type, s.url);
-                  xdr.send((s.hasContent && s.data) || null);
-                },
-                abort : function() {
-                  if (xdr) {
-                    xdr.onerror = jQuery.noop;
-                    xdr.abort();
-                  }
-                }
+              xdr = new XDomainRequest();
+              xdr.onload = function() {
+                callback(200, "OK", {
+                  text : xdr.responseText
+                }, "Content-Type: " + xdr.contentType);
               };
+              xdr.onerror = function() {
+                callback(404, "Not Found");
+              };
+              xdr.onprogress = jQuery.noop;
+              xdr.ontimeout = function() {
+                callback(0, "timeout");
+              };
+              xdr.timeout = s.xdrTimeout || Number.MAX_VALUE;
+              xdr.open(s.type, s.url);
+              xdr.send((s.hasContent && s.data) || null);
+            },
+            abort : function() {
+              if (xdr) {
+                xdr.onerror = jQuery.noop;
+                xdr.abort();
+              }
             }
-          });
+          };
+        }
+      });
       ui.display_ie_warning();
     } else {
       try {
@@ -440,11 +561,13 @@ util = {
   },
 
   switch_student : function() {
-    $("#btn_open").removeProp("onclick");
+    $("#btn_open").removeAttr("onclick");
     $("#btn_open").click(function() {
       backend.get_domains(state.gid, ui.list_domains);
     });
     $("#btn_save").hide();
+    $("#btn_from_existing").hide();
+    $("#btn_approve").hide();
     $("#btn_new").hide();
     $("#main_table").hide();
     $("#dia_vis").hide();
@@ -457,7 +580,7 @@ util = {
   filter_items : function(entityType) {
     var objs = {};
     var current = undefined;
-    var pack = util.get_by_type(entityType);
+    var pack = util.setup_by_type(entityType);
     var currentObjects = pack.buttons;
 
     for ( var i in pack.items)
@@ -507,7 +630,7 @@ util = {
   },
 
   replace_items : function(obj, entityType) {
-    var pack = util.get_by_type(entityType);
+    var pack = util.setup_by_type(entityType);
 
     for ( var o in obj) {
       var object = {
@@ -545,6 +668,7 @@ util = {
     }
     return size;
   },
+
   // taken from
   // http://stackoverflow.com/questions/1584370/how-to-merge-two-arrays-in-javascript
   unique : function(array) {
@@ -566,35 +690,63 @@ util = {
     return false;
   },
 
-  get_by_type : function(entityType) {
+  clear_iframe : function() {
+    try {
+      // browser bugs
+      $(".scaled-frame").attr("src", "");
+      while ($(".scaled-frame").length != 0)
+        $(".scaled-frame").remove();
+      while ($("#ifr_preview").length != 0)
+        $("#ifr_preview").remove();
+    } catch (not_an_error) {
+    }
+  },
+
+  setup_by_type : function(entityType) {
+    console.debug("Get by Type: " + entityType);
     var id_buttons = $(".btn_obj");
-    var key = logic.key_obj;
+    var key = logic.key_item;
     var items = state.backend_objects;
     var new_items = state.new_objects;
     var index = state.obj_index;
     var updatefunc = backend.update_object;
     var updatefunc_multi = backend.update_objects;
     var prefix_id = "#obj_";
-    var dia = $("#dia_set_obj");
-    var sel = $("#sel_set_obj");
-    var textarea = document.getElementById("text_descr_obj");
-    var btn = $("#btn_choose_obj_ok");
-    var btn_cancel = $("#btn_choose_obj_cancel");
+    var dia = $("#dia_set_item");
+    dia.attr("title", elgg.echo('wespot_fca:obj:set'));
+    dia.dialog("option", "title", elgg.echo('wespot_fca:obj:set'));
+    var sel = $("#sel_set_item");
+    try {
+      sel.autocomple.destroy();
+    } catch (not_an_error) {
+    }
+    var textarea = document.getElementById("text_descr_item");
+    var btn = $("#btn_choose_item_ok");
+    btn.removeAttr("onclick");
+    btn.unbind("click");
+    btn.attr("onclick", "logic.choose_item(" + entityType + ")");
+    var btn_cancel = $("#btn_choose_item_cancel");
     var inited = state.inited_obj;
+
+    $("#btn_item_edit").unbind("click");
+    $("#btn_item_edit").removeAttr("onclick");
+    $("#btn_item_edit").attr("onclick", "ui.display_item_edit(" + entityType + ")");
+    $(".layout_select_name").empty();
+    $(".layout_select_name").create("txt", elgg.echo('wespot_fca:obj:sel'));
+
     if (entityType == entity_types.attribute) {
+      $(".layout_select_name").empty();
+      $(".layout_select_name").create("txt", elgg.echo('wespot_fca:attr:sel'));
+      dia.attr("title", elgg.echo('wespot_fca:attr:set'));
+      dia.dialog("option", "title", elgg.echo('wespot_fca:attr:set'));
+      console.debug(dia.attr("title"));
       id_buttons = $(".btn_attr");
-      key = logic.key_attr;
       items = state.backend_attributes;
       new_items = state.new_attributes;
       index = state.attr_index;
       updatefunc = backend.update_attribute;
       updatefunc_multi = backend.update_attributes;
       prefix_id = "#attr_";
-      dia = $("#dia_set_attr");
-      sel = $("#sel_set_attr");
-      textarea = document.getElementById("text_descr_attr");
-      btn = $("#btn_choose_attr_ok");
-      btn_cancel = $("#btn_choose_attr_cancel");
       inited = state.inited_attr;
     }
     var pack = {
@@ -618,16 +770,17 @@ util = {
 };
 
 logic = {
-  key_obj : "object",
-  key_attr : "attribute",
+  key_item : "item",
   key_lo : "l_object",
 
-  init : function(basedir, backend_url, files) {
+  init : function(basedir, backend_url, files, groups) {
     state.basedir = basedir;
     state.files = files;
+    state.groups = groups;
     state.user = elgg.get_logged_in_user_entity();
     util.parse_params();
     util.init_state();
+    ui.prepare_table();
 
     backend.url = backend_url;
     $(window).resize(function() {
@@ -639,7 +792,9 @@ logic = {
       "description" : state.user.url,
       "externalUID" : state.user.guid.toString(),
       "teacher" : state.teacher
-    }));
+    }), function(id) {
+      state.internalUID = parseInt(id);
+    });
 
     ui.setup_btn_hover();
     ui.prepare_dialogs();
@@ -653,44 +808,63 @@ logic = {
     var los = [];
     for ( var f in state.files) {
       if (state.files[f].name && (state.files[f].name.trim() != "")) {
-        var lo = {
-          "name" : state.files[f].name,
-          "description" : state.files[f].description.replace(/(<([^>]+)>)/ig,
-              ""),
-          "data" : state.files[f].data,
-          "id" : Date.now(),
-          "externalUID" : state.user.guid
-        };
-        los.push(lo);
+        if (state.files[f].name && (state.files[f].name.trim() != "")) {
+          var lo = {
+            "name" : state.files[f].name,
+            "description" : state.files[f].description.replace(/(<([^>]+)>)/ig, ""),
+            "data" : state.files[f].data,
+            "id" : Date.now(),
+            "externalUID" : state.user.guid
+          };
+          los.push(lo);
+        }
       }
     }
 
-    backend
-        .create_l_objects(
-            JSON.stringify(los),
-            function(obj) {
-              backend
-                  .get_l_objects(function() {
-                    if (!state.teacher) {
-                      util.switch_student();
-                      if (state.load_domain)
-                        backend.get_domains(state.gid, ui.show_initial_domain);
-                    } else {
-                      if (state.load_domain)
-                        backend.get_domains('-1', ui.show_initial_domain);
-                    }
-                    if (state.msie) {
-                      console
-                          .debug("OH NO, IE! initilaizing objects and attributes on-demand");
+    backend.create_l_objects(JSON.stringify(los), function(obj) {
+      backend.get_l_objects(function() {
+        if (!state.teacher) {
+          util.switch_student();
+          if (state.load_domain) {
+            backend.get_domains(state.gid, ui.show_initial_domain);
+          } else {
+            logic.enable_disable();
+          }
+        } else {
+          if (state.load_domain) {
+            backend.get_domains('-1', ui.show_initial_domain);
+          } else {
+            logic.enable_disable();
+          }
+        }
+        if (state.msie) {
+          console.debug("OH NO, IE! initilaizing objects and attributes on-demand");
 
-                    } else {
-                      backend.get_objects(function() {
-                        backend.get_attributes(function() {
-                        });
-                      });
-                    }
-                  });
+        } else {
+          backend.get_objects(function() {
+            backend.get_attributes(function() {
             });
+          });
+        }
+      });
+    });
+
+    if (!state.teacher) {
+      logic.log("open fca tool", {});
+    }
+  },
+
+  log : function(verb, payload) {
+    console.trace();
+    console.log("POST TO STEPUP: " + verb);
+    console.log(payload);
+    try {
+      post_to_stepup(window.location.href, verb, {
+        course : elgg.get_page_owner_guid()
+      }, payload);
+    } catch (error) {
+      console.log(error);
+    }
   },
 
   remove_lo : function(lo, object, o) {
@@ -704,42 +878,94 @@ logic = {
     logic.save_item(object, o);
   },
 
-  set_l_object : function(object, o) {
+  set_l_object : function(object) {
     $(".item_description").empty();
-    var l_objs = util.filter_l_lobjects(object);
-    var sel = $("#sel_set_lo").empty();
-
-    sel.create("option").prop("disabled", true).create("txt",
-        elgg.echo("wespot_fca:new", [elgg.echo("wespot_fca:l_obj")]));
-    for ( var i in l_objs) {
-      sel.create("option", {
-        value : JSON.stringify(l_objs[i])
-      }).create("txt", l_objs[i].name);
+    util.clear_iframe();
+    var objects = util.filter_l_lobjects(object);
+    var sel = $("#sel_set_lo");
+    sel.removeData();
+    sel.click(function() {
+      $("#sel_set_lo").val("");
+      $("#sel_set_lo").removeData();
+    });
+    var items = [];
+    for ( var obj in objects) {
+      items.push({
+        label : objects[obj].name,
+        value : objects[obj].name,
+        data : obj
+      });
     }
-    sel.prop("selectedIndex", -1);
+
+    try {
+      sel.autocomplete.destroy();
+    } catch (not_an_error) {
+    }
+
+    sel.autocomplete({
+      // this is needed because of the old jQueryUI version used
+      source : function(request, response) {
+        var results = $.ui.autocomplete.filter(items, request.term);
+
+        if (results.length == 0) {
+          state.select_do_create = request.term;
+        } else
+          state.select_do_create = false;
+        results.splice(0, 0, {
+          value : request.term,
+          label : "create " + request.term
+        });
+        response(results);
+      }
+    });
+
+    sel.bind("autocompleteselect", function(event, ui) {
+      if (!ui.item.data)
+        window.ui.create_lo(ui.item.value);
+      else {
+        $(this).blur();
+        console.debug("Choose: " + ui.item.type);
+        window.ui.display_lo_description(ui.item);
+        $("#sel_set_lo").data(logic.key_lo, ui.item);
+      }
+    });
+
     $("#dia_set_lo").dialog("open");
     $("#dia_set_lo_content").css("background", "rgba(255,255,255,0.6)");
 
-    $("#dia_set_lo").data(logic.key_lo, {
-      "object" : object,
-      "o" : o
-    });
   },
 
   set_lo : function() {
-    var data = $("#dia_set_lo").data(logic.key_lo);
-    var sel = $("#sel_set_lo").get(0);
-    data.object.learningObjects.push(JSON
-        .parse(sel.options[sel.selectedIndex].value));
-    for ( var i in data.object.learningObjects) {
-      state.active_l_objects[data.object.learningObjects[i].id] = data.object.learningObjects[i];
+    var data = $("#sel_set_lo").data(logic.key_lo);
+    if (!data)
+      return;
+    state.current_item.learningObjects.push(state.backend_l_objects[data.data]);
+
+    if (!state.teacher) {
+      logic.log("add learning object", {
+        learningObject : state.backend_l_objects[data.data].data,
+        learnerID : state.user.guid.toString(),
+        itemID : state.current_item.id
+      });
+    }
+
+    for ( var i in state.current_item.learningObjects) {
+      state.active_l_objects[state.current_item.learningObjects[i].id] = state.current_item.learningObjects[i];
     }
 
     $("#dia_set_lo").dialog("close");
-    logic.save_item(data.object, data.o);
+    logic.save_item(state.current_item, state.type);
+
   },
+
   save_item : function(object, entityType, hideDialog) {
-    var pack = util.get_by_type(entityType);
+    console.trace();
+    console.debug(state);
+    logic.enable_disable(); // TODO CLEAN UP
+    if (state.conceptId)
+      lattice.update_info(state.conceptId);
+
+    var pack = util.setup_by_type(entityType);
     var updatefunc = pack.update_function;
 
     if (object.id in pack.items) { // update!
@@ -756,8 +982,18 @@ logic = {
       if (state.domain.id) {
         updatefunc(JSON.stringify(obj), function(resp) {
           pack.items[object.id] = resp;
-          if (!hideDialog)
-            ui.set_item(pack.index, entityType, object.id);
+          if (!state.teacher) {
+            backend.get_valuations(function(obj) {
+              console.debug(obj);
+              console.debug((state.domain.formalContext.bottom.id.toString()));
+              console.debug(state.domain.formalContext.bottom.id);
+              lattice.update_valuation(obj);
+              ui.set_item(pack.index, entityType, object.id);
+            });
+          } else {
+            if (!hideDialog)
+              ui.set_item(pack.index, entityType, object.id);
+          }
         });
       } else {
         ui.set_item(pack.index, entityType, object.id);
@@ -771,7 +1007,7 @@ logic = {
   },
 
   save_items : function(entityType) {
-    var pack = util.get_by_type(entityType);
+    var pack = util.setup_by_type(entityType);
 
     var updatefunc = pack.update_function_multiple;
 
@@ -796,7 +1032,7 @@ logic = {
   },
 
   choose_item : function(entityType) {
-    var pack = util.get_by_type(entityType);
+    var pack = util.setup_by_type(entityType);
     if (!(state.select_do_create === false)) {
       var dat = {
         item : {
@@ -833,14 +1069,12 @@ logic = {
 
     var attributes = $(".btn_attr");
     for (var i = 0; i < attributes.length; ++i) {
-
-      orderedAttribs.push($("#" + attributes[i].id).data(logic.key_attr).id);
+      orderedAttribs.push($("#" + attributes[i].id).data(logic.key_item).id);
     }
 
     var objects = $(".btn_obj");
     for (var i = 0; i < objects.length; ++i) {
-
-      orderedObjects.push($("#" + objects[i].id).data(logic.key_obj).id);
+      orderedObjects.push($("#" + objects[i].id).data(logic.key_item).id);
     }
 
     var checks = $(":checkbox:checked");
@@ -848,10 +1082,9 @@ logic = {
 
       try {
         var btn = $("#obj_" + (checks[c]).id.split("_")[1]);
-        var obj = btn.data(logic.key_obj);
+        var obj = btn.data(logic.key_item);
 
-        var attr = $("#attr_" + (checks[c]).id.split("_")[3]).data(
-            logic.key_attr);
+        var attr = $("#attr_" + (checks[c]).id.split("_")[3]).data(logic.key_item);
         if (!(obj.id.toString() in mapping)) {
           mapping[obj.id.toString()] = [];
 
@@ -878,21 +1111,30 @@ logic = {
   rem_object : function(index) {
 
     $("#dia_rem_obj").dialog("close");
-    $("#tr_obj_" + index).remove();
-    var tmp_w = $(".btn_attr").width();
-    var tmp_h = $(".btn_attr").height();
-    $(".td_attr").css("width", tmp_h + 15);
-    $(".td_attr").css("height", tmp_w + 15);
+    $(".tr_obj_" + index).remove();/*
+                                     * var tmp_w = $(".btn_attr").width(); var
+                                     * tmp_h = $(".btn_attr").height();
+                                     * $(".td_attr").css("width", tmp_h + 15);
+                                     * $(".td_attr").css("height", tmp_w + 15);
+                                     */
   },
 
   rem_attribute : function(index) {
 
     $("#dia_rem_attr").dialog("close");
-    $(".td_attr_" + index).remove();
-    var tmp_w = $(".btn_attr").width();
-    var tmp_h = $(".btn_attr").height();
-    $(".td_attr").css("width", tmp_h + 15);
-    $(".td_attr").css("height", tmp_w + 15);
+    $(".td_attr_" + index).remove();/*
+                                     * var tmp_w = $(".btn_attr").width(); var
+                                     * tmp_h = $(".btn_attr").height();
+                                     * $(".td_attr").css("width", tmp_h + 15);
+                                     * $(".td_attr").css("height", tmp_w + 15);
+                                     */
+
+    var tbl = $($("#matrix_attr_head").children().get(0));
+
+    tbl.width(35 + ($(".btn_attr").length) * 35);
+    tbl = $($("#matrix_main").children().get(0));
+
+    tbl.width(35 + ($(".btn_attr").length) * 35);
   },
 
   create_domain : function(name, description) {
@@ -904,34 +1146,34 @@ logic = {
       backend.create_domain(JSON.stringify(domain), function(obj) {
 
         $("#dia_create_domain").dialog("close");
-        alert(elgg.echo("wespot_fca:info_saved"));
+        alert(elgg.echo('wespot_fca:info_saved'));
         state.domain = obj;
-        util.set_state(obj.id);
         $("#h_domain_name").empty().create("txt", obj.name);
         logic.save_items(entity_types.object);
         logic.save_items(entity_types.attribute);
         ui.display_lattice();
+        $("#btn_save, #btn_approve, #btn_from_existing").show();
+        logic.enable_disable();
       });
     });
   },
 
   create_lo : function(name, description, data) {
 
-    var sel = document.getElementById("sel_set_lo");
-    $(sel.options[0]).prop("disabled", true);
-    if ((data.substring(0, 7) != "http://")
-        && (data.substring(0, 8) != "https://"))
+    $("#sel_set_lo").removeData();
+
+    if ((data.toLowerCase().indexOf("http://") == -1) || (data.toLowerCase().indexOf("https://") == -1))
       data = "http://" + data;
     var lo = {
-      "name" : name,
-      "description" : description,
-      "data" : data,
-      "id" : Date.now(),
-      "externalUID" : state.user.guid
+      name : name,
+      description : description,
+      data : data,
+      id : Date.now(),
+      externalUID : state.user.guid
     };
 
     // this is not pretty!
-    // on the other hand, anything more would be a waste since learnign object
+    // on the other hand, anything more would be a waste since learning objects
     // are pretty undefined as of now
     backend.create_l_objects(JSON.stringify([ lo ]), function(obj) {
       for ( var i in obj) {
@@ -939,39 +1181,69 @@ logic = {
         lo.id = i;
       }
       state.backend_l_objects[lo.id] = lo;
-      var opt = document.createElement("option");
-      opt.text = name;
-      opt.value = JSON.stringify(lo);
-      $(sel).append($(opt));
-      sel.selectedIndex = sel.options.length - 1;
+      $("#sel_set_lo").data(logic.key_lo, {
+        description : lo.description,
+        data : lo.id
+      });
+      $("#sel_set_lo").val(lo.name);
+      ui.display_lo_description({
+        description : lo.description,
+        data : lo.id
+      });
       $("#dia_create_lo").dialog("close");
-
     });
+  },
+
+  approve_domain : function() {
+    backend.approve_domain(state.domain.id, function() {
+      state.domain.approved = true;
+      logic.enable_disable();
+      alert("Domain approved and pubished!");
+    });
+  },
+
+  save_domain : function() {
+    if (state.domain) {
+      logic.save(function() {
+        var domain = logic.create_mapping(state.domain.name, state.domain.description);
+        domain.externalUID = state.user.guid.toString();
+        domain.externalCourseID = state.gid;
+        domain.courseName = state.g_name;
+        backend.update_domain(JSON.stringify(domain), function(obj) {
+
+          $("#dia_create_domain").dialog("close");
+          alert(elgg.echo('wespot_fca:info_saved'));
+          state.domain = obj;
+          logic.save_items(entity_types.object);
+          logic.save_items(entity_types.attribute);
+          ui.display_lattice();
+        });
+      });
+    } else
+      $('#dia_create_domain').dialog('open');
   },
 
   check_save : function() {
     var currentObjects = $(".btn_obj");
     for (var i = 0; i < currentObjects.length; ++i) {
-      if (!$(currentObjects[i]).data(logic.key_obj)) {
-        alert(elgg.echo("wespot_fca:err_undefined", [elgg
-            .echo("wespot_fca:objs")]));
+      // if (!$.hasData(currentObjects[i])) {
+      if (!$(currentObjects[i]).data(logic.key_item)) {
+        alert(elgg.echo('wespot_fca:err_undefined', elgg.echo('wespot_fca:objs')));
         return false;
       }
     }
 
     currentObjects = $(".btn_attr");
     for (var i = 0; i < currentObjects.length; ++i) {
-      if (!$(currentObjects[i]).data(logic.key_attr)) {
-        alert(elgg.echo("wespot_fca:err_undefined", [elgg
-            .echo("wespot_fca:attrs")]));
+      // if (!$.hasData(currentObjects[i])) {
+      if (!$(currentObjects[i]).data(logic.key_item)) {
+        alert(elgg.echo('wespot_fca:err_undefined', elgg.echo('wespot_fca:attrs')));
         return false;
       }
     }
-    $('#dia_create_domain').dialog('open');
+    return true;
   },
-
   save : function(callback) {
-
     var objects = [];
     for ( var i in state.new_objects)
       objects.push(state.new_objects[i]);
@@ -986,14 +1258,47 @@ logic = {
       backend.create_attributes(JSON.stringify(attributes), function(attr) {
 
         util.replace_items(attr, entity_types.attribute);
+
         if (callback)
           callback();
       });
     });
   },
 
-  populate_domain : function(domain, teacher) {
+  enable_disable : function() {
+    $("#btn_share").hide();
+    if (state.domain && state.domain.approved) {
+      if (state.owner_id == state.domain.owner.externalUid)
+        $("#btn_share").show();
+      $(".input").prop("disabled", true);
+      $(".btn_del_attr").css("visibility", "hidden");
+      $(".btn_del_obj").css("visibility", "hidden");
+      $(".add_buttons").css("visibility", "hidden");
+      $("#btn_new, #btn_from_existing, #btn_open").prop("disabled", false);
+      $("#btn_save, #btn_approve, #btn_approve").hide();
+      $(".btn_move_right, .btn_move_left, .btn_move_up, .btn_move_down").hide();
+      $(".to_be_hidden").hide();
+      if (state.teacher)
+        $("#btn_show_learner_lattice").prop("disabled", false);
+      else
+        $("#btn_show_learner_lattice").hide();
+    } else {
+      $("#btn_show_learner_lattice").hide();
+      $(".input").prop("disabled", false);
+      $(".btn_del_attr").css("visibility", "visible");
+      $(".btn_del_obj").css("visibility", "visible");
+      $(".add_buttons").css("visibility", "visible");
+      if (state.teacher)
+        $("#btn_save, #btn_approve, #btn_from_existing").show();
+      $(".to_be_hidden").show();
+    }
+    $(".always_on").removeProp("disabled");
+    if (!state.domain) {
+      $("#btn_from_existing, #btn_approve").hide();
+    }
+  },
 
+  populate_domain : function(domain, teacher) {
     state.domain = domain;
     $("#h_domain_name").empty().create("txt", domain.name);
     var num_attributes = Object.keys(domain.mapping.attributes).length;
@@ -1013,98 +1318,123 @@ logic = {
     while ($(".btn_del_obj").length > num_objects) {
       logic.rem_object($($(".btn_del_obj")[0]).prop("id").split("_")[3]);
     }
-    backend
-        .get_objects(backend
-            .get_attributes(function() {
-              setTimeout(
-                  function() {
-                    var index = 0;
-                    for ( var a in domain.mapping.attributes) {
+    backend.get_objects(backend.get_attributes(function() {
+      setTimeout(function() {
+        var index = 0;
+        for ( var a in domain.mapping.attributes) {
 
-                      var id = "#attr_"
-                          + $(".td_attr")[index].childNodes[2].id.split("_")[1];
+          var id = "#attr_" + $(".td_attr")[index].childNodes[2].id.split("_")[1];
 
-                      var attribute = JSON.parse(a);
-                      $(id).data(logic.key_attr, attribute);
-                      $(id).prop("value", attribute.name);
-                      ++index;
-                    }
+          var attribute = JSON.parse(a);
+          $(id).data(logic.key_item, attribute);
+          $(id).prop("value", attribute.name);
+          ++index;
+        }
 
-                    $(".check").prop("checked", false);
-                    var objects = $(".btn_del_obj");
-                    index = 0;
-                    for ( var o in domain.mapping.objects) {
-                      var id = "#obj_"
-                          + ($(objects[index]).prop("id").split("_")[3]);
-                      var object = $.parseJSON(o);
+        $(".check").prop("checked", false);
+        var objects = $(".btn_del_obj");
+        index = 0;
+        for ( var o in domain.mapping.objects) {
+          var id = "#obj_" + ($(objects[index]).prop("id").split("_")[3]);
+          var object = $.parseJSON(o);
 
-                      $(id).data(logic.key_obj, object);
-                      $(id).prop("value", object.name);
-                      var mapped = domain.mapping.objects[o];
+          $(id).data(logic.key_item, object);
+          $(id).prop("value", object.name);
+          var mapped = domain.mapping.objects[o];
 
-                      for (var m = 0; m < mapped.length; ++m) {
-                        var currentA = $(".btn_attr");
-                        for (var a = 0; a < currentA.length; ++a) {
-                          if ($("#" + currentA[a].id).data(logic.key_attr).id == mapped[m].id) {
-                            $(id + "_" + currentA[a].id).prop("checked", true);
-                          }
-                        }
-                      }
-                      ++index;
-                    }
+          for (var m = 0; m < mapped.length; ++m) {
+            var currentA = $(".btn_attr");
+            for (var a = 0; a < currentA.length; ++a) {
+              if ($("#" + currentA[a].id).data(logic.key_item).id == mapped[m].id) {
+                $(id + "_" + currentA[a].id).prop("checked", true);
+              }
+            }
+          }
+          ++index;
+        }
 
-                    if (state.msie) {
-                      setTimeout(function() {
-                        ui.display_lattice();
-                        if (teacher)
-                          $("#dia_vis").dialogExtend("minimize");
-                      }, 300);
-                    } else {
-                      ui.display_lattice();
-                      if (teacher)
-                        $("#dia_vis").dialogExtend("minimize");
-                    }
-                  }, 1000);
-            }));
+        if (state.msie) {
+          setTimeout(function() {
+            ui.display_lattice(teacher);
+          }, 300);
+        } else {
+          ui.display_lattice(teacher);
+        }
+
+        logic.enable_disable();
+      }, 1000);
+    }));
+  },
+
+  display_share_dialog : function() {
+    $("#sel_set_course").empty();
+    backend.get_course_domains(function(courses) {
+      var blacklist = [];
+      for ( var c in courses) {
+        if (courses[c].indexOf(state.domain.id) != -1)
+          blacklist.push(c);
+      }
+      for ( var i in state.groups) {
+        if ((state.groups[i].id != state.gid) && blacklist.indexOf(state.groups[i].id) == -1) {
+          $("#sel_set_course").create("option", {
+            value : state.groups[i].id
+          }).create("txt", $("<div/>").html(state.groups[i].name).text());
+        }
+      }
+      $("#sel_set_course").prop("selectedIndex", "-1");
+      $("#dia_share_dom").dialog("open");
+      $(".item_description").empty();
+    })
   },
 
   load : function(domainid, teacher) {
-    util.set_state(domainid);
+    state.conceptId = undefined;
+    if (state.teacher)
+      $("#btn_save, #btn_approve, #btn_from_existing").show();
     $("#dia_set_dom").dialog("close");
+    util.set_state(domainid);
     if (state.teacher) {
       backend.get_domain(domainid, function(domain) {
         logic.populate_domain(domain, teacher);
       });
     } else {
-      backend.get_learner_domain(domainid, state.user.guid.toString(),
-          function(domain) {
-            logic.populate_domain(domain);
-          });
+      backend.get_learner_domain(domainid, state.user.guid.toString(), function(domain) {
+        logic.populate_domain(domain);
+      });
     }
   }
 };
 
 ui = {
 
-  prepare_dialogs : function() {
+  prepare_table : function() {
+    $("#matrix_main").scroll(function(e) {
+      $("#matrix_obj_head").scrollTop($("#matrix_main").scrollTop());
+      $("#matrix_attr_head").scrollLeft($("#matrix_main").scrollLeft());
+    });
+  },
 
-    $("#dia_set_obj").dialog({
+  prepare_dialogs : function() {
+    $("#dia_set_item").dialog({
       autoOpen : false,
       height : 320,
       width : 510,
       resizable : false,
       modal : true,
       beforeClose : ui.clear_dialog
-    });
-    $("#dia_set_attr").dialog({
-      autoOpen : false,
-      height : 320,
-      width : 510,
-      resizable : false,
-      modal : true,
-      beforeClose : ui.clear_dialog
-    });
+    });/*
+         * $("#dia_set_attr").dialog({ autoOpen : false, height : 320, width :
+         * 510, resizable : false, modal : true, beforeClose : ui.clear_dialog
+         * });
+         */
     $("#dia_set_dom").dialog({
+      autoOpen : false,
+      height : 200,
+      width : 400,
+      resizable : false,
+      modal : true
+    });
+    $("#dia_share_dom").dialog({
       autoOpen : false,
       height : 200,
       width : 400,
@@ -1113,7 +1443,7 @@ ui = {
     });
     $("#dia_set_lo").dialog({
       autoOpen : false,
-      height : 200,
+      height : 410,
       width : 450,
       resizable : false,
       modal : true
@@ -1191,15 +1521,41 @@ ui = {
         }
       }).dialogExtend({
         minimize : true,
-        maximize : false
+        maximize : false,
+        events : {
+          "beforeMinimize" : function() {
+            $("#btn_show_learner_lattice").hide();
+            $("#sel_show_learner_lattice").hide();
+            $('#ui-dialog-title-dia_vis').css("width", '90%');
+
+          },
+          "beforeRestore" : function() {
+            $('#ui-dialog-title-dia_vis').css("width", 'auto');
+            if (!state.learner_lattice_learner) {
+              $("#btn_show_learner_lattice").show();
+            } else {
+              $("#sel_show_learner_lattice").show();
+            }
+          }
+        }
       });
     }
+    ui.hide_learner_lattice_dropdown();
 
   },
 
+  try_show_save_dialog : function() {
+    if (logic.check_save)
+      logic.save_domain();
+  },
+
+  try_show_create_dialog : function() {
+    if (logic.check_save)
+      $('#dia_create_domain').dialog('open');
+  },
+
   display_help : function() {
-    window.open("http://www.youtube.com/watch?v=yrjsM_X0u5s", "FCA_HELP",
-        "width=800,height=600");
+    window.open("http://www.youtube.com/watch?v=yrjsM_X0u5s", "FCA_HELP", "width=800,height=600");
   },
 
   clear_dialog : function() {
@@ -1218,27 +1574,24 @@ ui = {
     }
   },
 
-  enable_options : function(select) {
-    $(select.options[0]).prop("disabled", false);
-
-  },
-
-  disable_options : function(select) {
-
-    $(select.options[0]).prop("disabled", true);
-  },
   move_down : function(id) {
-    if ($("#tr_obj_" + id).next().prop("id"))
-      $("#tr_obj_" + id).next().after($("#tr_obj_" + id));
+    if (!($($(".tr_obj_" + id).get(0)).next().hasClass("obj_tail"))) {
+      console.trace();
+      $(".tr_obj_" + id).each(function(index) {
+        $(this).next().after($($(".tr_obj_" + id).get(index)));
+      });
+    }
     $(".btn_move_right").hide();
     $(".btn_move_left").hide();
     $(".btn_move_up").hide();
     $(".btn_move_down").hide();
   },
   move_up : function(id) {
-
-    if ($("#tr_obj_" + id).prev().prop("id"))
-      $("#tr_obj_" + id).prev().before($("#tr_obj_" + id));
+    if ($($(".tr_obj_" + id).get(0)).prev()) {
+      $(".tr_obj_" + id).each(function(index) {
+        $(this).prev().before($($(".tr_obj_" + id).get(index)));
+      });
+    }
     $(".btn_move_right").hide();
     $(".btn_move_left").hide();
     $(".btn_move_up").hide();
@@ -1301,10 +1654,12 @@ ui = {
     btn.hover(function() {
       state.hover = null;
       setTimeout(function() {
-        $(".btn_move_down").hide();
-        $(".btn_move_up").hide();
-        $("#btn_move_up_" + btn.prop("id").split("_")[1]).show();
-        $("#btn_move_down_" + btn.prop("id").split("_")[1]).show();
+        if (!state.domain || !state.domain.approved) {
+          $(".btn_move_down").hide();
+          $(".btn_move_up").hide();
+          $("#btn_move_up_" + btn.prop("id").split("_")[1]).show();
+          $("#btn_move_down_" + btn.prop("id").split("_")[1]).show();
+        }
       }, 150);
     }, function() {
       setTimeout(function() {
@@ -1341,13 +1696,16 @@ ui = {
       }, 100);
     });
     btn.hover(function() {
-      state.hover = null;
-      setTimeout(function() {
-        $(".btn_move_left").hide();
-        $(".btn_move_right").hide();
-        $("#btn_move_right_" + btn.prop("id").split("_")[1]).show();
-        $("#btn_move_left_" + btn.prop("id").split("_")[1]).show();
-      }, 150);
+      if (!state.domain || !state.domain.approved) {
+        state.hover = null;
+        setTimeout(function() {
+          $(".btn_move_left").hide();
+          $(".btn_move_right").hide();
+          $("#btn_move_right_" + btn.prop("id").split("_")[1]).show();
+          $("#btn_move_left_" + btn.prop("id").split("_")[1]).show();
+
+        }, 150);
+      }
     }, function() {
       setTimeout(function() {
         if (!state.hover) {
@@ -1358,22 +1716,22 @@ ui = {
     });
   },
 
-  create_lo : function(o) {
+  create_lo : function(name) {
+    $("#input_create_lo_name").val(name);
     $("#dia_create_lo").dialog("open");
-    $("#input_create_lo_name").val("");
     $("#input_create_lo_description").val("");
   },
 
   set_item : function(index, entityType, id) {
+
     state.select_do_create = false;
-    var pack = util.get_by_type(entityType);
+    var pack = util.setup_by_type(entityType);
 
     var data = $(pack.prefix + index);
 
     pack.select.val("");
     ui.prepare_dialog(entityType);
-    (entityType == entity_types.attribute) ? state.attr_index = index
-        : state.obj_index = index;
+    (entityType == entity_types.attribute) ? state.attr_index = index : state.obj_index = index;
 
     state.item_id = undefined;
 
@@ -1405,11 +1763,12 @@ ui = {
           data : obj
         });
       }
-
+      state.type = entityType;
       pack.select.autocomplete({
         // this is needed because of the old jQueryUI version used
         source : function(request, response) {
           var results = $.ui.autocomplete.filter(items, request.term);
+
           if (results.length == 0) {
             state.select_do_create = request.term;
           } else
@@ -1424,14 +1783,25 @@ ui = {
 
       pack.select.bind("autocompleteselect", function(event, ui) {
         if (!ui.item.data)
-          window.ui.prepare_item_edit(entityType, true);
+          window.ui.prepare_item_edit(state.type, true);
         else {
           $(this).blur();
-          window.ui.display_item_description(ui.item.data, entityType);
+          console.debug("Choose: " + ui.item.type);
+          window.ui.display_item_description(ui.item.data, state.type);
         }
       });
-      (entityType == entity_types.attribute) ? $("#dia_set_attr")
-          .dialog("open") : $("#dia_set_obj").dialog("open");
+
+      var title = (entityType == entity_types.attribute) ? elgg.echo('wespot_fca:attr:set') : elgg
+          .echo('wespot_fca:obj:set');
+      $("#dia_set_item").attr("title", title);
+      $("#dia_set_item").dialog("open");
+      if ((state.domain && state.domain.approved) || !state.teacher) {
+        $("#btn_item_edit").hide();
+        $(".to_be_hidden").hide();
+      } else {
+        $("#btn_item_edit").show();
+        $(".to_be_hidden").show();
+      }
 
     }
     if (id)
@@ -1441,26 +1811,16 @@ ui = {
   prepare_dialog : function(entityType) {
 
     state.editing = false;
-    var btn;
-    var btn_cancel;
+    var btn = $("#btn_choose_item_ok");
+    var btn_cancel = $("#btn_choose_item_cancel");
 
-    if (entityType == entity_types.attribute) {
-      btn = $("#btn_choose_attr_ok");
-      btn_cancel = $("#btn_choose_attr_cancel");
-    } else {
-      btn = $("#btn_choose_obj_ok");
-      btn_cancel = $("#btn_choose_obj_cancel");
-    }
-    btn.removeProp("onclick");
-    btn_cancel.removeProp("onclick");
+    btn.removeAttr("onclick");
+    btn_cancel.removeAttr("onclick");
     btn.unbind("click");
     btn_cancel.unbind("click");
     btn.val(elgg.echo('wespot_fca:ok'));
     btn_cancel.click(function() {
-      if (entityType == entity_types.attribute)
-        $('#dia_set_attr').dialog('close');
-      else
-        $('#dia_set_obj').dialog('close');
+      $('#dia_set_item').dialog('close');
     });
     btn.click(function() {
       logic.choose_item(entityType);
@@ -1469,8 +1829,7 @@ ui = {
     $(".descr_detail").hide();
     $(".btn_edit").hide();
 
-    var sel = (entityType == entity_types.attribute) ? $("#sel_set_attr")
-        : $("#sel_set_obj");
+    var sel = $("#sel_set_item");
 
     sel.blur(function() {
       try {
@@ -1499,12 +1858,16 @@ ui = {
 
     var id = ++state.id_last_attr;
 
-    $("<col class=\"td_attr_" + id + "\">").insertBefore($("#col_tail"));
+    $("<col class=\"td_attr_" + id + "\">").insertBefore($($(".col_tail")).get(0));
+    $("<col class=\"td_attr_" + id + "\">").insertBefore($($(".col_tail")).get(1));
     var i = 0;
     var tails = $(".tail");
     var cb;
     var len = tails.length;
-
+    var tbl = $($("#matrix_attr_head").children().get(0));
+    tbl.width(35 + ($(".btn_attr").length + 1) * 35);
+    tbl = $($("#matrix_main").children().get(0));
+    tbl.width(35 + ($(".btn_attr").length + 1) * 35);
     for ( var elem in tails) {
       if (i == 0) {
         var td = $(document.createElement("td"));
@@ -1549,7 +1912,7 @@ ui = {
         td.create("input", {
           type : "button",
           id : "attr_" + id,
-          class : "input btn_attr col",
+          class : "input btn_attr col always_on",
           value : elgg.echo('wespot_fca:attr:dummy') + " " + (id + 1),
           onclick : "ui.set_item(" + id + ",entity_types.attribute)"
         });
@@ -1558,16 +1921,16 @@ ui = {
       } else if (i < len - 1) {
         $("<td></td>").insertBefore($(tails[elem]));
         cb = $(tails[elem]).prev();
-        var obj_index = cb.parent().prop("id").split("_")[2];
-        cb.prop("class", "td_attr_" + id);
+        var obj_index = $(cb.prev().children().get(0)).prop("id").split("_")[1];
+        cb.prop("class", "cb_attr td_attr_" + id);
         cb.create("input", {
           "type" : "checkbox",
           "class" : "input check",
           "id" : "obj_" + obj_index + "_attr_" + id
         });
+
       } else if (i == len - 1) {
-        $("<td class=\"td_attr_" + id + "\"></td>")
-            .insertBefore($(tails[elem]));
+        $("<td class=\"td_attr_" + id + "\"></td>").insertBefore($(tails[elem]));
       }
       ++i;
     }
@@ -1576,11 +1939,13 @@ ui = {
   append_object : function() {
 
     var id = ++state.id_last_obj;
-    var tail = $(".obj_tail");
-    var tr = $("<tr id=\"tr_obj_" + id + "\" class=\"tr_obj\"></tr>");
-    tr.insertBefore(tail);
+    var tails = $(".obj_tail");
+    var tr_cb = $("<tr class=\"tr_obj tr_obj_" + id + "\" ></tr>");
+    var tr_btn = $("<tr class=\"tr_obj_" + id + "\" ></tr>");
+    tr_cb.insertBefore($(tails.get(1)));
+    tr_btn.insertBefore($(tails.get(0)));
     var attrs = $(".btn_attr");
-    var td = tr.create("td", {
+    var td = tr_btn.create("td", {
       "class" : "left"
     });
 
@@ -1619,7 +1984,7 @@ ui = {
     ui.setup_hover_obj(td.create("input", {
       "type" : "button",
       "id" : "obj_" + id,
-      "class" : "input btn_obj",
+      "class" : "input btn_obj always_on",
       "value" : elgg.echo('wespot_fca:obj:dummy') + " " + (id + 1),
       "onclick" : "ui.set_item(" + id + ",entity_types.object)"
     }));
@@ -1627,25 +1992,26 @@ ui = {
     for (var a = 0; a < attrs.length; ++a) {
 
       var attr_id = $(attrs[a]).prop("id").split("_")[1];
-      tr.append("<td class=\"td_attr_" + attr_id
-          + "\"><input type=\"checkbox\" class=\"input check\" id=\"obj_" + id
-          + "_attr_" + attr_id + "\" /></td>");
+      tr_cb.append("<td class=\" cb_attr td_attr_" + attr_id
+          + "\"><input type=\"checkbox\" class=\"input check\" id=\"obj_" + id + "_attr_" + attr_id + "\" /></td>");
     }
-    tr.append("<td class=\"tail\" style=\"background-color: #fff\"></td>");
+    tr_cb.append("<td class=\"tail\" style=\"background-color: #fff\"></td>");
   },
 
   rem_attribute : function(index) {
     if ($(".td_attr").length == 1) {
-      alert(elgg.echo("wespot_fca:err_rem_only", [elgg.echo("wespot_fca:attr")]));
+      alert(elgg.echo('wespot_fca:err_rem_only', elgg.echo('wespot_fca:attr')));
+      return;
+    }
+
+    if (!$("#attr_" + index).data(logic.key_item)) {
+      logic.rem_attribute(index);
       return;
     }
 
     $(".item_description").empty();
     $("#span_rem_attr").empty();
-    if (!$("#attr_" + index).data(logic.key_attr)) {
-      logic.rem_attribute(index);
-      return;
-    }
+
     $("#span_rem_attr").create("txt", $("#attr_" + index).prop("value"));
     $("#btn_rem_attr_yes").click(function() {
       logic.rem_attribute(index);
@@ -1655,15 +2021,18 @@ ui = {
 
   rem_object : function(index) {
     if ($(".btn_del_obj").length == 1) {
-      alert(elgg.echo("wespot_fca:err_rem_only", [elgg.echo("wespot_fca:pbj")]));
+      alert(elgg.echo('wespot_fca:err_rem_only', elgg.echo('wespot_fca:obj')));
       return;
     }
-    $(".item_description").empty();
-    $("#span_rem_obj").empty();
-    if (!$("#obj_" + index).data(logic.key_obj)) {
+
+    if (!$("#obj_" + index).data(logic.key_item)) {
       logic.rem_object(index);
       return;
     }
+
+    $(".item_description").empty();
+    $("#span_rem_obj").empty();
+
     $("#span_rem_obj").create("txt", $("#obj_" + index).prop("value"));
     $("#btn_rem_obj_yes").click(function() {
       logic.rem_object(index);
@@ -1681,47 +2050,55 @@ ui = {
     $("#dia_create_attr").dialog("open");
   },
 
-  display_description : function(select, entityType) {
+  display_share_ok_error : function(o) {
+    $("#dia_share_dom").dialog("close");
+    if (o) {
+      alert('OK!');
+    }
+  },
+
+  display_description : function(select) {
     $(".item_description").empty();
-    if (select.selectedIndex == 0) {
-      if (entityType == entity_types.learningobject) {
-        ui.create_lo(entityType);
-        select.selectedIndex = -1;
-      } else if (entityType == entity_types.domain) {
-        var str_domain = select.options[select.selectedIndex].value;
-        if (str_domain != "-1") {
-          ui.display_domain_description(select);
-        } else {
-          $("#btn_choose_dom_ok").prop("disabled", true);
-        }
-      }
-    } else if (select.selectedIndex != -1) {
-      if (entityType == entity_types.domain) {
-        var str_domain = select.options[select.selectedIndex].value;
-        if (str_domain != "-1") {
-          ui.display_domain_description(select);
-        } else {
-          $("#btn_choose_dom_ok").prop("disabled", true);
-        }
-      } else if (entityType == entity_types.learningobject) {
+    if (select.selectedIndex != -1) {
+      var str_domain = select.options[select.selectedIndex].value;
+      if (str_domain != "-1") {
         ui.display_domain_description(select);
+      } else {
+        $("#btn_choose_dom_ok").prop("disabled", true);
       }
     }
   },
 
-  display_domain_description : function(select) {
+  display_lo_description : function(item) {
+    util.clear_iframe();
+    $(".item_description").empty();
+    var preview = $(document.createElement("div"));
+    preview.attr("id", "ifr_preview");
+    preview.create("iframe", {
+      class : "scaled-frame",
+      src : state.backend_l_objects[item.data].data
+    });
+    console.debug(state.backend_l_objects[item.data]);
+    preview.insertBefore(".item_description");
+    $(".item_description").create("txt", state.backend_l_objects[item.data].description);
+    if (state.backend_l_objects[item.data].owner) {
+      $(".item_description").create("br");
+      $(".item_description").create("txt",
+          "(" + elgg.echo('wespot_fca:created_by') + " " + state.backend_l_objects[item.data].owner.name + ")");
+    }
+  },
 
+  display_domain_description : function(select) {
     var obj = JSON.parse(select.options[select.selectedIndex].value);
     $("#btn_choose_dom_ok").prop("disabled", false);
+
     $(".item_description").create("txt", obj.description);
+
     if (obj.owner) {
       $(".item_description").create("br");
-      $(".item_description")
-          .create(
-              "txt",
-              "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name
-                  + ")");
+      $(".item_description").create("txt", "(" + elgg.echo('wespot_fca:created_by') + " " + obj.owner.name + ")");
     }
+
   },
 
   set_lo : function(object, select, entityType) {
@@ -1741,6 +2118,12 @@ ui = {
       "class" : "txt_lo"
     }).click(function() {
       window.open(lo.data, "Learning Object", "width=800,height=600");
+      if (!state.teacher) {
+        logic.log("consume learning object", {
+          learningObject : lo.data,
+          learnerID : state.user.guid.toString()
+        });
+      }
     });
     tdiv.create("txt", lo.name);
     var buttons = div.create("div", {
@@ -1771,10 +2154,7 @@ ui = {
   },
 
   display_learning_objects : function(object, entityType) {
-
-    var div_lo;
-    (entityType == entity_types.attribute) ? div_lo = $("#lo_attr")
-        : div_lo = $("#lo_obj");
+    var div_lo = $("#lo_item");
     div_lo.empty();
 
     for ( var i in object.learningObjects) {
@@ -1786,7 +2166,7 @@ ui = {
       src : state.basedir + "img/add.svg",
       width : "22px",
       height : "22px",
-      class : "input btn_add_lo"
+      class : "input btn_add_lo always_on"
     }).click(function() {
       logic.set_l_object(object, entityType);
     });
@@ -1796,7 +2176,7 @@ ui = {
     $(".div_lo").empty();
     $(".btn_edit").show();
 
-    var pack = util.get_by_type(entityType);
+    var pack = util.setup_by_type(entityType);
 
     state.item_id = id;
     $(".text_description").empty();
@@ -1814,7 +2194,6 @@ ui = {
       ui.display_learning_objects(pack.new_items[id], entityType);
       pack.select.val(pack.new_items[id].name);
     }
-    console.debug(state.current_item);
   },
 
   show_lo_buttons : function(lo) {
@@ -1833,7 +2212,7 @@ ui = {
   cancel_item_edit : function(entityType, item) {
     state.editing = false;
     state.current_item = undefined;
-    var pack = util.get_by_type(entityType);
+    var pack = util.setup_by_type(entityType);
 
     $(pack.textarea_descr).val(item.description);
     pack.select.val(item.name);
@@ -1842,13 +2221,12 @@ ui = {
 
   prepare_item_edit : function(entityType, clear) {
     state.edit_current_item = !clear;
-    console.debug(entityType + ", " + clear);
     if (clear) {
       $(".div_lo").empty();
       $(".text_description").val("");
     }
     $(".btn_edit").hide();
-    var pack = util.get_by_type(entityType);
+    var pack = util.setup_by_type(entityType);
 
     try {
       pack.select.autocomplete("destroy");
@@ -1856,8 +2234,8 @@ ui = {
     }
     pack.select.unbind("click");
     pack.select.unbind("blur");
-    pack.btn_ok.removeProp("onclick");
-    pack.btn_cancel.removeProp("onclick");
+    pack.btn_ok.removeAttr("onclick");
+    pack.btn_cancel.removeAttr("onclick");
     pack.btn_ok.unbind("click");
     pack.btn_cancel.unbind("click");
     pack.btn_ok.val(elgg.echo('wespot_fca:save'));
@@ -1889,25 +2267,32 @@ ui = {
 
   display_item_edit : function(entityType) {
     state.editing = !state.editing;
-    console.debug($("#sel_set_obj").data("item"));
     ui.prepare_item_edit(entityType);
-
   },
 
   show_initial_domain : function(courses) {
-
     for ( var id in courses) {
       if (state.load_domain in courses[id].domains) {
         logic.load(state.load_domain, state.teacher);
         return;
       }
+
       if (courses[id].externalCourseID == state.gid) {
         for ( var d in courses[id].domains) {
           logic.load(d, state.teacher);
-          break;
+          return;
         }
       }
     }
+    // if (!state.teacher)
+    for ( var id in courses) {
+      if (courses[id].externalCourseID == "-1")
+        for ( var d in courses[id].domains) {
+          logic.load(d, state.teacher);
+          return;
+        }
+    }
+    // $("#btn_approve, #btn_from_existing").hide();
   },
 
   list_domains : function(courses) {
@@ -1923,10 +2308,8 @@ ui = {
       } else {
         $("#sel_set_dom").create("option", {
           value : "-1"
-        }).prop("disabled", true).create(
-            "txt",
-            "--- " + elgg.echo("wespot_fca:course") + " "
-                + decodeURIComponent(courses[id].name) + " ---");
+        }).prop("disabled", true).create("txt",
+            "--- " + elgg.echo("wespot_fca:course") + " " + decodeURIComponent(courses[id].name) + " ---");
         for ( var d in courses[id].domains) {
           courses[id].domains[d].id = d;
           $("#sel_set_dom").create("option", {
@@ -1940,12 +2323,33 @@ ui = {
     $(".item_description").empty();
   },
 
-  display_lattice : function() {
+  display_lattice : function(hide) {
     if (state.teacher) {
-      lattice.init("#canvas_lattice", $(window).width() - 350, $(window)
-          .height() - 100, "#div_lattice_info", backend);
+      state.learner_lattice_learner = undefined;
+      $("#btn_show_learner_lattice").remove();
+      $("#sel_show_learner_lattice").remove();
+      $('#ui-dialog-title-dia_vis').css("width", 'auto');
+      $(
+          '<input type="button" class="input" id="btn_show_learner_lattice" onclick="ui.show_learner_lattice_dropdown()"'
+              + ' value="'
+              + state.learner_lattice_learner
+              + '" /> <select id="sel_show_learner_lattice"'
+              + ' onblur="ui.hide_learner_lattice_dropdown()" onchange="lattice.display_learner_lattice(this)"></select>')
+          .insertAfter("#ui-dialog-title-dia_vis");
+      $('#sel_show_learner_lattice').hover(function() {
+        $("#sel_show_learner_lattice").focus();
+        $("#dia_vis").dialog('option', 'draggable', false);
+        console.debug("no drag");
+      }, function() {
+        setTimeout(function() {
+          $("#dia_vis").dialog('option', 'draggable', true);
+          console.debug("drag");
+        }, 300)
+      });
+      lattice.init("#canvas_lattice", $(window).width() - 350, $(window).height() - 100, "#div_lattice_info");
       lattice.draw();
-      $("#vis_loading").show();
+      if (!hide)
+        $("#vis_loading").show();
       $("#canvas_lattice").hide();
       $("#div_lattice_info").hide();
       setTimeout(function() {
@@ -1959,12 +2363,9 @@ ui = {
         $("#dia_vis").dialogExtend("restore");
       } catch (not_an_error) {
       }
-      $("#dia_vis").dialog("option", "title",
-          elgg.echo('wespot_fca:lattice:tax') + " '" + state.domain.name + "'");
-      $("#dia_vis").dialog("option", "width",
-          $("#canvas_lattice").prop("width") + 240);
-      $("#dia_vis").dialog("option", "height",
-          $("#canvas_lattice").prop("height") + 50);
+      $("#dia_vis").dialog("option", "title", elgg.echo('wespot_fca:lattice:tax') + " '" + state.domain.name + "'");
+      $("#dia_vis").dialog("option", "width", $("#canvas_lattice").prop("width") + 240);
+      $("#dia_vis").dialog("option", "height", $("#canvas_lattice").prop("height") + 50);
       try {
         $("#dia_vis").dialog("open").dialogExtend("restore");
       } catch (error) {
@@ -1972,11 +2373,11 @@ ui = {
       $("#dia_vis").fadeTo(0, 0);
       $("#dia_vis").fadeTo(1000, 1);
     } else {
-      $("#dia_vis").show();
+      if (!hide)
+        $("#dia_vis").show();
       $("#dia_vis").css("width", "100%");
       $("#dia_vis").css("height", $(window).height() - 150 + "px");
-      lattice.init("#canvas_lattice", $("#dia_vis").width() - 220,
-          $("#dia_vis").height(), "#div_lattice_info", backend);
+      lattice.init("#canvas_lattice", $("#dia_vis").width() - 220, $("#dia_vis").height(), "#div_lattice_info");
       lattice.draw();
       $("#vis_loading").show();
       $("#canvas_lattice").hide();
@@ -1992,7 +2393,38 @@ ui = {
       $("#dia_vis").fadeTo(0, 0);
       $("#dia_vis").fadeTo(1000, 1);
     }
+    if (state.domain.approved && state.teacher) {
+      ui.hide_learner_lattice_dropdown();
+    }
   },
+
+  show_learner_lattice_dropdown : function() {
+    $("#btn_show_learner_lattice").hide();
+    backend.get_domain_learners(function(learners) {
+      console.debug(learners);
+      var sel = $("#sel_show_learner_lattice");
+      sel.empty();
+      sel.create("option", {
+        value : state.internalUID
+      }).create("txt", "Default");
+      for ( var i in learners) {
+        sel.create("option", {
+          value : learners[i].id
+        }).create("txt", learners[i].name);
+      }
+      sel.prop("selectedIndex", -1);
+      $("#sel_show_learner_lattice").show()
+    });
+  },
+
+  hide_learner_lattice_dropdown : function() {
+    if (!state.learner_lattice_learner) {
+      $("#btn_show_learner_lattice").show();
+      $("#btn_show_learner_lattice").prop("value", elgg.echo("wespot_fca:lattice:show_user") + "  \u25BC");
+      $("#sel_show_learner_lattice").hide();
+    }
+  },
+
   resize : function() {
     // TODO this is a hack, but since elgg ships an ancient version on jQuery we
     // are limited to hacks
@@ -2000,10 +2432,8 @@ ui = {
       var d_state = $("#dia_vis").data("dialog-state");
 
       lattice.resize($(window).width() - 350, $(window).height() - 100);
-      $("#dia_vis").dialog("option", "width",
-          $("#canvas_lattice").prop("width") + 240);
-      $("#dia_vis").dialog("option", "height",
-          $("#canvas_lattice").prop("height") + 50);
+      $("#dia_vis").dialog("option", "width", $("#canvas_lattice").prop("width") + 240);
+      $("#dia_vis").dialog("option", "height", $("#canvas_lattice").prop("height") + 50);
       if (d_state == "minimized") {
         $("#dia_vis").dialogExtend("minimize");
       }

@@ -13,7 +13,7 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
 
 /**
  * Base class of {@link FCAObject} and {@link FCAAttribute}. Those classes serve
- * semantics. Every FCAAbstract contains a Set of {@link LearningObject}s
+ * semantics. Every FCAAbstract contains a set of {@link LearningObject}s
  * 
  * @author Bernd Prünster <mail@berndpruenster.org>
  * 
@@ -23,10 +23,10 @@ public class FCAAbstract extends DataObject {
   /**
    * 
    */
-  private static final long serialVersionUID = -6632084060702601592L;
+  private static final long   serialVersionUID = -6632084060702601592L;
   private Set<LearningObject> learningObjects;
 
-  private String creationId;
+  private String              creationId;
 
   /**
    * @param name
@@ -55,6 +55,12 @@ public class FCAAbstract extends DataObject {
     return creationId;
   }
 
+  public boolean containsLearningObject(LearningObject obj) {
+    synchronized (learningObjects) {
+      return learningObjects.contains(obj);
+    }
+  }
+
   private void writeObject(ObjectOutputStream oos) throws IOException {
     oos.writeObject(getName());
     oos.writeObject(getDescription());
@@ -68,6 +74,15 @@ public class FCAAbstract extends DataObject {
     this.creationId = (String) in.readObject();
     this.id = in.readLong();
     this.learningObjects = Collections.synchronizedSet(new HashSet<LearningObject>());
+  }
+
+  public String toDebugString() {
+    StringBuilder bld = new StringBuilder(super.toString());
+    bld.append("\nLearningObjects: [");
+    for (LearningObject o : learningObjects)
+      bld.append(o.toString()).append(", ");
+    return bld.append("]").toString();
+
   }
 
 }

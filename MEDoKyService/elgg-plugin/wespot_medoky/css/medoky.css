@@ -4,12 +4,19 @@
 }
 
 .medoky_star {
-  vertical-align: middle;
+  vertical-align: top;
+  display: inline-block;
 }
+
+/* .fresh { */
+/*   background-color: #ffffcc !important; */
+/*   color: black !important; */
+/* } */
 
 .medoky_recommendation_ok {
   padding-left: 25px;
 }
+
 .medoky_recommendation_title {
   width: 400px;
   display: inline-block;
@@ -20,7 +27,7 @@
 }
 
 .medoky_main {
-  display:none;
+  display: none;
 }
 
 .pointy {
@@ -157,6 +164,10 @@
 
 
 
+
+
+
+
 *
 /
 /* textarea { */
@@ -229,9 +240,17 @@
 
 
 
+
+
+
+
 *
 /
 /* /*---------------------------------------*/
+
+
+
+
 
 
 

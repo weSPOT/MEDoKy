@@ -1,4 +1,4 @@
-<?php if(isLoggedin()){ ?>
+<?php if(isLoggedin() && (is_group_member(elgg_get_page_owner_entity ()->guid, elgg_get_logged_in_user_guid ()))){ ?>
 <?php $basedir = $CONFIG->url . "/mod/wespot_medoky/"; ?>
 <link type="text/css" href="<?php echo $basedir; ?>css/smoothness/jquery-ui.css" rel="Stylesheet" />
 <link type="text/css" href="<?php echo $basedir; ?>css/medoky.css" rel="Stylesheet" />
@@ -8,12 +8,14 @@
 <script type="text/javascript">
 $(function(){
   //medoky_backend.init("http://192.168.1.1:8080/MEDoKyService/rest/");
-  medoky_backend.init("http://css-kti.tugraz.at/MEDoKyService/rest/");
-  medoky_ui.prepareDialogs();
-  medoky.getRecommendations(medoky.displayInitialRecommendations);
+  if(medoky_backend.init("http://css-kti.tugraz.at/MEDoKyService/rest/")){
+    medoky_ui.prepareDialogs()
+    medoky.getRecommendations(medoky.displayInitialRecommendations);
+    setInterval(medoky_util.pollRecommendations, 150000);
+  }
  });
 </script>
-<div class="elgg-module  elgg-module-aside elgg-menu-owner-block medoky_main">
+<div class="elgg-module  elgg-module-aside elgg-menu-owner-block medoky_main" id="medoky_main">
   <div class="elgg-head medoky_main">
     <h3>
       <a class="pointy medoky_main" onclick="medoky_ui.showRecommendations()">Your Recommendations</a>

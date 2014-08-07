@@ -60,6 +60,7 @@ public class ImportExport {
   private static final String DATA = "data";
   private static final String MAPPING = "mapping";
   private static final String GLOBAL = "global";
+  private static final String APPROVED = "approved";
   private static final String PARTICIPANTS = "participants";
 
   private String file;
@@ -172,6 +173,7 @@ public class ImportExport {
       jso.add(SECTION_M, jsM);
       jso.addProperty(OWNER, d.getOwner().getId());
       jso.addProperty(GLOBAL, d.isGlobal());
+      jso.addProperty(APPROVED, d.isApproved());
       JsonObject jsMapping = new JsonObject();
       for (FCAObject o : mapping.keySet()) {
         LinkedList<Long> aIds = new LinkedList<Long>();
@@ -356,9 +358,13 @@ public class ImportExport {
         mat.add(object, attribs);
       }
       boolean global = (d.get(GLOBAL) == null) ? false : d.get(GLOBAL).getAsBoolean();
-      domains.put(d.get(ID).getAsLong(),
-          new Domain(mat.getName(), mat.getDescription(), mat, users.get(d.get(OWNER).getAsLong()), global));
-
+      Domain domain = new Domain(mat.getName(), mat.getDescription(), mat, users.get(d.get(OWNER).getAsLong()), global);
+      if (d.get(APPROVED) == null) {
+        domain.setApproved(true);
+      } else {
+        domain.setApproved(d.get(APPROVED).getAsBoolean());
+      }
+      domains.put(d.get(ID).getAsLong(), domain);
     }
     return domains;
   }
@@ -396,27 +402,27 @@ public class ImportExport {
     Database.getInstance().clear();
 
     Map<Long, User> users = json2Users(json);
-    Database.getInstance().putAll(users.values(),false);
+    Database.getInstance().putAll(users.values(), false);
 
     Map<Long, LearningObject> learningObjects = json2LearningObjects(json, users);
-    Database.getInstance().putAll(learningObjects.values(),false);
+    Database.getInstance().putAll(learningObjects.values(), false);
 
     Map<Long, FCAObject> objects = json2Objects(json, learningObjects);
-    Database.getInstance().putAll(objects.values(),false);
+    Database.getInstance().putAll(objects.values(), false);
 
     Map<Long, FCAAttribute> attributes = json2Attributes(json, learningObjects);
-    Database.getInstance().putAll(attributes.values(),false);
+    Database.getInstance().putAll(attributes.values(), false);
 
     Map<Long, FCAItemMetadata> metadata = json2Metadata(json, learningObjects);
-    Database.getInstance().putAll(metadata.values(),false);
+    Database.getInstance().putAll(metadata.values(), false);
 
     Map<Long, Domain> domains = json2Domains(json, objects, attributes, users, metadata);
     for (Domain domain : domains.values()) {
-      Database.getInstance().putAll(domain.getFormalContext().getConcepts(),false);
+      Database.getInstance().putAll(domain.getFormalContext().getConcepts(), false);
     }
-    Database.getInstance().putAll(domains.values(),false);
+    Database.getInstance().putAll(domains.values(), false);
 
-    Database.getInstance().putAll(json2Courses(json, domains, users),false);
+    Database.getInstance().putAll(json2Courses(json, domains, users), false);
     Database.getInstance().save();
 
   }

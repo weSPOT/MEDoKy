@@ -18,11 +18,10 @@ public abstract class DataObject implements Comparable<DataObject>, Serializable
   private static final long serialVersionUID = 4030398877692134854L;
   /**
    * unique identifier of a {@link DataObject}
-   * 
    */
-  protected long id;
-  private String name;
-  private String description;
+  protected long            id;
+  private String            name;
+  private String            description;
 
   /**
    * Creates a new {@link DataObject} with a unique {@literal id}
@@ -96,6 +95,11 @@ public abstract class DataObject implements Comparable<DataObject>, Serializable
     if (o instanceof DataObject)
       return id == ((DataObject) (o)).id;
     return o.equals(this);
+  }
+
+  @Override
+  public int hashCode() {
+    return (int) (id ^ (id >>> 32));
   }
 
   /**

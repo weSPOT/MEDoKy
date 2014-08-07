@@ -33,11 +33,11 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 import com.sun.istack.logging.Logger;
 
 /**
- * Database storing {@link DataObject} derived Objects backed by multiple
- * HashMaps mapping {@link Long} IDs to Objects. Every Object in the Database is
- * referenced twice: by a global Map and by a Map for its specific Class(Type).
- * The class is fully thread-safe at the cost of permitting only purely
- * synchronous(single-threaded) access. Furthermore queries return
+ * Database storing {@link DataObject} derived objects backed by multiple
+ * HashMaps mapping {@link Long} IDs to objects. Every object in the database is
+ * referenced twice: by a global map and by a map for its specific class (type).
+ * This class is fully thread-safe at the cost of permitting only purely
+ * synchronous (single-threaded) access. Furthermore queries return
  * {@link BlockingDeque}s containing the results to ensure thread-safety. Since
  * only references are stored inside a deque the objects itself are mutable.
  * 
@@ -46,23 +46,20 @@ import com.sun.istack.logging.Logger;
  */
 public class Database implements Serializable {
 
-  /**
-   * 
-   */
-  private static boolean testing = false;
+  private static boolean              testing          = false;
 
-  private static final long serialVersionUID = 764673402284713973L;
+  private static final long           serialVersionUID = 764673402284713973L;
 
-  private static Database instance = null;
+  private static Database             instance         = null;
 
-  private Map<String, Course> coursesByExternalID;
-  private Map<String, User> usersByExtrnalUID;
-  private Map<String, FCAAbstract> fcaItemsBycreationID;
+  private Map<String, Course>         coursesByExternalID;
+  private Map<String, User>           usersByExtrnalUID;
+  private Map<String, FCAAbstract>    fcaItemsBycreationID;
   private Map<String, LearningObject> learningObjectsByURL;
-  private Map<Long, DataObject> registry;
+  private Map<Long, DataObject>       registry;
 
   @SuppressWarnings("rawtypes")
-  private Map<Class, Map> typeMap;
+  private Map<Class, Map>             typeMap;
 
   @SuppressWarnings("rawtypes")
   private Database() {
@@ -105,7 +102,7 @@ public class Database implements Serializable {
           Database db = (Database) objIn.readObject();
           instance = db;
           IDGenerator.getInstance().lastId = objIn.readLong();
-          Logger.getLogger(Database.class).log(Level.INFO, "Database laded from file " + in.getAbsolutePath());
+          Logger.getLogger(Database.class).log(Level.INFO, "Database laded from file " + in.getCanonicalPath());
         } catch (ClassNotFoundException e) {
           Logger.getLogger(Database.class).log(Level.WARNING, "Incomaptible Databse found");
         } catch (InvalidClassException e) {
@@ -183,20 +180,37 @@ public class Database implements Serializable {
    * 
    * @param externalUID
    *          the external UUID of the user to get
-   * @return the User with the specified identifier
+   * @return the User with the specified identifier or {@literal null} if none
+   *         matches
    */
   public synchronized User getUserByExternalUID(String externalUID) {
     User u = usersByExtrnalUID.get(externalUID);
     return u;
   }
 
+  /**
+   * retrieves an FCA item (object, attribute, learning resource, ...) using its
+   * creation id
+   * 
+   * @param creationId
+   *          the creation id of the object to be retrieved
+   * @return the object matching the id or {@literal null} if none matches
+   */
   public synchronized FCAAbstract getFCAItemBycreationId(String creationId) {
     FCAAbstract a = fcaItemsBycreationID.get(creationId);
     return a;
   }
 
+  /**
+   * retrieves a single learning object by its URL
+   * 
+   * @param url
+   *          the URL of the learning object to retreive
+   * @return the learning object matching the URL or {@literal null} if none
+   *         matches
+   */
   public synchronized LearningObject getLearningObjectsByURL(String url) {
-       if (!learningObjectsByURL.containsKey(url))
+    if (!learningObjectsByURL.containsKey(url))
       return null;
     LearningObject lo = learningObjectsByURL.get(url);
     return lo;
@@ -207,7 +221,8 @@ public class Database implements Serializable {
    * 
    * @param externalID
    *          the external ID of the course to get
-   * @return the Course with the specified identifier
+   * @return the Course with the specified identifier or {@literal null} if none
+   *         matches
    */
   public synchronized Course getCourseByExternalID(String externalID) {
     Course c = coursesByExternalID.get(externalID);
@@ -237,6 +252,9 @@ public class Database implements Serializable {
    * 
    * @param obj
    *          the object to store inside the database
+   * @param save
+   *          a flag indicating whether the change should be presisted
+   *          immediately or not (so it can be done maually at a later point)
    */
 
   @SuppressWarnings("unchecked")
@@ -255,26 +273,63 @@ public class Database implements Serializable {
           fcaItemsBycreationID.put(((FCAAbstract) obj).getCreationId(), (FCAAbstract) obj);
         else if (obj instanceof LearningObject)
           learningObjectsByURL.put(((LearningObject) obj).getData(), (LearningObject) obj);
-        if(save)
-        try {
-          save();
-        } catch (FileNotFoundException e) {
-          e.printStackTrace();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
+        if (save)
+          try {
+            save();
+          } catch (FileNotFoundException e) {
+            e.printStackTrace();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
       }
     }
   }
 
-  
-  
+  /**
+   * Removes the provided object form the database
+   * 
+   * @param obj
+   *          teh object to remove
+   * @param save
+   *          a flag indicating whether the change should be presisted
+   *          immediately or not (so it can be done maually at a later point)
+   */
+  public synchronized void remove(DataObject obj, boolean save) {
+    synchronized (registry) {
+      if (!typeMap.containsKey(obj.getClass()))
+        return;
+      synchronized (typeMap.get(obj.getClass())) {
+        registry.remove(obj.id);
+        typeMap.get(obj.getClass()).remove(obj.getId());
+        if (obj instanceof User)
+          usersByExtrnalUID.remove(((User) obj).getExternalUid());
+        else if (obj instanceof Course)
+          coursesByExternalID.remove(((Course) obj).getExternalCourseID());
+        else if (obj instanceof FCAAbstract)
+          fcaItemsBycreationID.remove(((FCAAbstract) obj).getCreationId());
+        else if (obj instanceof LearningObject)
+          learningObjectsByURL.remove(((LearningObject) obj).getData());
+        if (save)
+          try {
+            save();
+          } catch (FileNotFoundException e) {
+            e.printStackTrace();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+      }
+    }
+  }
+
   /**
    * Stores the provided objects in the database. If an object already exists it
    * is overwritten
    * 
    * @param objs
    *          the objects to store inside the database
+   * @param save
+   *          a flag indicating whether the change should be presisted
+   *          immediately or not (so it can be done maually at a later point)
    */
   @SuppressWarnings("unchecked")
   public synchronized <E extends DataObject> void putAll(Collection<E> objs, boolean save) {
@@ -295,14 +350,52 @@ public class Database implements Serializable {
             learningObjectsByURL.put(((LearningObject) obj).getData(), (LearningObject) obj);
         }
       }
-      if(save)
-      try {
-        save();
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      } catch (IOException e) {
-        e.printStackTrace();
+      if (save)
+        try {
+          save();
+        } catch (FileNotFoundException e) {
+          e.printStackTrace();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+    }
+  }
+
+  /**
+   * Removes all specified objects form the database
+   * 
+   * @param objs
+   *          the objects to be removed
+   * @param save
+   *          a flag indicating whether the change should be presisted
+   *          immediately or not (so it can be done maually at a later point)
+   */
+  public synchronized <E extends DataObject> void removeAll(Collection<E> objs, boolean save) {
+    synchronized (registry) {
+      for (DataObject obj : objs) {
+        if (!typeMap.containsKey(obj.getClass()))
+          continue;
+        synchronized (typeMap.get(obj.getClass())) {
+          registry.remove(obj.getId());
+          typeMap.get(obj.getClass()).remove(obj.getId());
+          if (obj instanceof User)
+            usersByExtrnalUID.remove(((User) obj).getExternalUid());
+          else if (obj instanceof Course)
+            coursesByExternalID.remove(((Course) obj).getExternalCourseID());
+          else if (obj instanceof FCAAbstract)
+            fcaItemsBycreationID.remove(((FCAAbstract) obj).getCreationId());
+          else if (obj instanceof LearningObject)
+            learningObjectsByURL.remove(((LearningObject) obj).getData());
+        }
       }
+      if (save)
+        try {
+          save();
+        } catch (FileNotFoundException e) {
+          e.printStackTrace();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
     }
   }
 
@@ -321,7 +414,8 @@ public class Database implements Serializable {
       outO.writeObject(this);
       outO.writeLong(IDGenerator.getInstance().lastId);
       outO.close();
-      Logger.getLogger(Database.class).log(Level.INFO, "Database " + DBConfig.DB_DIR + DBConfig.DB_PATH + " Saved");
+      Logger.getLogger(Database.class).log(Level.INFO,
+          "Database " + new File(DBConfig.DB_DIR + DBConfig.DB_PATH).getCanonicalPath() + " Saved");
     } else {
       Logger.getLogger(Database.class).log(Level.WARNING, "Test mode, nothing will be written to disk!");
     }

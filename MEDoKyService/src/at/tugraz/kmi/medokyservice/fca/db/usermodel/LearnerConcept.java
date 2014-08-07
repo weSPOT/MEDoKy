@@ -2,6 +2,7 @@ package at.tugraz.kmi.medokyservice.fca.db.usermodel;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +13,7 @@ import at.tugraz.kmi.medokyservice.fca.db.DataObject;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
+import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
 
 /**
  * A LearnerConcept linked to a {@link Concept} of the domain model.
@@ -30,6 +32,7 @@ public class LearnerConcept extends DataObject {
   private Set<LearnerConcept> taxonomySuccessors;
   private HashMap<FCAObject, Float> objects;
   private HashMap<FCAAttribute, Float> attributes;
+  private Set<LearningObject> clickedLearningObjects;
 
   /**
    * Creates a new LearnerConcept based upon a {@link Concept} of the domain
@@ -43,6 +46,7 @@ public class LearnerConcept extends DataObject {
   @SuppressWarnings("rawtypes")
   public LearnerConcept(Concept c) {
     super(c.getName(), c.getDescription());
+    clickedLearningObjects=new HashSet<>();
     domainConceptId = c.getId();
     objects = new HashMap<FCAObject, Float>();
     attributes = new HashMap<FCAAttribute, Float>();
@@ -154,5 +158,13 @@ public class LearnerConcept extends DataObject {
   public String toString() {
     return Long.toString(getId());
   }
+  
+  public void addClickedLearningObject(LearningObject obj){
+    clickedLearningObjects.add(obj);
+  }
 
+  public Set<LearningObject> getClickedLearningObjects(){
+    return clickedLearningObjects;
+  }
+  
 }

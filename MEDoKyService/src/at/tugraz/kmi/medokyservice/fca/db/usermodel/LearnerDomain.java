@@ -1,6 +1,7 @@
 package at.tugraz.kmi.medokyservice.fca.db.usermodel;
 
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
+import at.tugraz.kmi.medokyservice.fca.db.Database;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Domain;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.IncidenceMatrix;
 
@@ -50,6 +51,10 @@ public class LearnerDomain extends DataObject {
 
   public long getDomainID() {
     return domainID;
+  }
+
+  public void setMetadata() {
+    mapping.getAttributes();
   }
 
 }
