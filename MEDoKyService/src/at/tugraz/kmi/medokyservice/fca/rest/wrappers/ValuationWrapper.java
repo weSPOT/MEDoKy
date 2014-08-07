@@ -15,7 +15,7 @@ public class ValuationWrapper {
 
   public ValuationWrapper(float[] valuations, Set<LearningObject> clickedLearningObjects) {
     this.valuations = valuations;
-    this.clickedLearningObjects = new HashSet<>();
+    this.clickedLearningObjects = new HashSet<Long>();
     for (LearningObject o : clickedLearningObjects) {
       this.clickedLearningObjects.add(o.getId());
     }

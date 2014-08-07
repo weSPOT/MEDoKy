@@ -140,7 +140,7 @@ public class FCAService {
   @Path(RestConfig.PATH_COURSE_DOMAINS)
   @Produces(MediaType.APPLICATION_JSON)
   public Map<String, Set<Long>> getCourseDomains() {
-    HashMap<String, Set<Long>> result = new HashMap<>();
+    HashMap<String, Set<Long>> result = new HashMap<String, Set<Long>>();
     Deque<Course> courses = Database.getInstance().getAll(Course.class);
     for (Course c : courses) {
       Set<Long> dIds = new HashSet<Long>();
@@ -317,7 +317,7 @@ public class FCAService {
   @Produces(MediaType.APPLICATION_JSON)
   public Map<Long, ValuationWrapper> getValuations(@PathParam(RestConfig.KEY_ID) long learnerDomaindId) {
     log("getValuations");
-    Map<Long, ValuationWrapper> valuations = new HashMap<>();
+    Map<Long, ValuationWrapper> valuations = new HashMap<Long, ValuationWrapper>();
     LearnerDomain domain = Database.getInstance().get(learnerDomaindId);
     for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
       valuations.put(c.getId(), new ValuationWrapper(c.getPercentagedValuations(), c.getClickedLearningObjects()));

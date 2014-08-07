@@ -100,24 +100,24 @@ public class ConceptWrapper extends AbstractWrapper {
     objectConcept = concept.isObjectConcept();
     attributeConcept = concept.isAttributeConcept();
 
-    attributes = new LinkedHashMap<>();
+    attributes = new LinkedHashMap<FCAAttribute, Float>();
     for (Comparable a : concept.getAttributes()) {
       attributes.put((FCAAttribute) a, 0.0f);
     }
 
-    objects = new LinkedHashMap<>();
+    objects = new LinkedHashMap<FCAObject, Float>();
     for (Comparable o : concept.getObjects()) {
       objects.put((FCAObject) o, 0.0f);
     }
-    uniqueAttributes = new LinkedHashSet<>();
+    uniqueAttributes = new LinkedHashSet<FCAAttribute>();
     uniqueAttributes.addAll((Collection<? extends FCAAttribute>) concept.getUniqueAttributes());
 
-    uniqueObjects = new LinkedHashSet<>();
+    uniqueObjects = new LinkedHashSet<FCAObject>();
     uniqueObjects.addAll((Collection<? extends FCAObject>) concept.getUniqueObjects());
 
-    successors = new HashSet<>();
-    taxonomySuccessors = new HashSet<>();
-    clickedLearningObjects = new HashSet<>();
+    successors = new HashSet<ConceptWrapper>();
+    taxonomySuccessors = new HashSet<ConceptWrapper>();
+    clickedLearningObjects = new HashSet<Long>();
 
   }
 
@@ -142,7 +142,7 @@ public class ConceptWrapper extends AbstractWrapper {
     taxonomySuccessors = new HashSet<ConceptWrapper>();
     valuations = concept.getPercentagedValuations();
 
-    clickedLearningObjects = new HashSet<>();
+    clickedLearningObjects = new HashSet<Long>();
     for (LearningObject clicked : concept.getClickedLearningObjects())
       clickedLearningObjects.add(clicked.getId());
   }

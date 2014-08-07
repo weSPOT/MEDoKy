@@ -48,7 +48,7 @@ public class LearnerConcept extends DataObject {
   public LearnerConcept(Concept c) {
     super(c.getName(), c.getDescription());
     viewed = false;
-    clickedLearningObjects = new HashSet<>();
+    clickedLearningObjects = new HashSet<LearningObject>();
     domainConceptId = c.getId();
     objects = new HashMap<FCAObject, Float>();
     attributes = new HashMap<FCAAttribute, Float>();

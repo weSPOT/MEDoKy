@@ -1,8 +1,8 @@
 package at.tugraz.kmi.medokyservice.fca.tests;
 
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Failure {
   public boolean failed = false;
-  ConcurrentLinkedDeque<Exception> eceptions = new ConcurrentLinkedDeque<Exception>();
+  ConcurrentLinkedQueue<Exception> eceptions = new ConcurrentLinkedQueue<Exception>();
 }

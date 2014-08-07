@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.LinkedList;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -114,7 +114,7 @@ public class TestFCA {
 
     final Domain[] domains = new Domain[part * part];
 
-    ConcurrentLinkedDeque<Thread> threads = new ConcurrentLinkedDeque<Thread>();
+    ConcurrentLinkedQueue<Thread> threads = new ConcurrentLinkedQueue<Thread>();
     for (int n = 0; n < part; ++n) {
       for (int j = n * part; j < part; ++j) {
         final Integer val = j;
