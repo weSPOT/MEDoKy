@@ -31,11 +31,14 @@ $english = array (
     'wespot_fca:move_up' => "Move Up",
     'wespot_fca:move_down' => "Move Down",
     
-    'wespot_fca:intent' => "Intension",
-    'wespot_fca:extent' => "Extension",
+    'wespot_fca:intent' => "Attribute Label",
+    'wespot_fca:intent_ibl' => "Skills",
+    'wespot_fca:extent' => "Object Label",
+    'wespot_fca:extent_ibl' => "Activities",
 
     'wespot_fca:attr' => "Attribute",
     'wespot_fca:attrs' => "Attributes",
+    'wespot_fca:attrs_ibl' => "Skills",
     'wespot_fca:attr:add' => "Add Attribute",
     'wespot_fca:attr:set' => "Set Attribute",
     'wespot_fca:attr:rem' => "Remove Attribute",
@@ -46,6 +49,7 @@ $english = array (
 
     'wespot_fca:obj' => "Object",
     'wespot_fca:objs' => "Objects",
+    'wespot_fca:objs_ibl' => "Activities",
     'wespot_fca:obj:add' => "Add Object",
     'wespot_fca:obj:set' => "Set Object",
     'wespot_fca:obj:rem' => "Remove Object",

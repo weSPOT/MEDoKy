@@ -29,21 +29,22 @@ public class DomainBlueprint extends AbstractWrapper {
   /**
    * external UID of the teacher that created this domain
    */
-  public String externalUID;
+  public String                                   externalUID;
 
-  public String externalCourseID;
+  public String                                   externalCourseID;
 
-  public String courseName;
+  public String                                   courseName;
+
 
   /**
    * the set of {@link FCAAttribute} IDs part of this domain
    */
-  public LinkedHashSet<Long> attributes;
+  public LinkedHashSet<Long>                      attributes;
 
   /**
    * the set of {@link FCAObject} IDs part of this domain
    */
-  public LinkedHashSet<Long> objects;
+  public LinkedHashSet<Long>                      objects;
 
   /**
    * Mapping of {@link FCAObject} IDs to FCAAttribute IDs
@@ -53,11 +54,11 @@ public class DomainBlueprint extends AbstractWrapper {
   /**
    * The Domain's owner/creator
    */
-  public User owner;
+  public User                                     owner;
 
   /**
    * Flag indicating whethet this domain is approved
    */
-  public boolean approved;
+  public boolean                                  approved;
 
 }

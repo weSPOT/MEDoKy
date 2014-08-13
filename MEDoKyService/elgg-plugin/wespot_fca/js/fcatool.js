@@ -980,11 +980,11 @@ logic = {
     }
 
     $("#dia_set_lo").dialog("close");
-    logic.save_item(state.current_item, state.type);
+    logic.save_item(state.current_item, state.type, false, data.data);
 
   },
 
-  save_item : function(object, entityType, hideDialog) {
+  save_item : function(object, entityType, hideDialog, newLO) {
     console.trace();
     console.debug(state);
     logic.enable_disable(); // TODO CLEAN UP
@@ -1016,10 +1016,13 @@ logic = {
         updatefunc(JSON.stringify(obj), function(resp) {
           pack.items[object.id] = resp;
           if (!state.teacher) {
+
             backend.get_valuations(function(obj) {
               ui.set_item(pack.index, entityType, object.id);
               console.debug(obj);
               lattice.update_valuation(obj);
+              if (newLO)
+                logic.consume_lo(newLO);
             });
           } else {
             if (!hideDialog)
@@ -2213,16 +2216,18 @@ ui = {
     for ( var i in object.learningObjectsByLearners) {
       ui.create_lo_div(object.learningObjectsByLearners[i], object, div_lo, entityType, true);
     }
-    div_lo.append("<br>");
-    div_lo.create("input", {
-      type : "image",
-      src : state.basedir + "img/add.svg",
-      width : "22px",
-      height : "22px",
-      class : "input btn_add_lo always_on"
-    }).click(function() {
-      logic.set_l_object(object, entityType);
-    });
+    if (!state.domain.global) {
+      div_lo.append("<br>");
+      div_lo.create("input", {
+        type : "image",
+        src : state.basedir + "img/add.svg",
+        width : "22px",
+        height : "22px",
+        class : "input btn_add_lo always_on"
+      }).click(function() {
+        logic.set_l_object(object, entityType);
+      });
+    }
   },
 
   display_item_description : function(id, entityType) {

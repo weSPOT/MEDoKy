@@ -1,7 +1,6 @@
 package at.tugraz.kmi.medokyservice.fca.db.usermodel;
 
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
-import at.tugraz.kmi.medokyservice.fca.db.Database;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Domain;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.IncidenceMatrix;
 
@@ -15,10 +14,11 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.IncidenceMatrix;
 public class LearnerDomain extends DataObject {
 
   private static final long serialVersionUID = -5008174895395567756L;
-  private IncidenceMatrix mapping;
-  private User owner;
-  private LearnerLattice formalContext;
-  private long domainID;
+  private IncidenceMatrix   mapping;
+  private User              owner;
+  private LearnerLattice    formalContext;
+  private long              domainID;
+  private final boolean     global;
 
   /**
    * Creates a new LearnerDomain based upona {@link Domain}
@@ -34,6 +34,7 @@ public class LearnerDomain extends DataObject {
     this.mapping = domain.getMapping();
     this.owner = owner;
     this.domainID = domain.getId();
+    this.global = domain.isGlobal();
     this.formalContext = new LearnerLattice(domain.getFormalContext());
   }
 
@@ -55,6 +56,10 @@ public class LearnerDomain extends DataObject {
 
   public void setMetadata() {
     mapping.getAttributes();
+  }
+
+  public boolean isGlobal() {
+    return global;
   }
 
 }
