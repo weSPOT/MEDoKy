@@ -16,4 +16,5 @@ public class LearningObjectWrapper extends AbstractWrapper {
   public String externalUID;
   public String data;
   public User owner;
+  public boolean byLearner;
 }

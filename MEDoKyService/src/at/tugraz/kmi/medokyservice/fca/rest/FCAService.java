@@ -609,7 +609,7 @@ public class FCAService {
 
       if (Database.getInstance().getLearningObjectsByURL(object.data) == null) {
         LearningObject fcaObject = new LearningObject(object.name, object.description, object.data, Database
-            .getInstance().getUserByExternalUID(object.externalUID));
+            .getInstance().getUserByExternalUID(object.externalUID), object.byLearner);
         object.owner = Database.getInstance().getUserByExternalUID(object.externalUID);
         result.put(fcaObject.getId(), object);
         Database.getInstance().put(fcaObject, false);
@@ -880,11 +880,12 @@ public class FCAService {
     for (LearningObject lo : obj.getLearningObjects()) {
       LearningObject dbLo = Database.getInstance().get(lo.getId());
       if (dbLo == null)
-        dbLo = new LearningObject(lo.getName(), lo.getDescription(), lo.getData(), lo.getOwner());
+        dbLo = new LearningObject(lo.getName(), lo.getDescription(), lo.getData(), lo.getOwner(), lo.isByLearner());
       else {
         dbLo.setName(lo.getName());
         dbLo.setDescription(lo.getDescription());
         dbLo.setData(lo.getData());
+        dbLo.setByLearner(lo.isByLearner());
       }
       Database.getInstance().put(dbLo, false);
     }

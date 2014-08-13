@@ -41,34 +41,35 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 public class ImportExport {
-  private static final String SECTION_LO = "learningObjects";
-  private static final String SECTION_O = "objects";
-  private static final String SECTION_A = "attributes";
-  private static final String SECTION_U = "users";
-  private static final String SECTION_D = "domains";
-  private static final String SECTION_M = "metadata";
-  private static final String SECTION_C = "courses";
+  private static final String SECTION_LO   = "learningObjects";
+  private static final String SECTION_O    = "objects";
+  private static final String SECTION_A    = "attributes";
+  private static final String SECTION_U    = "users";
+  private static final String SECTION_D    = "domains";
+  private static final String SECTION_M    = "metadata";
+  private static final String SECTION_C    = "courses";
 
-  private static final String ID = "id";
-  private static final String O_ID = "objectId";
-  private static final String E_UID = "externalUid";
-  private static final String E_CID = "externalCourseid";
-  private static final String CID = "creationId";
-  private static final String NAME = "name";
-  private static final String DESCRIPTION = "description";
-  private static final String OWNER = "owner";
-  private static final String DATA = "data";
-  private static final String MAPPING = "mapping";
-  private static final String GLOBAL = "global";
-  private static final String APPROVED = "approved";
+  private static final String ID           = "id";
+  private static final String O_ID         = "objectId";
+  private static final String E_UID        = "externalUid";
+  private static final String E_CID        = "externalCourseid";
+  private static final String CID          = "creationId";
+  private static final String NAME         = "name";
+  private static final String DESCRIPTION  = "description";
+  private static final String OWNER        = "owner";
+  private static final String DATA         = "data";
+  private static final String MAPPING      = "mapping";
+  private static final String GLOBAL       = "global";
+  private static final String APPROVED     = "approved";
   private static final String PARTICIPANTS = "participants";
+  private static final String BY_LEARNER   = "byLearner";
 
-  private String file;
-  private boolean export;
+  private String              file;
+  private boolean             export;
 
-  private Gson gson;
+  private Gson                gson;
 
-  private Random rand;
+  private Random              rand;
 
   private static JsonObject prepare(DataObject o) {
     JsonObject jso = new JsonObject();
@@ -112,6 +113,7 @@ public class ImportExport {
       JsonObject jso = prepare(o);
       jso.addProperty(DATA, o.getData());
       jso.addProperty(OWNER, o.getOwner().getId());
+      jso.addProperty(BY_LEARNER, o.isByLearner());
       block.add(Long.toString(o.getId()), jso);
     }
     return block;
@@ -258,8 +260,11 @@ public class ImportExport {
     for (Entry<String, JsonElement> lo : entries) {
       JsonObject jsLo = lo.getValue().getAsJsonObject();
       User owner = users.get(Long.parseLong(jsLo.get(OWNER).getAsString()));
+      boolean by_learner = false;
+      if (jsLo.get(BY_LEARNER) != null)
+        by_learner = jsLo.get(BY_LEARNER).getAsBoolean();
       LearningObject learningObject = new LearningObject(jsLo.get(NAME).getAsString(), jsLo.get(DESCRIPTION)
-          .getAsString(), jsLo.get(DATA).getAsString(), owner);
+          .getAsString(), jsLo.get(DATA).getAsString(), owner, by_learner);
       learningObjects.put(Long.parseLong(lo.getKey()), learningObject);
     }
     return learningObjects;
@@ -432,11 +437,11 @@ public class ImportExport {
     private List<String> parameters = new ArrayList<String>();
 
     @Parameter(names = { "-f", "--file" }, description = "Source/Desitnation File")
-    private String file;
+    private String       file;
 
     @Parameter(names = { "-e", "--export" }, description = "Export mode, the FCA DB file needs to be located at webapps/at.tugraz.kmi.medoky.fca.db"
         + " -- If not set data will be imported to webapps/at.tugraz.kmi.medoky.fca.db")
-    private boolean export = false;
+    private boolean      export     = false;
 
   }
 

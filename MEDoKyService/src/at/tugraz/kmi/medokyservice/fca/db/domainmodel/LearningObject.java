@@ -13,10 +13,11 @@ public class LearningObject extends DataObject {
 
   /**
    * 
-   */ 
+   */
   private static final long serialVersionUID = -773144330881908191L;
-  private User owner;
-  private String data;
+  private User              owner;
+  private String            data;
+  private boolean          byLearner;
 
   /**
    * Creates a new learning object referencing the resource contained in the
@@ -31,10 +32,11 @@ public class LearningObject extends DataObject {
    * @param owner
    *          the owner (creator) of this learning object
    */
-  public LearningObject(String name, String description, String data, User owner) {
+  public LearningObject(String name, String description, String data, User owner, boolean byLearner) {
     super(name, description);
     this.owner = owner;
     this.data = data;
+    this.byLearner = byLearner;
   }
 
   public User getOwner() {
@@ -47,6 +49,14 @@ public class LearningObject extends DataObject {
 
   public void setData(String data) {
     this.data = data;
+  }
+
+  public boolean isByLearner() {
+    return byLearner;
+  }
+
+  public void setByLearner(boolean byLearner) {
+    this.byLearner = byLearner;
   }
 
 }
