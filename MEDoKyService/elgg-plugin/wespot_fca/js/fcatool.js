@@ -968,7 +968,7 @@ logic = {
     if (!state.teacher) {
       logic.log("add learning object", {
         learningObject : state.backend_l_objects[data.data].data,
-        itemID : state.current_item.id
+        itemId : state.current_item.id
       });
     }
 
@@ -1229,19 +1229,7 @@ logic = {
         data : lo.id
       });
       $("#dia_create_lo").dialog("close");
-      if (!state.teacher) {
-        var postdata = {
-          "id" : state.domain.id,
-          "externalUID" : state.user.guid.toString(),
-          "learningObjectId" : parseInt(lo.id)
-        };
-        try {
-          $("btn_lo_" + lo.id).addClass("btn_lo_clicked");
-        } catch (error) {
-          console.debug(error);
-        }
-        backend.update_valuation(JSON.stringify(postdata), lattice.update_valuation);
-      }
+
     });
   },
 
