@@ -89,7 +89,7 @@ public class TestFCA {
     final LearningObject[] lobjs = new LearningObject[part * part];
     for (int i = 0; i < (part * part); ++i) {
       lobjs[i] = new LearningObject("LearningObject " + i, "test" + i * i + "http:// test", "", new User("FCA Tester",
-          "", ""),false);
+          "", ""));
       Database.getInstance().put(lobjs[i],false);
 
     }

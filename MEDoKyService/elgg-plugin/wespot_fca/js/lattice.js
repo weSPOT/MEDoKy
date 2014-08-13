@@ -482,8 +482,7 @@ lattice = {
     var concept = state.domain.formalContext.concepts[c];
     if (!state.teacher) {
       logic.log("click on concept", {
-        conceptID : concept.id,
-        learnerID : state.user.guid.toString(),
+        conceptID : concept.id
       });
     }
 
@@ -493,6 +492,11 @@ lattice = {
       o = state.backend_objects[o.id];
       for ( var lo in o.learningObjects) {
         learningObjects[o.learningObjects[lo].id] = o.learningObjects[lo];
+        learningObjects[o.learningObjects[lo].id].byLearner=false;
+      }
+      for ( var lo in o.learningObjectsByLearners) {
+        learningObjects[o.learningObjectsByLearners[lo].id] = o.learningObjectsByLearners[lo];
+        learningObjects[o.learningObjectsByLearners[lo].id].byLearner=true;
       }
     }
     for ( var os in concept.attributes) {
@@ -500,6 +504,11 @@ lattice = {
       o = state.backend_attributes[o.id];
       for ( var lo in o.learningObjects) {
         learningObjects[o.learningObjects[lo].id] = o.learningObjects[lo];
+        learningObjects[o.learningObjects[lo].id].byLearner=false;
+      }
+      for ( var lo in o.learningObjectsByLearners) {
+        learningObjects[o.learningObjectsByLearners[lo].id] = o.learningObjectsByLearners[lo];
+        learningObjects[o.learningObjectsByLearners[lo].id].byLearner=true;
       }
     }
 
@@ -547,37 +556,26 @@ lattice = {
           }
         }
       }
+      var class_lo_button = "input lattice_lo col";
+      if (isClicked)
+        class_lo_button += " btn_lo_clicked";
+      if (learningObjects[lo].byLearner)
+        class_lo_button += " learner_lo";
       tr.create("td", {
         rowspan : rowspan,
         class : "td_spacer, td_lo"
       }).create("input", {
         id : "btn_lo_" + learningObjects[lo].id,
         type : "button",
-        class : isClicked ? "input lattice_lo col btn_lo_clicked" : "input lattice_lo col",
+        class : class_lo_button,
         style : "margin-left: -61px; margin-right: -61px; text-overflow: ellipsis; overflow: hidden;",
         value : learningObjects[lo].name
       }).data("url", learningObjects[lo].data)
 
       .click(function() {
-
+        var loID= parseInt(this.id.split("_")[2]);
+        ui.show_lo_popup(loID);
         console.debug(this.id);
-        if (!state.teacher) {
-          var postdata = {
-            "id" : state.domain.id,
-            "externalUID" : state.user.guid.toString(),
-            "learningObjectId" : parseInt(this.id.split("_")[2])
-          };
-          $(this).addClass("btn_lo_clicked");
-          backend.update_valuation(JSON.stringify(postdata), lattice.update_valuation);
-
-        }
-        window.open($(this).data("url"), "Learning Object", "width=800,height=600");
-        if (!state.teacher) {
-          logic.log("consume learning object", {
-            learningObject : $(this).data("url"),
-            learnerID : state.user.guid.toString()
-          });
-        }
       }).hover(function() {
         $(this).addClass("lattice_lo_hover");
       }, function() {
@@ -788,6 +786,14 @@ lattice = {
             $("#btn_lo_" + state.backend_attributes[(o.id)].learningObjects[ol].id);
           }
         }
+        for ( var ol in state.backend_attributes[(o.id)].learningObjectsByLearners) {
+          if (state.backend_attributes[(o.id)].learningObjectsByLearners[ol].id == lo) {
+            tmp.create("txt", "x");
+            var av = $("#btn_lo_" + state.backend_attributes[(o.id)].learningObjectsByLearners[ol].id);
+            av[o.id] = 1;
+            $("#btn_lo_" + state.backend_attributes[(o.id)].learningObjectsByLearners[ol].id);
+          }
+        }
       }
       if (len < Object.keys(concept.attributes).length - 1) {
         tr = table.create("tr", {
@@ -874,6 +880,14 @@ lattice = {
             var ov = $("#btn_lo_" + state.backend_objects[(o.id)].learningObjects[ol].id);
             ov[o.id] = 1;
             $("#btn_lo_" + state.backend_objects[(o.id)].learningObjects[ol].id);
+          }
+        }
+        for ( var ol in state.backend_objects[(o.id)].learningObjectsByLearners) {
+          if (state.backend_objects[(o.id)].learningObjectsByLearners[ol].id == lo) {
+            tmp.create("txt", "x");
+            var ov = $("#btn_lo_" + state.backend_objects[(o.id)].learningObjectsByLearners[ol].id);
+            ov[o.id] = 1;
+            $("#btn_lo_" + state.backend_objects[(o.id)].learningObjectsByLearners[ol].id);
           }
         }
 

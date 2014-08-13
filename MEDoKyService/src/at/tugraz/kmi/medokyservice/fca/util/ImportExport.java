@@ -42,6 +42,7 @@ import com.google.gson.reflect.TypeToken;
 
 public class ImportExport {
   private static final String SECTION_LO   = "learningObjects";
+  private static final String SECTION_LO_L = "learningObjectsByLearners";
   private static final String SECTION_O    = "objects";
   private static final String SECTION_A    = "attributes";
   private static final String SECTION_U    = "users";
@@ -62,7 +63,6 @@ public class ImportExport {
   private static final String GLOBAL       = "global";
   private static final String APPROVED     = "approved";
   private static final String PARTICIPANTS = "participants";
-  private static final String BY_LEARNER   = "byLearner";
 
   private String              file;
   private boolean             export;
@@ -113,7 +113,6 @@ public class ImportExport {
       JsonObject jso = prepare(o);
       jso.addProperty(DATA, o.getData());
       jso.addProperty(OWNER, o.getOwner().getId());
-      jso.addProperty(BY_LEARNER, o.isByLearner());
       block.add(Long.toString(o.getId()), jso);
     }
     return block;
@@ -126,10 +125,16 @@ public class ImportExport {
       JsonObject jso = prepare(o);
       jso.addProperty(CID, o.getCreationId());
       LinkedList<Long> loIds = new LinkedList<Long>();
+      LinkedList<Long> loByLearnerIds = new LinkedList<Long>();
       for (LearningObject lo : o.getLearningObjects()) {
         loIds.add(lo.getId());
       }
+      for (LearningObject lo : o.getLearningObjectsByLearners()) {
+        loByLearnerIds.add(lo.getId());
+      }
       jso.add(SECTION_LO, gson.toJsonTree(loIds, new TypeToken<List<Long>>() {
+      }.getType()));
+      jso.add(SECTION_LO_L, gson.toJsonTree(loByLearnerIds, new TypeToken<List<Long>>() {
       }.getType()));
       block.add(Long.toString(o.getId()), jso);
     }
@@ -154,7 +159,13 @@ public class ImportExport {
       for (LearningObject lo : o.getLearningObjects()) {
         loIds.add(lo.getId());
       }
+      LinkedList<Long> loByLernerIds = new LinkedList<Long>();
+      for (LearningObject lo : o.getLearningObjectByLearner()) {
+        loByLernerIds.add(lo.getId());
+      }
       jso.add(SECTION_LO, gson.toJsonTree(loIds, new TypeToken<List<Long>>() {
+      }.getType()));
+      jso.add(SECTION_LO_L, gson.toJsonTree(loByLernerIds, new TypeToken<List<Long>>() {
       }.getType()));
       block.add(Long.toString(o.getId()), jso);
     }
@@ -260,11 +271,9 @@ public class ImportExport {
     for (Entry<String, JsonElement> lo : entries) {
       JsonObject jsLo = lo.getValue().getAsJsonObject();
       User owner = users.get(Long.parseLong(jsLo.get(OWNER).getAsString()));
-      boolean by_learner = false;
-      if (jsLo.get(BY_LEARNER) != null)
-        by_learner = jsLo.get(BY_LEARNER).getAsBoolean();
+
       LearningObject learningObject = new LearningObject(jsLo.get(NAME).getAsString(), jsLo.get(DESCRIPTION)
-          .getAsString(), jsLo.get(DATA).getAsString(), owner, by_learner);
+          .getAsString(), jsLo.get(DATA).getAsString(), owner);
       learningObjects.put(Long.parseLong(lo.getKey()), learningObject);
     }
     return learningObjects;
@@ -294,12 +303,23 @@ public class ImportExport {
         object = (E) new FCAObject(jsO.get(NAME).getAsString(), jsO.get(DESCRIPTION).getAsString(), creationId);
       else
         object = (E) new FCAAttribute(jsO.get(NAME).getAsString(), jsO.get(DESCRIPTION).getAsString(), creationId);
-      Iterator<JsonElement> lOs = jsO.getAsJsonArray(SECTION_LO).iterator();
       Set<LearningObject> lObjs = new HashSet<LearningObject>();
+      Set<LearningObject> lObjsByLearner = new HashSet<LearningObject>();
+      Iterator<JsonElement> lOs = jsO.getAsJsonArray(SECTION_LO).iterator();
       while (lOs.hasNext()) {
         LearningObject lo = learningObjects.get((lOs.next().getAsLong()));
         lObjs.add(lo);
       }
+      try {
+        Iterator<JsonElement> lOsByLearner = jsO.getAsJsonArray(SECTION_LO_L).iterator();
+        while (lOsByLearner.hasNext()) {
+          LearningObject lo = learningObjects.get((lOsByLearner.next().getAsLong()));
+          lObjsByLearner.add(lo);
+        }
+      } catch (Exception notAnError) {
+
+      }
+      object.setLearningObjectsByLearners(lObjsByLearner);
       object.setLearningObjects(lObjs);
       objects.put(Long.parseLong(o.getKey()), object);
     }
@@ -320,11 +340,19 @@ public class ImportExport {
     for (Entry<String, JsonElement> entry : jsM.entrySet()) {
       JsonObject val = entry.getValue().getAsJsonObject();
       JsonArray arr = val.get(SECTION_LO).getAsJsonArray();
+      LinkedHashSet<LearningObject> l_objsByLernar = new LinkedHashSet<LearningObject>();
+      try {
+        JsonArray arrByLearner = val.get(SECTION_LO_L).getAsJsonArray();
+        for (JsonElement loID : arrByLearner)
+          l_objsByLernar.add(learningObjects.get(loID.getAsLong()));
+      } catch (Exception notAnError) {
+
+      }
       LinkedHashSet<LearningObject> l_objs = new LinkedHashSet<LearningObject>();
       for (JsonElement loID : arr)
         l_objs.add(learningObjects.get(loID.getAsLong()));
       result.put(Long.parseLong(entry.getKey()), new FCAItemMetadata(val.get(DESCRIPTION).getAsString(), val.get(O_ID)
-          .getAsLong(), l_objs));
+          .getAsLong(), l_objs, l_objsByLernar));
     }
     return result;
   }
@@ -343,6 +371,7 @@ public class ImportExport {
         FCAItemMetadata meta = metadata.get(objMeta.get(map.getKey()).getAsLong());
         System.out.println(object.getName());
         object.setLearningObjects(meta.getLearningObjects());
+        object.setLearningObjectsByLearners(meta.getLearningObjectByLearner());
         String descr = object.getDescription();
         object.setDescription(meta.getDescription());
         mat.storeMetadata(object);
