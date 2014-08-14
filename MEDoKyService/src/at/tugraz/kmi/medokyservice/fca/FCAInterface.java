@@ -14,7 +14,7 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerConcept;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerLattice;
 
-public abstract class FCAInterface {
+public class FCAInterface {
 
   public static Collection<LearningObject> getLOsFromInquiry(long inquiryId) {
     synchronized (Database.getInstance()) {
@@ -71,6 +71,6 @@ public abstract class FCAInterface {
   }
 
   public static void setCompletedActivity(long inquiryId, long learnerId, Object activity) {
-
+	  //TODO: implement functionality;
   }
 }
