@@ -9,11 +9,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import at.tugraz.kmi.medokyservice.fca.FCAInterface; 
 import at.tugraz.kmi.medokyservice.fca.db.FCAAbstract;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
+import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerConcept;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerLattice;
 
@@ -22,7 +24,7 @@ public class FCARecommendation {
 	FCAInterface fca;
 	HashMap<FCAAbstract, Float> attributes; 
 	Map<FCAAbstract, Float> objects;
-	// a cocept can be either dominated by Attributes or Objects
+	// a cncept can be either dominated by Attributes or Objects
 	boolean isAttributeConcept;
 	
 	public FCARecommendation(){
@@ -47,7 +49,7 @@ public class FCARecommendation {
 			
 			
 			// if LO already consumed
-			this.stepTwo();
+			this.stepTwo(learnerConcepts);
 			
 		}
 	}
@@ -108,17 +110,26 @@ public class FCARecommendation {
 		return los;
 	}
 	
-	private void stepTwo() {
+	private void stepTwo(Set<LearnerConcept>learnerConcepts) {
 		TreeMap<FCAAbstract,Float> sorted_map;
+		ValueComparator vc;
+		Set<LearningObject> los = new HashSet<LearningObject>();
+		
 		if (this.isAttributeConcept){
-			ValueComparator vc =  new ValueComparator(this.objects);
-	        sorted_map = new TreeMap<FCAAbstract,Float>(vc);
-	        sorted_map.firstKey().getLearningObjects(); 
-		}
-		
-		
+			vc =  new ValueComparator(this.objects);
+			sorted_map = new TreeMap<FCAAbstract,Float>(vc);
+	        for (Entry<FCAAbstract, Float> entry : sorted_map.entrySet()){
+	        	
+	        }
+
+//			while (!los.size()>0)
+	//			los = sorted_map.firstKey().getLearningObjects();
+			
+		} 
 	}
 
+	
+	
 	private void initConceptVariables(Set<LearnerConcept> concepts){
 		  this.attributes = new HashMap<FCAAbstract, Float>();
 		  this.objects = new HashMap<FCAAbstract, Float>();
@@ -135,7 +146,7 @@ public class FCARecommendation {
 
 
 class ValueComparator implements Comparator<FCAAbstract> {
-
+	
     Map<FCAAbstract, Float> base;
     public ValueComparator(Map<FCAAbstract, Float> base) {
         this.base = base;
