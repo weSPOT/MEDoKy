@@ -36,14 +36,17 @@ public abstract class Updater {
     LearnerLattice lattice = domain.getFormalContext();
     Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects();
     clickedLearningObjects.add(clickedObject);
-
+    System.out.println(clickedLearningObjects);
+    System.out.println(clickedObject);
     for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
       FCAAttribute[] domainAttrs = c.getAttributes().keySet().toArray(new FCAAttribute[c.getAttributes().size()]);
       for (FCAAttribute a : domainAttrs) {
         if (a.containsLearningObject(clickedObject)) {
 
           Set<LearningObject> intersection = new HashSet<LearningObject>(clickedLearningObjects);
-          intersection.retainAll(a.getLearningObjects());
+          Set<LearningObject> combinedLearningObjects = new HashSet<LearningObject>(a.getLearningObjects());
+          combinedLearningObjects.addAll(a.getLearningObjectsByLearners());
+          intersection.retainAll(combinedLearningObjects);
           float valuation = ((float) (intersection.size())) / ((float) (a.getLearningObjects().size()));
           c.getAttributes().put(a, valuation);
         }
@@ -52,7 +55,9 @@ public abstract class Updater {
       for (FCAObject o : domainObjs) {
         if (o.containsLearningObject(clickedObject)) {
           Set<LearningObject> intersection = new HashSet<LearningObject>(clickedLearningObjects);
-          intersection.retainAll(o.getLearningObjects());
+          Set<LearningObject> combinedLearningObjects = new HashSet<LearningObject>(o.getLearningObjects());
+          combinedLearningObjects.addAll(o.getLearningObjectsByLearners());
+          intersection.retainAll(combinedLearningObjects);
           float valuation = ((float) (intersection.size())) / ((float) (o.getLearningObjects().size()));
           c.getObjects().put(o, valuation);
         }
@@ -69,7 +74,9 @@ public abstract class Updater {
       FCAAttribute[] domainAttrs = c.getAttributes().keySet().toArray(new FCAAttribute[c.getAttributes().size()]);
       for (FCAAttribute a : domainAttrs) {
         Set<LearningObject> intersection = new HashSet<LearningObject>(clickedLearningObjects);
-        intersection.retainAll(a.getLearningObjects());
+        Set<LearningObject> combinedLearningObjects = new HashSet<LearningObject>(a.getLearningObjects());
+        combinedLearningObjects.addAll(a.getLearningObjectsByLearners());
+        intersection.retainAll(combinedLearningObjects);
         float valuation = a.getLearningObjects().isEmpty() ? 0f : ((float) (intersection.size()))
             / ((float) (a.getLearningObjects().size()));
         c.getAttributes().put(a, valuation);
@@ -77,7 +84,9 @@ public abstract class Updater {
       FCAObject[] domainObjs = c.getObjects().keySet().toArray(new FCAObject[c.getObjects().size()]);
       for (FCAObject o : domainObjs) {
         Set<LearningObject> intersection = new HashSet<LearningObject>(clickedLearningObjects);
-        intersection.retainAll(o.getLearningObjects());
+        Set<LearningObject> combinedLearningObjects = new HashSet<LearningObject>(o.getLearningObjects());
+        combinedLearningObjects.addAll(o.getLearningObjectsByLearners());
+        intersection.retainAll(combinedLearningObjects);
         float valuation = o.getLearningObjects().isEmpty() ? 0f : ((float) (intersection.size()))
             / ((float) (o.getLearningObjects().size()));
         c.getObjects().put(o, valuation);

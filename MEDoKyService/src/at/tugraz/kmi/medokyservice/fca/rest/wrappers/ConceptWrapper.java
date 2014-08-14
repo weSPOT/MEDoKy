@@ -157,10 +157,12 @@ public class ConceptWrapper extends AbstractWrapper {
     Set<LearningObject> conceptLearningObjects = new HashSet<LearningObject>();
     for (FCAObject o : objects.keySet()) {
       conceptLearningObjects.addAll(o.getLearningObjects());
+      conceptLearningObjects.addAll(o.getLearningObjectsByLearners());
     }
     
     for (FCAAttribute a : attributes.keySet()) {
       conceptLearningObjects.addAll(a.getLearningObjects());
+      conceptLearningObjects.addAll(a.getLearningObjectsByLearners());
     }
     
     intersection.retainAll(conceptLearningObjects);
