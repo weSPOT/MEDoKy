@@ -322,13 +322,15 @@ public class FCAService {
     for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
       Set<LearningObject> intersection = new HashSet<LearningObject>(domain.getFormalContext()
           .getClickedLearningObjects());
-      //FIXME clickedLearningobjects
+      // FIXME clickedLearningobjects
       Set<LearningObject> conceptLearningObjects = new HashSet<LearningObject>();
       for (FCAObject o : c.getObjects().keySet()) {
         conceptLearningObjects.addAll(o.getLearningObjects());
+        conceptLearningObjects.addAll(o.getLearningObjectsByLearners());
       }
       for (FCAAttribute a : c.getAttributes().keySet()) {
         conceptLearningObjects.addAll(a.getLearningObjects());
+        conceptLearningObjects.addAll(a.getLearningObjectsByLearners());
       }
       intersection.retainAll(conceptLearningObjects);
       valuations.put(c.getId(), new ValuationWrapper(c.getPercentagedValuations(), intersection));
