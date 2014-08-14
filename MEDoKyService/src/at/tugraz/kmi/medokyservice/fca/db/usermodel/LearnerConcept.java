@@ -33,7 +33,7 @@ public class LearnerConcept extends DataObject {
   private HashMap<FCAObject, Float>    objects;
   private HashMap<FCAAttribute, Float> attributes;
   private Set<LearningObject>          clickedLearningObjects;
-  private boolean                     viewed;
+  private boolean                      viewed;
 
   /**
    * Creates a new LearnerConcept based upon a {@link Concept} of the domain
@@ -110,7 +110,7 @@ public class LearnerConcept extends DataObject {
   }
 
   /**
-   * computes the percentaged valuation of the object- and attribute-set of this
+   * computes the percentage valuation of the object- and attribute-set of this
    * concept
    * 
    * @return a float array containing two values ranging from -1 to +1 (-100% to

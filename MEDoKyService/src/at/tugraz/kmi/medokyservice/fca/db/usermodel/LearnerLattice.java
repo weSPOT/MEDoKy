@@ -1,12 +1,16 @@
 package at.tugraz.kmi.medokyservice.fca.db.usermodel;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
+import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
+import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Lattice;
 
 /**
@@ -24,7 +28,13 @@ public class LearnerLattice extends DataObject {
   private static final long serialVersionUID = 4677352490936383590L;
   private Set<LearnerConcept> concepts;
   private LearnerConcept bottom, top;
-
+  private Map<FCAObject, Float> objects;
+  private Map<FCAAttribute, Float> attributes;
+  
+  
+  //TODO: init list of objects and attributes 
+  
+  
   /**
    * Creates a LearnerLattice based upon a {@link Lattice} from the domain
    * model.
@@ -36,6 +46,9 @@ public class LearnerLattice extends DataObject {
    */
   public LearnerLattice(Lattice lattice) {
     super("Learner" + lattice.getName(), lattice.getDescription());
+    this.attributes = new HashMap<FCAAttribute, Float>(); 
+    this.objects = new HashMap<FCAObject, Float>();
+    
     concepts = Collections.synchronizedSet(new LinkedHashSet<LearnerConcept>());
     synchronized (concepts) {
       HashMap<Long, LearnerConcept> registry = new HashMap<Long, LearnerConcept>();
@@ -80,6 +93,28 @@ public class LearnerLattice extends DataObject {
     }
   }
 
+  
+  private void initObjectAndAttributeSets(){
+	  for (LearnerConcept concept : concepts){
+		  this.attributes.putAll(concept.getAttributes());
+		  this.objects.putAll(concept.getObjects());
+	  } 
+  }
+  
+  public Map<FCAAttribute, Float> getAttributes(){
+	  if (this.attributes.size()>0)
+		  return this.attributes;
+	  this.initObjectAndAttributeSets();
+	  return this.attributes;
+  }
+  
+  public Map<FCAObject, Float> getObjects(){
+	  if (this.objects.size()>0)
+		  return this.objects;
+	  this.initObjectAndAttributeSets();
+	  return this.objects;
+  }
+  
   public Set<LearnerConcept> getConcepts() {
     return concepts;
   }

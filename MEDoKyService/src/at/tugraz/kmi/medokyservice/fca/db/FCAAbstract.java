@@ -25,7 +25,6 @@ public class FCAAbstract extends DataObject {
    */
   private static final long   serialVersionUID = -6632084060702601592L;
   private Set<LearningObject> learningObjects;
-
   private String              creationId;
 
   /**
