@@ -320,7 +320,18 @@ public class FCAService {
     Map<Long, ValuationWrapper> valuations = new HashMap<Long, ValuationWrapper>();
     LearnerDomain domain = Database.getInstance().get(learnerDomaindId);
     for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
-      valuations.put(c.getId(), new ValuationWrapper(c.getPercentagedValuations(), c.getClickedLearningObjects()));
+      Set<LearningObject> intersection = new HashSet<LearningObject>(domain.getFormalContext()
+          .getClickedLearningObjects());
+      //FIXME clickedLearningobjects
+      Set<LearningObject> conceptLearningObjects = new HashSet<LearningObject>();
+      for (FCAObject o : c.getObjects().keySet()) {
+        conceptLearningObjects.addAll(o.getLearningObjects());
+      }
+      for (FCAAttribute a : c.getAttributes().keySet()) {
+        conceptLearningObjects.addAll(a.getLearningObjects());
+      }
+      intersection.retainAll(conceptLearningObjects);
+      valuations.put(c.getId(), new ValuationWrapper(c.getPercentagedValuations(), intersection));
     }
     return valuations;
   }

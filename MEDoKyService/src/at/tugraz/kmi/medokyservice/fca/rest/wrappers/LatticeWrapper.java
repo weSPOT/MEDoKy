@@ -1,9 +1,11 @@
 package at.tugraz.kmi.medokyservice.fca.rest.wrappers;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Lattice;
+import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerConcept;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerLattice;
 
@@ -20,7 +22,7 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerLattice;
  */
 public class LatticeWrapper extends AbstractWrapper {
 
-  public ConceptWrapper bottom, top;
+  public ConceptWrapper             bottom, top;
   public LinkedList<ConceptWrapper> concepts;
 
   public LatticeWrapper() {
@@ -38,8 +40,8 @@ public class LatticeWrapper extends AbstractWrapper {
     concepts = new LinkedList<ConceptWrapper>();
 
     for (Concept c : lattice.getConcepts()) {
-      ConceptWrapper concept = new ConceptWrapper(c);
-      concept.setSucessors(c.getSuccessors(), c.getTaxonomySuccessors());
+      ConceptWrapper concept = new ConceptWrapper(c, new HashSet<LearningObject>());
+      concept.setSucessors(c.getSuccessors(), c.getTaxonomySuccessors(), new HashSet<LearningObject>());
       concepts.add(concept);
       if (c.getPredecessors().isEmpty())
         bottom = concept;
@@ -47,6 +49,7 @@ public class LatticeWrapper extends AbstractWrapper {
         top = concept;
     }
   }
+
   /**
    * @param lattice
    *          the original {@link Lattice} to wrap
@@ -57,8 +60,8 @@ public class LatticeWrapper extends AbstractWrapper {
     super.id = lattice.getId();
     concepts = new LinkedList<ConceptWrapper>();
     for (LearnerConcept c : lattice.getConcepts()) {
-      ConceptWrapper concept = new ConceptWrapper(c);
-      concept.setSucessors(c.getSuccessors(), c.getTaxonomySuccessors());
+      ConceptWrapper concept = new ConceptWrapper(c, lattice.getClickedLearningObjects());
+      concept.setSucessors(c.getSuccessors(), c.getTaxonomySuccessors(), lattice.getClickedLearningObjects());
       concepts.add(concept);
       if (c.getPredecessors().isEmpty())
         bottom = concept;
