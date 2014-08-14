@@ -336,6 +336,16 @@ public class FCAService {
     return valuations;
   }
 
+  @POST
+  @Path(RestConfig.PATH_VIEWCONCEPT)
+  @Produces(MediaType.TEXT_PLAIN)
+  public String clickConcept(@PathParam(RestConfig.KEY_ID) Long cid) throws Exception {
+    LearnerConcept c = Database.getInstance().get(cid);
+    c.setViewed(true);
+    Database.getInstance().save();
+    return "OK";
+  }
+
   /**
    * Updates an {@link FCAObject} and returns the updated object
    * 
@@ -470,6 +480,7 @@ public class FCAService {
     domainObject.setName(obj.getName());
     updateLearningObject(obj);
     domainObject.setLearningObjects(obj.getLearningObjects());
+    domainObject.setLearningObjectsByLearners(obj.getLearningObjectsByLearners());
     domain.getMapping().storeMetadata(obj);
     domainObject.setDescription(obj.getDescription());
     return domainObject;
@@ -889,6 +900,17 @@ public class FCAService {
 
   private void updateLearningObject(FCAAbstract obj) {
     for (LearningObject lo : obj.getLearningObjects()) {
+      LearningObject dbLo = Database.getInstance().get(lo.getId());
+      if (dbLo == null)
+        dbLo = new LearningObject(lo.getName(), lo.getDescription(), lo.getData(), lo.getOwner());
+      else {
+        dbLo.setName(lo.getName());
+        dbLo.setDescription(lo.getDescription());
+        dbLo.setData(lo.getData());
+      }
+      Database.getInstance().put(dbLo, false);
+    }
+    for (LearningObject lo : obj.getLearningObjectsByLearners()) {
       LearningObject dbLo = Database.getInstance().get(lo.getId());
       if (dbLo == null)
         dbLo = new LearningObject(lo.getName(), lo.getDescription(), lo.getData(), lo.getOwner());

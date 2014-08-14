@@ -43,5 +43,7 @@ public interface RestConfig {
   public static final String PATH_DOMAIN_SHARE      = PATH_DOMAIN + "/{" + KEY_DOMAINID + "}/shareTo/{"
                                                         + KEY_EXTERNALCOURSEID + "}/{" + KEY_NAME + "}";
   public static final String PATH_DOMAIN_VALUATIONS = PATH_LEARNERDOMAIN + "/{" + KEY_ID + "}/" + PATH_VALUATIONS;
+  public static final String PATH_VIEWCONCEPT      = PATH_CONCEPT + "/{"
+                                                        + KEY_ID + "}/view";
 
 }

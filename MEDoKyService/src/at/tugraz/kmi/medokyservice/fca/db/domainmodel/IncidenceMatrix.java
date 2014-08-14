@@ -28,10 +28,10 @@ import at.tugraz.kmi.medokyservice.fca.lib.colibri.lib.Relation;
  */
 public class IncidenceMatrix extends DataObject {
 
-  private static final long serialVersionUID = 316445789327401260L;
+  private static final long                 serialVersionUID = 316445789327401260L;
   private Map<FCAObject, Set<FCAAttribute>> objects;
   private Map<FCAAttribute, Set<FCAObject>> attributes;
-  private Map<Long, FCAItemMetadata> itemMetadata;
+  private Map<Long, FCAItemMetadata>        itemMetadata;
 
   /**
    * @param name
@@ -94,7 +94,6 @@ public class IncidenceMatrix extends DataObject {
     Database.getInstance().put(metadata, false);
   }
 
-  
   public Set<FCAAttribute> getAttributes(FCAObject obj) {
     Set<FCAAttribute> attrs = this.objects.get(obj) == null ? Collections.synchronizedSet(new HashSet<FCAAttribute>())
         : this.objects.get(obj);
@@ -251,6 +250,7 @@ public class IncidenceMatrix extends DataObject {
     for (FCAAbstract item : items) {
       item.setDescription(itemMetadata.get(item.getId()).getDescription());
       item.setLearningObjects(itemMetadata.get(item.getId()).getLearningObjects());
+      item.setLearningObjectsByLearners(itemMetadata.get(item.getId()).getLearningObjectByLearner());
     }
   }
 

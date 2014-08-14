@@ -13,10 +13,10 @@ public class LearningObject extends DataObject {
 
   /**
    * 
-   */ 
+   */
   private static final long serialVersionUID = -773144330881908191L;
-  private User owner;
-  private String data;
+  private User              owner;
+  private String            data;
 
   /**
    * Creates a new learning object referencing the resource contained in the

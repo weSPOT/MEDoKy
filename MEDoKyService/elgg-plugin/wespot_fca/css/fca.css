@@ -115,7 +115,7 @@
   margin-right: -20px;
 }
 
-#matrix_attr_head,#matrix_obj_head {
+#matrix_attr_head, #matrix_obj_head {
   overflow: hidden;
 }
 
@@ -142,7 +142,7 @@ table {
   table-layout: fixed;
 }
 
-th,tr,td {
+th, tr, td {
   vertical-align: bottom;
 }
 
@@ -299,12 +299,16 @@ input {
   border: none;
 }
 
-.lattice_lo {
-  background-color:rgba(255,255,255,0.6);
+.learner_lo {
+  border: 2px solid black !important;
 }
 
-.lattice_lo_hover { 
-  background-color:white !important;
+.lattice_lo {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.lattice_lo_hover {
+  background-color: white !important;
   font-weight: bold;
 }
 

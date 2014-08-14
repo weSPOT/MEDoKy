@@ -319,6 +319,7 @@ var medoky = {
     console.trace();
     console.log(verb);
     console.log(payload);
+    payload.userId=medoky_recommendation_state.user.guid;
     try {
       // initial test
       post_to_stepup(window.location.href, verb, {

@@ -96,6 +96,9 @@ backend = {
           for ( var i in obj[id].learningObjects) {
             state.active_l_objects[obj[id].learningObjects[i].id] = obj[id].learningObjects[i];
           }
+          for ( var i in obj[id].learningObjectsByLearners) {
+            state.active_l_objects[obj[id].learningObjectsByLearners[i].id] = obj[id].learningObjectsByLearners[i];
+          }
         }
         if (callback)
           callback();
@@ -117,6 +120,9 @@ backend = {
           state.backend_attributes[id] = obj[id];
           for ( var i in obj[id].learningObjects) {
             state.active_l_objects[obj[id].learningObjects[i].id] = obj[id].learningObjects[i];
+          }
+          for ( var i in obj[id].learningObjectsByLearners) {
+            state.active_l_objects[obj[id].learningObjectsByLearners[i].id] = obj[id].learningObjectsByLearners[i];
           }
         }
         if (callback)
@@ -623,6 +629,9 @@ util = {
     for ( var i in object.learningObjects) {
       obj_los[object.learningObjects[i].id] = object.learningObjects[i];
     }
+    for ( var i in object.learningObjectsByLearners) {
+      obj_los[object.learningObjectsByLearners[i].id] = object.learningObjectsByLearners[i];
+    }
     for ( var i in state.backend_l_objects)
       if (!(i in obj_los))
         l_objs[i] = state.backend_l_objects[i];
@@ -637,11 +646,15 @@ util = {
         "name" : obj[o].name,
         "description" : obj[o].description,
         "id" : o,
-        "learningObjects" : obj[o].learningObjects
+        "learningObjects" : obj[o].learningObjects,
+        "learningObjectsByLearners" : obj[o].learningObjectsByLearners
       };
       pack.items[o] = object;
       for ( var i in object.learningObjects) {
         state.active_l_objects[object.learningObjects[i].id] = object.learningObjects[i];
+      }
+      for ( var i in object.learningObjectsByLearners) {
+        state.active_l_objects[object.learningObjectsByLearners[i].id] = object.learningObjectsByLearners[i];
       }
       var currentObjects = pack.buttons;
       for (var i = 0; i < currentObjects.length; ++i) {
@@ -858,6 +871,7 @@ logic = {
     console.trace();
     console.log("POST TO STEPUP: " + verb);
     console.log(payload);
+    payload.userId = state.user.guid;
     try {
       post_to_stepup(window.location.href, verb, {
         course : elgg.get_page_owner_guid()
@@ -872,6 +886,13 @@ logic = {
       if (object.learningObjects[i] == lo) {
         delete state.active_l_objects[object.learningObjects[i].id];
         object.learningObjects.splice(i, 1);
+        break;
+      }
+    }
+    for ( var i in object.learningObjectsByLearners) {
+      if (object.learningObjectsByLearners[i] == lo) {
+        delete state.active_l_objects[object.learningObjectsByLearners[i].id];
+        object.learningObjectsByLearners.splice(i, 1);
         break;
       }
     }
@@ -939,26 +960,31 @@ logic = {
     var data = $("#sel_set_lo").data(logic.key_lo);
     if (!data)
       return;
-    state.current_item.learningObjects.push(state.backend_l_objects[data.data]);
-
+    if (state.teacher)
+      state.current_item.learningObjects.push(state.backend_l_objects[data.data]);
+    else {
+      state.current_item.learningObjectsByLearners.push(state.backend_l_objects[data.data]);
+    }
     if (!state.teacher) {
       logic.log("add learning object", {
         learningObject : state.backend_l_objects[data.data].data,
-        learnerID : state.user.guid.toString(),
-        itemID : state.current_item.id
+        itemId : state.current_item.id
       });
     }
 
     for ( var i in state.current_item.learningObjects) {
       state.active_l_objects[state.current_item.learningObjects[i].id] = state.current_item.learningObjects[i];
     }
+    for ( var i in state.current_item.learningObjectsByLearners) {
+      state.active_l_objects[state.current_item.learningObjectsByLearners[i].id] = state.current_item.learningObjectsByLearners[i];
+    }
 
     $("#dia_set_lo").dialog("close");
-    logic.save_item(state.current_item, state.type);
+    logic.save_item(state.current_item, state.type, false, data.data);
 
   },
 
-  save_item : function(object, entityType, hideDialog) {
+  save_item : function(object, entityType, hideDialog, newLO) {
     console.trace();
     console.debug(state);
     logic.enable_disable(); // TODO CLEAN UP
@@ -979,16 +1005,24 @@ logic = {
           obj.learningObjects[l].owner.attributes = {};
         }
       }
+      for ( var l in obj.learningObjectsByLearners) {
+        // check yourself before you wreck yourself
+        if (obj.learningObjectsByLearners[l].owner) {
+          obj.learningObjectsByLearners[l].owner.objects = {}; // cannot parse
+          obj.learningObjectsByLearners[l].owner.attributes = {};
+        }
+      }
       if (state.domain.id) {
         updatefunc(JSON.stringify(obj), function(resp) {
           pack.items[object.id] = resp;
           if (!state.teacher) {
+
             backend.get_valuations(function(obj) {
-              console.debug(obj);
-              console.debug((state.domain.formalContext.bottom.id.toString()));
-              console.debug(state.domain.formalContext.bottom.id);
-              lattice.update_valuation(obj);
               ui.set_item(pack.index, entityType, object.id);
+              console.debug(obj);
+              lattice.update_valuation(obj);
+              if (newLO)
+                logic.consume_lo(newLO);
             });
           } else {
             if (!hideDialog)
@@ -1021,6 +1055,13 @@ logic = {
         if (obj.learningObjects[l].owner) {
           obj.learningObjects[l].owner.objects = {}; // cannot parse
           obj.learningObjects[l].owner.attributes = {};
+        }
+      }
+      for ( var l in obj.learningObjectsByLearners) {
+        // check yourself before you wreck yourself
+        if (obj.learningObjectsByLearners[l].owner) {
+          obj.learningObjectsByLearners[l].owner.objects = {}; // cannot parse
+          obj.learningObjectsByLearners[l].owner.attributes = {};
         }
       }
       objects.push(obj);
@@ -1191,6 +1232,7 @@ logic = {
         data : lo.id
       });
       $("#dia_create_lo").dialog("close");
+
     });
   },
 
@@ -1402,6 +1444,19 @@ logic = {
         logic.populate_domain(domain);
       });
     }
+  },
+
+  consume_lo : function(id) {
+    var postdata = {
+      "id" : state.domain.id,
+      "externalUID" : state.user.guid.toString(),
+      "learningObjectId" : id
+    };
+    backend.update_valuation(JSON.stringify(postdata), lattice.update_valuation);
+    logic.log("consume learning object", {
+      learningObject : state.backend_l_objects[id].data
+    });
+    $("#btn_lo_" + id).addClass("btn_lo_clicked");
   }
 };
 
@@ -2108,22 +2163,19 @@ ui = {
     });
   },
 
-  create_lo_div : function(lo, object, div_lo, entityType) {
+  create_lo_div : function(lo, object, div_lo, entityType, byLearner) {
 
     var div = div_lo.create("div", {
       id : "lo_" + lo.id,
       "class" : "span_lo"
     });
     var tdiv = div.create("div", {
-      "class" : "txt_lo"
+      "class" : byLearner ? "txt_lo learner_lo" : "txt_lo"
     }).click(function() {
-      window.open(lo.data, "Learning Object", "width=800,height=600");
       if (!state.teacher) {
-        logic.log("consume learning object", {
-          learningObject : lo.data,
-          learnerID : state.user.guid.toString()
-        });
+        logic.consume_lo(lo.id);
       }
+      window.open(lo.data, "Learning Object", "width=800,height=600");
     });
     tdiv.create("txt", lo.name);
     var buttons = div.create("div", {
@@ -2145,12 +2197,13 @@ ui = {
     }).click(function() {
       logic.remove_lo(lo, object, entityType);
     });
-    div.hover(function() {
-      ui.hide_lo_buttons();
-      ui.show_lo_buttons(this);
-    }, function() {
-      ui.hide_lo_buttons();
-    });
+    if (state.teacher)
+      div.hover(function() {
+        ui.hide_lo_buttons();
+        ui.show_lo_buttons(this);
+      }, function() {
+        ui.hide_lo_buttons();
+      });
   },
 
   display_learning_objects : function(object, entityType) {
@@ -2158,18 +2211,23 @@ ui = {
     div_lo.empty();
 
     for ( var i in object.learningObjects) {
-      ui.create_lo_div(object.learningObjects[i], object, div_lo, entityType);
+      ui.create_lo_div(object.learningObjects[i], object, div_lo, entityType, false);
     }
-    div_lo.append("<br>");
-    div_lo.create("input", {
-      type : "image",
-      src : state.basedir + "img/add.svg",
-      width : "22px",
-      height : "22px",
-      class : "input btn_add_lo always_on"
-    }).click(function() {
-      logic.set_l_object(object, entityType);
-    });
+    for ( var i in object.learningObjectsByLearners) {
+      ui.create_lo_div(object.learningObjectsByLearners[i], object, div_lo, entityType, true);
+    }
+    if (!state.domain.global) {
+      div_lo.append("<br>");
+      div_lo.create("input", {
+        type : "image",
+        src : state.basedir + "img/add.svg",
+        width : "22px",
+        height : "22px",
+        class : "input btn_add_lo always_on"
+      }).click(function() {
+        logic.set_l_object(object, entityType);
+      });
+    }
   },
 
   display_item_description : function(id, entityType) {
@@ -2396,6 +2454,13 @@ ui = {
     if (state.domain.approved && state.teacher) {
       ui.hide_learner_lattice_dropdown();
     }
+  },
+
+  show_lo_popup : function(id) {
+    if (!state.teacher) {
+      logic.consume_lo(id);
+    }
+    window.open($(this).data("url"), "Learning Object", "width=800,height=600");
   },
 
   show_learner_lattice_dropdown : function() {

@@ -41,6 +41,8 @@ public class DomainWrapper extends AbstractWrapper {
     owner = domain.getOwner();
     formalContext = new LatticeWrapper(domain.getFormalContext());
     mapping = domain.getMapping();
+    System.out.println(domain.isGlobal());
+    global=domain.isGlobal();
   }
 
 }

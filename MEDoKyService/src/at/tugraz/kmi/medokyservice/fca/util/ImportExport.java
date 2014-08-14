@@ -41,34 +41,35 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 public class ImportExport {
-  private static final String SECTION_LO = "learningObjects";
-  private static final String SECTION_O = "objects";
-  private static final String SECTION_A = "attributes";
-  private static final String SECTION_U = "users";
-  private static final String SECTION_D = "domains";
-  private static final String SECTION_M = "metadata";
-  private static final String SECTION_C = "courses";
+  private static final String SECTION_LO   = "learningObjects";
+  private static final String SECTION_LO_L = "learningObjectsByLearners";
+  private static final String SECTION_O    = "objects";
+  private static final String SECTION_A    = "attributes";
+  private static final String SECTION_U    = "users";
+  private static final String SECTION_D    = "domains";
+  private static final String SECTION_M    = "metadata";
+  private static final String SECTION_C    = "courses";
 
-  private static final String ID = "id";
-  private static final String O_ID = "objectId";
-  private static final String E_UID = "externalUid";
-  private static final String E_CID = "externalCourseid";
-  private static final String CID = "creationId";
-  private static final String NAME = "name";
-  private static final String DESCRIPTION = "description";
-  private static final String OWNER = "owner";
-  private static final String DATA = "data";
-  private static final String MAPPING = "mapping";
-  private static final String GLOBAL = "global";
-  private static final String APPROVED = "approved";
+  private static final String ID           = "id";
+  private static final String O_ID         = "objectId";
+  private static final String E_UID        = "externalUid";
+  private static final String E_CID        = "externalCourseid";
+  private static final String CID          = "creationId";
+  private static final String NAME         = "name";
+  private static final String DESCRIPTION  = "description";
+  private static final String OWNER        = "owner";
+  private static final String DATA         = "data";
+  private static final String MAPPING      = "mapping";
+  private static final String GLOBAL       = "global";
+  private static final String APPROVED     = "approved";
   private static final String PARTICIPANTS = "participants";
 
-  private String file;
-  private boolean export;
+  private String              file;
+  private boolean             export;
 
-  private Gson gson;
+  private Gson                gson;
 
-  private Random rand;
+  private Random              rand;
 
   private static JsonObject prepare(DataObject o) {
     JsonObject jso = new JsonObject();
@@ -124,10 +125,16 @@ public class ImportExport {
       JsonObject jso = prepare(o);
       jso.addProperty(CID, o.getCreationId());
       LinkedList<Long> loIds = new LinkedList<Long>();
+      LinkedList<Long> loByLearnerIds = new LinkedList<Long>();
       for (LearningObject lo : o.getLearningObjects()) {
         loIds.add(lo.getId());
       }
+      for (LearningObject lo : o.getLearningObjectsByLearners()) {
+        loByLearnerIds.add(lo.getId());
+      }
       jso.add(SECTION_LO, gson.toJsonTree(loIds, new TypeToken<List<Long>>() {
+      }.getType()));
+      jso.add(SECTION_LO_L, gson.toJsonTree(loByLearnerIds, new TypeToken<List<Long>>() {
       }.getType()));
       block.add(Long.toString(o.getId()), jso);
     }
@@ -152,7 +159,13 @@ public class ImportExport {
       for (LearningObject lo : o.getLearningObjects()) {
         loIds.add(lo.getId());
       }
+      LinkedList<Long> loByLernerIds = new LinkedList<Long>();
+      for (LearningObject lo : o.getLearningObjectByLearner()) {
+        loByLernerIds.add(lo.getId());
+      }
       jso.add(SECTION_LO, gson.toJsonTree(loIds, new TypeToken<List<Long>>() {
+      }.getType()));
+      jso.add(SECTION_LO_L, gson.toJsonTree(loByLernerIds, new TypeToken<List<Long>>() {
       }.getType()));
       block.add(Long.toString(o.getId()), jso);
     }
@@ -258,6 +271,7 @@ public class ImportExport {
     for (Entry<String, JsonElement> lo : entries) {
       JsonObject jsLo = lo.getValue().getAsJsonObject();
       User owner = users.get(Long.parseLong(jsLo.get(OWNER).getAsString()));
+
       LearningObject learningObject = new LearningObject(jsLo.get(NAME).getAsString(), jsLo.get(DESCRIPTION)
           .getAsString(), jsLo.get(DATA).getAsString(), owner);
       learningObjects.put(Long.parseLong(lo.getKey()), learningObject);
@@ -289,12 +303,23 @@ public class ImportExport {
         object = (E) new FCAObject(jsO.get(NAME).getAsString(), jsO.get(DESCRIPTION).getAsString(), creationId);
       else
         object = (E) new FCAAttribute(jsO.get(NAME).getAsString(), jsO.get(DESCRIPTION).getAsString(), creationId);
-      Iterator<JsonElement> lOs = jsO.getAsJsonArray(SECTION_LO).iterator();
       Set<LearningObject> lObjs = new HashSet<LearningObject>();
+      Set<LearningObject> lObjsByLearner = new HashSet<LearningObject>();
+      Iterator<JsonElement> lOs = jsO.getAsJsonArray(SECTION_LO).iterator();
       while (lOs.hasNext()) {
         LearningObject lo = learningObjects.get((lOs.next().getAsLong()));
         lObjs.add(lo);
       }
+      try {
+        Iterator<JsonElement> lOsByLearner = jsO.getAsJsonArray(SECTION_LO_L).iterator();
+        while (lOsByLearner.hasNext()) {
+          LearningObject lo = learningObjects.get((lOsByLearner.next().getAsLong()));
+          lObjsByLearner.add(lo);
+        }
+      } catch (Exception notAnError) {
+
+      }
+      object.setLearningObjectsByLearners(lObjsByLearner);
       object.setLearningObjects(lObjs);
       objects.put(Long.parseLong(o.getKey()), object);
     }
@@ -315,11 +340,19 @@ public class ImportExport {
     for (Entry<String, JsonElement> entry : jsM.entrySet()) {
       JsonObject val = entry.getValue().getAsJsonObject();
       JsonArray arr = val.get(SECTION_LO).getAsJsonArray();
+      LinkedHashSet<LearningObject> l_objsByLernar = new LinkedHashSet<LearningObject>();
+      try {
+        JsonArray arrByLearner = val.get(SECTION_LO_L).getAsJsonArray();
+        for (JsonElement loID : arrByLearner)
+          l_objsByLernar.add(learningObjects.get(loID.getAsLong()));
+      } catch (Exception notAnError) {
+
+      }
       LinkedHashSet<LearningObject> l_objs = new LinkedHashSet<LearningObject>();
       for (JsonElement loID : arr)
         l_objs.add(learningObjects.get(loID.getAsLong()));
       result.put(Long.parseLong(entry.getKey()), new FCAItemMetadata(val.get(DESCRIPTION).getAsString(), val.get(O_ID)
-          .getAsLong(), l_objs));
+          .getAsLong(), l_objs, l_objsByLernar));
     }
     return result;
   }
@@ -338,6 +371,7 @@ public class ImportExport {
         FCAItemMetadata meta = metadata.get(objMeta.get(map.getKey()).getAsLong());
         System.out.println(object.getName());
         object.setLearningObjects(meta.getLearningObjects());
+        object.setLearningObjectsByLearners(meta.getLearningObjectByLearner());
         String descr = object.getDescription();
         object.setDescription(meta.getDescription());
         mat.storeMetadata(object);
@@ -432,11 +466,11 @@ public class ImportExport {
     private List<String> parameters = new ArrayList<String>();
 
     @Parameter(names = { "-f", "--file" }, description = "Source/Desitnation File")
-    private String file;
+    private String       file;
 
     @Parameter(names = { "-e", "--export" }, description = "Export mode, the FCA DB file needs to be located at webapps/at.tugraz.kmi.medoky.fca.db"
         + " -- If not set data will be imported to webapps/at.tugraz.kmi.medoky.fca.db")
-    private boolean export = false;
+    private boolean      export     = false;
 
   }
 

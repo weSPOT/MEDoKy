@@ -25,6 +25,8 @@ public class FCAAbstract extends DataObject {
    */
   private static final long   serialVersionUID = -6632084060702601592L;
   private Set<LearningObject> learningObjects;
+  private Set<LearningObject> learningObjectsByLearners;
+
   private String              creationId;
 
   /**
@@ -38,6 +40,7 @@ public class FCAAbstract extends DataObject {
     super(name, description);
     this.creationId = creationId;
     learningObjects = Collections.synchronizedSet(new HashSet<LearningObject>());
+    learningObjectsByLearners = Collections.synchronizedSet(new HashSet<LearningObject>());
   }
 
   public Set<LearningObject> getLearningObjects() {
@@ -56,7 +59,7 @@ public class FCAAbstract extends DataObject {
 
   public boolean containsLearningObject(LearningObject obj) {
     synchronized (learningObjects) {
-      return learningObjects.contains(obj);
+      return learningObjects.contains(obj) || learningObjectsByLearners.contains(obj);
     }
   }
 
@@ -73,6 +76,7 @@ public class FCAAbstract extends DataObject {
     this.creationId = (String) in.readObject();
     this.id = in.readLong();
     this.learningObjects = Collections.synchronizedSet(new HashSet<LearningObject>());
+    this.learningObjectsByLearners = Collections.synchronizedSet(new HashSet<LearningObject>());
   }
 
   public String toDebugString() {
@@ -82,6 +86,14 @@ public class FCAAbstract extends DataObject {
       bld.append(o.toString()).append(", ");
     return bld.append("]").toString();
 
+  }
+
+  public Set<LearningObject> getLearningObjectsByLearners() {
+    return learningObjectsByLearners;
+  }
+
+  public void setLearningObjectsByLearners(Set<LearningObject> learningObjectsByLearners) {
+    this.learningObjectsByLearners = learningObjectsByLearners;
   }
 
 }
