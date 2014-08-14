@@ -32,7 +32,6 @@ public class LearnerConcept extends DataObject {
   private Set<LearnerConcept>          taxonomySuccessors;
   private HashMap<FCAObject, Float>    objects;
   private HashMap<FCAAttribute, Float> attributes;
-  private Set<LearningObject>          clickedLearningObjects;
   private boolean                      viewed;
 
   /**
@@ -48,7 +47,6 @@ public class LearnerConcept extends DataObject {
   public LearnerConcept(Concept c) {
     super(c.getName(), c.getDescription());
     viewed = false;
-    clickedLearningObjects = new HashSet<LearningObject>();
     domainConceptId = c.getId();
     objects = new HashMap<FCAObject, Float>();
     attributes = new HashMap<FCAAttribute, Float>();
@@ -159,14 +157,6 @@ public class LearnerConcept extends DataObject {
 
   public String toString() {
     return Long.toString(getId());
-  }
-
-  public void addClickedLearningObject(LearningObject obj) {
-    clickedLearningObjects.add(obj);
-  }
-
-  public Set<LearningObject> getClickedLearningObjects() {
-    return clickedLearningObjects;
   }
 
   public boolean isViewed() {

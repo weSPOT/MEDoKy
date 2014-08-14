@@ -82,7 +82,7 @@ public class ConceptWrapper extends AbstractWrapper {
 
   public ConceptWrapper() {
   }
-
+/*
   public <E extends DataObject> ConceptWrapper(E concept) {
     super.id = concept.getId();
     super.name = concept.getName();
@@ -91,6 +91,16 @@ public class ConceptWrapper extends AbstractWrapper {
       init((Concept) concept);
     else if (concept instanceof LearnerConcept)
       init((LearnerConcept) concept);
+  }*/
+
+  public <E extends DataObject> ConceptWrapper(E concept, Set<LearningObject> clickedLearningObjects) {
+    super.id = concept.getId();
+    super.name = concept.getName();
+    super.description = concept.getDescription();
+    if (concept instanceof Concept)
+      init((Concept) concept);
+    else if (concept instanceof LearnerConcept)
+      init((LearnerConcept) concept, clickedLearningObjects);
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -122,7 +132,8 @@ public class ConceptWrapper extends AbstractWrapper {
   }
 
   @SuppressWarnings("unchecked")
-  private void init(LearnerConcept concept) {
+  //FIXME clickedLEarningObjects
+  private void init(LearnerConcept concept, Set<LearningObject> clickedLearningObjects) {
 
     Concept c = Database.getInstance().get(concept.getDomainConceptId());
     partOfTaxonomy = c.isPartOfTaxonomy();
@@ -141,10 +152,21 @@ public class ConceptWrapper extends AbstractWrapper {
     successors = new HashSet<ConceptWrapper>();
     taxonomySuccessors = new HashSet<ConceptWrapper>();
     valuations = concept.getPercentagedValuations();
-
-    clickedLearningObjects = new HashSet<Long>();
-    for (LearningObject clicked : concept.getClickedLearningObjects())
-      clickedLearningObjects.add(clicked.getId());
+    Set<LearningObject> intersection = new HashSet<LearningObject>(clickedLearningObjects);
+    //FIXME clickedLearningobjects
+    Set<LearningObject> conceptLearningObjects = new HashSet<LearningObject>();
+    for (FCAObject o : objects.keySet()) {
+      conceptLearningObjects.addAll(o.getLearningObjects());
+    }
+    
+    for (FCAAttribute a : attributes.keySet()) {
+      conceptLearningObjects.addAll(a.getLearningObjects());
+    }
+    
+    intersection.retainAll(conceptLearningObjects);
+    this.clickedLearningObjects = new HashSet<Long>();
+    for (LearningObject clicked : intersection)
+      this.clickedLearningObjects.add(clicked.getId());
   }
 
   /**
@@ -157,12 +179,12 @@ public class ConceptWrapper extends AbstractWrapper {
    * @param taxonomySuccessors
    *          successors also part of the taxonomy
    */
-  <E extends DataObject> void setSucessors(Set<E> successors, Set<E> taxonomySuccessors) {
+  <E extends DataObject> void setSucessors(Set<E> successors, Set<E> taxonomySuccessors, Set<LearningObject> clickedLearningObjects) {
     for (E s : successors) {
-      this.successors.add(new ConceptWrapper(s));
+      this.successors.add(new ConceptWrapper(s, clickedLearningObjects));
     }
     for (E s : taxonomySuccessors) {
-      this.taxonomySuccessors.add(new ConceptWrapper(s));
+      this.taxonomySuccessors.add(new ConceptWrapper(s, clickedLearningObjects));
     }
   }
 

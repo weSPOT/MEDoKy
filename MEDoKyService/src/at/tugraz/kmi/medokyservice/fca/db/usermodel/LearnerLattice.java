@@ -3,6 +3,7 @@ package at.tugraz.kmi.medokyservice.fca.db.usermodel;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +13,7 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Lattice;
+import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
 
 /**
  * This class represents a personalised overlay of a {@link Lattice}. Similar to
@@ -30,6 +32,7 @@ public class LearnerLattice extends DataObject {
   private LearnerConcept bottom, top;
   private Map<FCAObject, Float> objects;
   private Map<FCAAttribute, Float> attributes;
+  private Set<LearningObject>          clickedLearningObjects;
   
   
   //TODO: init list of objects and attributes 
@@ -48,7 +51,8 @@ public class LearnerLattice extends DataObject {
     super("Learner" + lattice.getName(), lattice.getDescription());
     this.attributes = new HashMap<FCAAttribute, Float>(); 
     this.objects = new HashMap<FCAObject, Float>();
-    
+
+    clickedLearningObjects = new HashSet<LearningObject>();
     concepts = Collections.synchronizedSet(new LinkedHashSet<LearnerConcept>());
     synchronized (concepts) {
       HashMap<Long, LearnerConcept> registry = new HashMap<Long, LearnerConcept>();
@@ -127,6 +131,14 @@ public class LearnerLattice extends DataObject {
     return bottom;
   }
 
+  public void addClickedLearningObject(LearningObject obj) {
+    clickedLearningObjects.add(obj);
+  }
+
+  public Set<LearningObject> getClickedLearningObjects() {
+    return clickedLearningObjects;
+  }
+  
   /**
    * Return a String representation of this object. The string value returned is
    * subject to change and therefore only suitable for debugging purposes.
