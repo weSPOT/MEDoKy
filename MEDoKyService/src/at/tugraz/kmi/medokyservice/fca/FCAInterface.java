@@ -3,6 +3,7 @@ package at.tugraz.kmi.medokyservice.fca;
 import java.util.Collection;
 import java.util.HashSet;
 
+import at.tugraz.kmi.medokyservice.fca.bl.Magic;
 import at.tugraz.kmi.medokyservice.fca.bl.Updater;
 import at.tugraz.kmi.medokyservice.fca.db.Database;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Concept;
@@ -13,6 +14,8 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerConcept;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerLattice;
+import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
+import at.tugraz.kmi.medokyservice.fca.rest.FCAService;
 
 public abstract class FCAInterface {
 
@@ -32,15 +35,25 @@ public abstract class FCAInterface {
   }
 
   public static Long getLearnerID(String learnerId){
+   User u = Database.getInstance().getUserByExternalUID(learnerId);
+   if(u==null){
+     u = new User(learnerId, "Anonymous", "generated at backend");
+     //log("New User " + u.getId() + ", " + u.getExternalUid() + ", " + u.getName() + ", " + u.getDescription());
+     Database.getInstance().put(u, true);
+   }
     return Database.getInstance().getUserByExternalUID(learnerId).getId();
   }
   
-  public static Long getInquiryID(String learnerId){
-    return Database.getInstance().getCourseByExternalID(learnerId).getId();
+  public static Long getInquiryID(String learnerId) throws FCAException{
+    Course c= Database.getInstance().getCourseByExternalID(learnerId);
+    if(c==null)
+      throw new FCAException("Inquiry does not Exists");
+    return c.getId();
   }
   
-  public static Collection<LearnerLattice> getLearnerModel(long inquiryId, long learnerId) {
+  public static Collection<LearnerLattice> getLearnerModel(long inquiryId, long learnerId) throws FCAException {
     Course c = Database.getInstance().get(inquiryId);
+    Magic.createLearnerModel(learnerId, inquiryId);
     HashSet<LearnerLattice> result = new HashSet<LearnerLattice>();
     for (Domain d : c.getDomains()) {
       if (d.containsLearnerDomain(learnerId)) {

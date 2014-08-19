@@ -8,7 +8,7 @@
 <script type="text/javascript">
 $(function(){
   //medoky_backend.init("http://192.168.1.1:8080/MEDoKyService/rest/");
-  if(medoky_backend.init("http://css-kti.tugraz.at/MEDoKyService/rest/")){
+  if(medoky_backend.init("http://192.168.1.101:8080/MEDoKyService/rest/")){
     medoky_ui.prepareDialogs()
     medoky.getRecommendations(medoky.displayInitialRecommendations);
     setInterval(medoky_util.pollRecommendations, 150000);

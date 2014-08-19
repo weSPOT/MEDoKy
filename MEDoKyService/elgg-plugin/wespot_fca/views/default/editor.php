@@ -4,7 +4,7 @@ $basedir = $CONFIG->url . "/mod/wespot_fca/";
 $options = array (
   'type' => 'object',
   'subtype' => 'file',
-  'owner_guid' => get_entity ( $inquiryId )->owner_guid,
+ // 'owner_guid' => get_entity ( $inquiryId )->owner_guid,
   'container_guid' => $inquiryId 
 );
 
@@ -16,6 +16,9 @@ foreach ( $files as $file ) {
     'description' => $file->description,
     'data' => $CONFIG->url . 'file/view/' . $file->guid 
   );
+  echo("<!-- ");
+  echo(($file));
+  echo("-->");
   $files_json [] = $json_file;
 }
 $user_entity = elgg_get_logged_in_user_entity ();

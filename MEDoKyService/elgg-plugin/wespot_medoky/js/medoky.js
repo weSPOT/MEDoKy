@@ -275,6 +275,7 @@ var medoky_backend = {
       type : "GET",
       url : medoky_backend.url + path_trigger,
       success : function(obj) {
+        console.debug(obj);
         if (callback)
           callback(obj.recommendationId);
       },
@@ -290,6 +291,7 @@ var medoky_backend = {
       type : "GET",
       url : medoky_backend.url + medoky_backend.path_getrecommendation + rid,
       success : function(obj) {
+        console.debug(obj);
         if (callback) {
           var recommendations = [];
           for ( var i in obj.recommendations) {
