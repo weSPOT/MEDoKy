@@ -6,7 +6,7 @@ state = {
   backend_objects : {},
   backend_attributes : {},
   backend_l_objects : {},
-  current_l_objects: {},
+  current_l_objects : {},
   new_objects : {},
   new_attributes : {},
   active_l_objects : {},
@@ -802,79 +802,73 @@ logic = {
     });
 
     backend.identify(JSON.stringify({
-      "name" : state.user.name,
-      "description" : state.user.url,
-      "externalUID" : state.user.guid.toString(),
-      "teacher" : state.teacher
+      user : {
+        "name" : state.user.name,
+        "description" : state.user.url,
+        "externalUID" : state.user.guid.toString(),
+        "teacher" : state.teacher,
+      },
+      "cid" : state.gid,
+      "cOwner" : ""+state.owner_id,
+      "cName" : state.g_name
     }), function(id) {
       state.internalUID = parseInt(id);
-    });
 
-    ui.setup_btn_hover();
-    ui.prepare_dialogs();
-    util.setup_msie();
+      ui.setup_btn_hover();
+      ui.prepare_dialogs();
+      util.setup_msie();
 
-    var tmp_w = $(".btn_attr").width();
-    var tmp_h = $(".btn_attr").height();
-    $(".td_attr").css("width", tmp_h + 15);
-    $(".td_attr").css("height", tmp_w + 15);
-
-    for ( var f in state.files) {
-      if (state.files[f].name && (state.files[f].name.trim() != "")) {
+      var tmp_w = $(".btn_attr").width();
+      var tmp_h = $(".btn_attr").height();
+      $(".td_attr").css("width", tmp_h + 15);
+      $(".td_attr").css("height", tmp_w + 15);
+      var los = [];
+      for ( var f in state.files) {
         if (state.files[f].name && (state.files[f].name.trim() != "")) {
-          var lo = {
-            "name" : state.files[f].name,
-            "description" : state.files[f].description.replace(/(<([^>]+)>)/ig, ""),
-            "data" : state.files[f].data,
-            "id" : Date.now(),
-            "externalUID" : state.user.guid
-          };
-          state.current_l_objects[lo.id]=lo;
+          if (state.files[f].name && (state.files[f].name.trim() != "")) {
+            var lo = {
+              "name" : state.files[f].name,
+              "description" : state.files[f].description.replace(/(<([^>]+)>)/ig, ""),
+              "data" : state.files[f].data,
+              "id" : Date.now(),
+              "externalUID" : state.user.guid
+            };
+            los.push(lo);
+          }
         }
       }
-    }
-    
-    backend.get_l_objects(function() {
-      if (!state.teacher) {
-        util.switch_student();
-        if (state.load_domain) {
-          backend.get_domains(state.gid, ui.show_initial_domain);
-        } else {
-          logic.enable_disable();
-        }
-      } else {
-        if (state.load_domain) {
-          backend.get_domains('-1', ui.show_initial_domain);
-        } else {
-          logic.enable_disable();
-        }
-      }
-      if (state.msie) {
-        console.debug("OH NO, IE! initilaizing objects and attributes on-demand");
 
-      } else {
-        backend.get_objects(function() {
-          backend.get_attributes(function() {
-          });
+      backend.create_l_objects(JSON.stringify(los), function(obj) {
+        backend.get_l_objects(function() {
+          if (!state.teacher) {
+            util.switch_student();
+            if (state.load_domain) {
+              backend.get_domains(state.gid, ui.show_initial_domain);
+            } else {
+              logic.enable_disable();
+            }
+          } else {
+            if (state.load_domain) {
+              backend.get_domains('-1', ui.show_initial_domain);
+            } else {
+              logic.enable_disable();
+            }
+          }
+          if (state.msie) {
+            console.debug("OH NO, IE! initilaizing objects and attributes on-demand");
+          } else {
+            backend.get_objects(function() {
+              backend.get_attributes(function() {
+              });
+            });
+          }
         });
+      });
+
+      if (!state.teacher) {
+        logic.log("open fca tool", {});
       }
     });
-    /*
-     * backend.create_l_objects(JSON.stringify(los), function(obj) {
-     * backend.get_l_objects(function() { if (!state.teacher) {
-     * util.switch_student(); if (state.load_domain) {
-     * backend.get_domains(state.gid, ui.show_initial_domain); } else {
-     * logic.enable_disable(); } } else { if (state.load_domain) {
-     * backend.get_domains('-1', ui.show_initial_domain); } else {
-     * logic.enable_disable(); } } if (state.msie) { console.debug("OH NO, IE!
-     * initilaizing objects and attributes on-demand");
-     *  } else { backend.get_objects(function() {
-     * backend.get_attributes(function() { }); }); } }); });
-     */
-
-    if (!state.teacher) {
-      logic.log("open fca tool", {});
-    }
   },
 
   log : function(verb, payload) {

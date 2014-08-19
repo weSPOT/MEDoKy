@@ -27,6 +27,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import at.tugraz.kmi.medokyservice.fca.FCAException;
+import at.tugraz.kmi.medokyservice.fca.bl.Magic;
 import at.tugraz.kmi.medokyservice.fca.bl.Updater;
 import at.tugraz.kmi.medokyservice.fca.db.DataObject;
 import at.tugraz.kmi.medokyservice.fca.db.Database;
@@ -43,6 +45,7 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 import at.tugraz.kmi.medokyservice.fca.rest.conf.RestConfig;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.ConceptWrapper;
+import at.tugraz.kmi.medokyservice.fca.rest.wrappers.CourseMeta;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.CourseWrapper;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.DomainBlueprint;
 import at.tugraz.kmi.medokyservice.fca.rest.wrappers.DomainWrapper;
@@ -245,11 +248,13 @@ public class FCAService {
     User learner = Database.getInstance().getUserByExternalUID(uid);
     if (domain.getLearnerDomains().containsKey(learner.getId()))
       return new DomainWrapper(domain.getLearnerDomains().get(learner.getId()));
+    log("Creating new LearnerDomain on Demand for Domain: " + domain.getName() + " (" + domain.getId() + ")");
     LearnerDomain dom = new LearnerDomain(Database.getInstance().<User> get(learner.getId()), domain);
     domain.addLearnerDomain(learner.getId(), dom);
     Database.getInstance().put(dom, false);
     Database.getInstance().save();
     return new DomainWrapper(dom);
+
   }
 
   /**
@@ -562,14 +567,23 @@ public class FCAService {
   @Path(RestConfig.PATH_IDENTIFY)
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.TEXT_PLAIN)
-  public String identify(UserWrapper user) {
+  public String identify(CourseMeta meta) {
+    UserWrapper user = meta.user;
     log("identify");
     User u = Database.getInstance().getUserByExternalUID(user.externalUID);
-    if (u != null)
-      return Long.toString(u.getId());
-    u = new User(user.externalUID, user.name, user.description);
-    log("New User " + u.getId() + ", " + u.getExternalUid() + ", " + u.getName() + ", " + u.getDescription());
-    Database.getInstance().put(u, true);
+    if (u == null) {
+      u = new User(user.externalUID, user.name, user.description);
+      log("New User " + u.getId() + ", " + u.getExternalUid() + ", " + u.getName() + ", " + u.getDescription());
+      Database.getInstance().put(u, true);
+    }
+    if (!user.teacher)
+      try {
+        log("Creating learner Model for Inquiry: " + meta.cid);
+        Magic.createLearnerModel(u, meta.cid, meta.cOwnerId, meta.cName);
+      } catch (FCAException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     return Long.toString(u.getId());
 
   }
