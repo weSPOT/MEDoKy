@@ -74,8 +74,7 @@ var medoky_ui = {
   },
 
   closeCallback : function() {
-
-  },
+ },
 
   showRecommendations : function() {
     var header = $("#medoky_recommmendation_detail_header").empty();

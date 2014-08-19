@@ -1,6 +1,5 @@
 package at.tugraz.kmi.medokyservice.bl;
 
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -8,9 +7,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import at.tugraz.kmi.medokyservice.datapreprocessing.Course;
 import at.tugraz.kmi.medokyservice.datapreprocessing.Courses;
-import at.tugraz.kmi.medokyservice.io.StepUpIO;
 import at.tugraz.kmi.medokyservice.recommendations.Recommendation;
 import at.tugraz.kmi.medokyservice.recommendations.Recommendations;
 import at.tugraz.kmi.medokyservice.resources.Info;
@@ -22,19 +19,13 @@ import at.tugraz.kmi.medokyservice.resources.TagRecommendations;
 
 
 /**
- * @author meins
+ * @author Simone Kopeinik
  * This class is implemented as a singleton. It is the container class that handles web-service requests, 
  * the reading of data from the LMS and the Recommendation calculation.	
  *
  */
-/**
- * @author meins
- *
- */
-/**
- * @author meins
- *
- */
+
+
 public class CoreLogic {
 
 	private static CoreLogic coreLogic = null;
@@ -95,6 +86,16 @@ public class CoreLogic {
 		new SimpleUserClassificationThread(userId, courseId, number, environment, uuid).start();
 		return new RecommendationId(uuid);
 	}
+	
+
+	public RecommendationId triggerUserClassification(String userId,
+			String courseId, String environment, String type) {
+		String uuid = this.generateRecommendationId();
+		this.userRecommendations.put(uuid, new Recommendations());
+		new SpecifiedUserClassificationThread(userId, courseId, environment, type, uuid).start();
+		return new RecommendationId(uuid);
+	}
+
 	
 	
 	/**
@@ -295,6 +296,7 @@ public class CoreLogic {
 //			System.out.println(recommendation);
 //			System.out.println(recommendationTwo);
 	}
+
 
 
 }

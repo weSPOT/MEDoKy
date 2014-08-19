@@ -1,6 +1,7 @@
 package at.tugraz.kmi.medokyservice.bl;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import at.tugraz.kmi.medokyservice.classifications.ClassificationManager;
 import at.tugraz.kmi.medokyservice.classifications.UserClassification;
@@ -32,11 +33,12 @@ public class SimpleUserClassificationThread extends Thread{
 		 * @see java.lang.Thread#run()
 		 */
 		public void run(){
-			ArrayList<UserClassification> classifications = ClassificationManager.getDummyClassifications(number, userId);
+			//ArrayList<UserClassification> classifications = ClassificationManager.getDummyClassifications(number, userId);
+			ArrayList<UserClassification> classifications = ClassificationManager.getClassifications(userId);
 			for (UserClassification classification : classifications){
-				Recommendation recommendation = classification.calculate(this.courseId);
-				if (recommendation != null)
-					this.recommendations.addRecommendation(recommendation);
+				Set<Recommendation> recommendations = classification.calculate(this.courseId);
+				for (Recommendation r : recommendations)
+					this.recommendations.addRecommendation(r);
 			}
 			
 			CoreLogic.getInstance().setRecommendation(this.recommendationId, this.recommendations);

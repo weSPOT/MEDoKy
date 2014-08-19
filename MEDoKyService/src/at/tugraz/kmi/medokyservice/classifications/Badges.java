@@ -1,6 +1,7 @@
 package at.tugraz.kmi.medokyservice.classifications;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import at.tugraz.kmi.medokyservice.bl.CoreLogic;
 import at.tugraz.kmi.medokyservice.datapreprocessing.Activities;
@@ -20,14 +21,17 @@ public class Badges extends UserClassification{
 	}
 	
 	@Override
-	public Recommendation calculate(String courseId) {
+	public Set<Recommendation> calculate(String courseId) {
 		Courses courses = CoreLogic.getInstance().getCourses();
 		Students allStudents = courses.getStudents();
 		Course course = courses.getCourse(courseId);
-	
+		Recommendation recommendation = new Recommendation(courseId, type);
+
+		
 		if(course==null){
 			recommendation.setRecommendation("Sorry, there is no Information about this course available!");
-		return recommendation;
+			this.recommendations.add(recommendation);
+			return this.recommendations;
 		}
 	
 		ArrayList<String> students = course.getEnrolledStudents();
@@ -35,7 +39,8 @@ public class Badges extends UserClassification{
 	
 		if (currentStudent==null){
 			recommendation.setRecommendation("Sorry, you are currently not enrolled in "+courseId+"!");
-			return recommendation;
+			this.recommendations.add(recommendation);
+			return this.recommendations;
 		}
 		
 		int studentNum = students.size();
@@ -63,7 +68,8 @@ public class Badges extends UserClassification{
 			recommendation.setRecommendation("The average Student achieved a number of "+average+" awards. You've got "+currentStudentAwards+". Keep up!");
 		else
 			recommendation.setRecommendation("The average Student achieved a number of "+average+" awards. You've got "+currentStudentAwards+". Well done!");
-		return this.recommendation;
+		this.recommendations.add(recommendation);
+		return this.recommendations;
 	}
 	
 }

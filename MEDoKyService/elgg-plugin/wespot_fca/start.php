@@ -1,5 +1,6 @@
 <?php
 elgg_register_event_handler ( 'init', 'system', 'fcatool_init' );
+
 function fcatool_init() {
   elgg_load_js ( 'wespot_stepup' );
   elgg_register_page_handler ( 'fca', 'fcatool_page_handler' );
@@ -13,6 +14,7 @@ function fcatool_init() {
   // add a file link to owner blocks
   elgg_register_plugin_hook_handler ( 'register', 'menu:owner_block', 'wespot_fca_sidebar' );
 }
+
 function fcatool_page_handler($segments) {
   $base_dir = elgg_get_plugins_path () . 'wespot_fca/pages/fca';
   $group_guid = elgg_get_page_owner_guid ();
@@ -39,6 +41,5 @@ function wespot_fca_sidebar($hook, $type, $return, $params) {
       $return [] = $item;
     }
   }
-  
   return $return;
 }
