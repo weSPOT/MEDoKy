@@ -99,13 +99,12 @@ public class FCARecommendation {
 		double average = this.attributes.size()/2;
 		
 		for (LearnerConcept concept : concepts){
-			
-			
 			Double deviation = Math.abs(average - concept.getAttributes().size());  
 			base.put(concept, deviation);
 			}
 		dvc = new DoubleValueComparator(base);
 		sorted_map = new TreeMap<LearnerConcept, Double>(dvc);
+		sorted_map.putAll(base);
 		
 		for (LearnerConcept concept : sorted_map.keySet()){
 			for (FCAObject object : concept.getObjects().keySet()){
@@ -128,8 +127,10 @@ public class FCARecommendation {
 			Double deviation = Math.abs(average - concept.getObjects().size());  
 			base.put(concept, deviation);
 			}
+		
 		dvc = new DoubleValueComparator(base);
 		sorted_map = new TreeMap<LearnerConcept, Double>(dvc);
+		sorted_map.putAll(base);
 		
 		for (LearnerConcept concept : sorted_map.keySet()){
 			for (FCAAttribute attribute : concept.getAttributes().keySet()){
@@ -148,7 +149,8 @@ public class FCARecommendation {
 		// sort entry set according to values
 		vc =  new ValueComparator(items);
 		sorted_map = new TreeMap<FCAAbstract,Float>(vc);
-	    // remove Objects with value 1 - 1 means all Los are already consumed
+		sorted_map.putAll(items);
+		// remove Objects with value 1 - 1 means all Los are already consumed
 		sorted_map.values().removeAll(Collections.singleton(1));
 		
 		for (FCAAbstract item : sorted_map.keySet()){
