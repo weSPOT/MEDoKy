@@ -44,7 +44,8 @@ public class LearningObjectRecommendation extends UserClassification {
 	private void runFCARecommendation(String inquiryId){
 		FCARecommendation fcaRec = new FCARecommendation(); 
 		// TODO: check whether inquiry and userId really are long values??
-		Set<LearningObject> los = fcaRec.calculateLoRecommendation(Long.valueOf(inquiryId), Long.valueOf(this.userId));
+		
+		Set<LearningObject> los = fcaRec.calculateLoRecommendation(inquiryId, this.userId);
 		for (LearningObject lo : los){
 			Recommendation recommendation = new Recommendation(inquiryId, this.type);
 			recommendation.setRecommendation("Take a look at this resourse.");
