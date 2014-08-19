@@ -93,7 +93,7 @@ public class FCAAbstract extends DataObject {
   }
 
   public void setLearningObjectsByLearners(Set<LearningObject> learningObjectsByLearners) {
-    this.learningObjectsByLearners = learningObjectsByLearners;
+    this.learningObjectsByLearners = Collections.synchronizedSet(learningObjectsByLearners);
   }
 
   public Set<LearningObject> getAllLearningObjects() {
