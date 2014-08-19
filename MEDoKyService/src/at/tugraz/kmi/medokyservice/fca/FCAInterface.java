@@ -31,11 +31,11 @@ public abstract class FCAInterface {
     }
   }
 
-  public Long getLearnerID(String learnerId){
+  public static Long getLearnerID(String learnerId){
     return Database.getInstance().getUserByExternalUID(learnerId).getId();
   }
   
-  public Long getInquiryID(String learnerId){
+  public static Long getInquiryID(String learnerId){
     return Database.getInstance().getCourseByExternalID(learnerId).getId();
   }
   

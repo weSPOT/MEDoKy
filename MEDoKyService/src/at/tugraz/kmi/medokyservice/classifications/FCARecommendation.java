@@ -27,8 +27,9 @@ public class FCARecommendation {
 	
 	public FCARecommendation(){}
 	
-	public Set<LearningObject> calculateLoRecommendation(long inquiryId, long learnerId){
-		Collection<LearnerLattice> learnerModel = FCAInterface.getLearnerModel(inquiryId, learnerId);
+	public Set<LearningObject> calculateLoRecommendation(String inquiryId, String learnerId){
+		
+		Collection<LearnerLattice> learnerModel = FCAInterface.getLearnerModel(FCAInterface.getInquiryID(inquiryId), FCAInterface.getLearnerID(learnerId));
 		Set<LearningObject> learningObjects = new HashSet<LearningObject>();
 		for (LearnerLattice lattice : learnerModel){
 			if (learnerModel.size()>1 && lattice.getName().equals("IBL"))
