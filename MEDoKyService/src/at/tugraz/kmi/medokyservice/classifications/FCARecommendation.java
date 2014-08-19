@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import at.tugraz.kmi.medokyservice.fca.FCAException;
 import at.tugraz.kmi.medokyservice.fca.FCAInterface;
 import at.tugraz.kmi.medokyservice.fca.db.FCAAbstract;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
@@ -29,7 +30,13 @@ public class FCARecommendation {
 	
 	public Set<LearningObject> calculateLoRecommendation(String inquiryId, String learnerId){
 		
-		Collection<LearnerLattice> learnerModel = FCAInterface.getLearnerModel(FCAInterface.getInquiryID(inquiryId), FCAInterface.getLearnerID(learnerId));
+		Collection<LearnerLattice> learnerModel;
+		try {
+			learnerModel = FCAInterface.getLearnerModel(FCAInterface.getInquiryID(inquiryId), FCAInterface.getLearnerID(learnerId));
+		} catch (FCAException e) {
+			// TODO Auto-generated catch block
+			return new HashSet<LearningObject>();
+		}
 		Set<LearningObject> learningObjects = new HashSet<LearningObject>();
 		for (LearnerLattice lattice : learnerModel){
 			if (learnerModel.size()>1 && lattice.getName().equals("IBL"))
