@@ -31,6 +31,14 @@ public abstract class FCAInterface {
     }
   }
 
+  public Long getLearnerID(String learnerId){
+    return Database.getInstance().getUserByExternalUID(learnerId).getId();
+  }
+  
+  public Long getInquiryID(String learnerId){
+    return Database.getInstance().getCourseByExternalID(learnerId).getId();
+  }
+  
   public static Collection<LearnerLattice> getLearnerModel(long inquiryId, long learnerId) {
     Course c = Database.getInstance().get(inquiryId);
     HashSet<LearnerLattice> result = new HashSet<LearnerLattice>();
