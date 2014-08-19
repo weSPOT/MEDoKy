@@ -96,4 +96,9 @@ public class FCAAbstract extends DataObject {
     this.learningObjectsByLearners = learningObjectsByLearners;
   }
 
+  public Set<LearningObject> getAllLearningObjects() {
+	  Set<LearningObject> allLos = this.learningObjectsByLearners;   
+	  allLos.addAll(this.learningObjects);
+	  return allLos;
+  } 
 }

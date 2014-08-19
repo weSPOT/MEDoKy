@@ -32,7 +32,8 @@ public class LearnerLattice extends DataObject {
   private LearnerConcept bottom, top;
   private Map<FCAObject, Float> objects;
   private Map<FCAAttribute, Float> attributes;
-  private Set<LearningObject>          clickedLearningObjects;
+  private Set<LearningObject> clickedLearningObjects;
+  
   
   
   //TODO: init list of objects and attributes 

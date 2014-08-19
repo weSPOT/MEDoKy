@@ -1,6 +1,7 @@
 package at.tugraz.kmi.medokyservice.classifications;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import at.tugraz.kmi.medokyservice.bl.CoreLogic;
 import at.tugraz.kmi.medokyservice.datapreprocessing.Activities;
@@ -19,14 +20,18 @@ public class Communication extends UserClassification{
 
 	}
 
-	public Recommendation calculate(String courseId){
+	public Set<Recommendation> calculate(String courseId){
 		Courses courses = CoreLogic.getInstance().getCourses();
 		Students allStudents = courses.getStudents();
 		Course course = courses.getCourse(courseId);
-	
+		Recommendation recommendation = new Recommendation(courseId, type);
+		
+		
 		if(course==null){
 			recommendation.setRecommendation("Sorry, there is no Information about this course available!");
-		return recommendation;
+			// TODO Error text should be handled with exceptions
+			this.recommendations.add(recommendation);
+			return this.recommendations;
 		}
 	
 		ArrayList<String> students = course.getEnrolledStudents();
@@ -34,7 +39,8 @@ public class Communication extends UserClassification{
 	
 		if (currentStudent==null){
 			recommendation.setRecommendation("Sorry, you are currently not enrolled in "+courseId+"!");
-			return recommendation;
+			this.recommendations.add(recommendation);
+			return this.recommendations;
 		}
 	
 		double studentNum = students.size();
@@ -77,7 +83,8 @@ public class Communication extends UserClassification{
 //	System.out.println("sum "+sum+", students "+studentNum+", average: "+average+", varianz: "+var+", std: "+std);
 //	
 	
-		return recommendation;
+		this.recommendations.add(recommendation);
+		return this.recommendations;
 	
 	}
 }

@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import at.tugraz.kmi.medokyservice.bl.CoreLogic;
+import at.tugraz.kmi.medokyservice.recommendations.RecommendationClassification;
 import at.tugraz.kmi.medokyservice.recommendations.Recommendations;
 
 
@@ -26,6 +27,13 @@ public class TriggerMedoky{
 		return CoreLogic.getInstance().triggerUserClassification(userId, courseId, intNumber, environment);
 	}
 		
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("triggerRecommendation/userId/{userId}/courseId/{courseId}/environment/{environment}/type/{type}")
+	public RecommendationId triggerRecommendation(@DefaultValue("1") @PathParam("userId") String userId, @DefaultValue("1") @PathParam("courseId") String courseId, @DefaultValue("textBased") @PathParam("environment") String environment, @DefaultValue("LearningResource") @PathParam("type") String type, @DefaultValue("application/json") @HeaderParam("Accept") String accept) {
+		//RecommendationId id = new RecommendationId("test");
+		return CoreLogic.getInstance().triggerUserClassification(userId, courseId, environment, type);
+	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

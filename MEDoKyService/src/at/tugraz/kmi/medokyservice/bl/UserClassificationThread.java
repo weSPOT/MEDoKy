@@ -1,6 +1,7 @@
 package at.tugraz.kmi.medokyservice.bl;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import at.tugraz.kmi.medokyservice.classifications.ClassificationManager;
 import at.tugraz.kmi.medokyservice.classifications.UserClassification;
@@ -32,9 +33,9 @@ public  class UserClassificationThread extends Thread{
 			// FIXME change to exceptions for errors
 			ArrayList<UserClassification> classifications = ClassificationManager.getClassifications(this.userId);
 			for (UserClassification classification : classifications){
-				Recommendation recommendation = classification.calculate(this.courseId);
-				if (recommendation != null)
-					this.recommendations.addRecommendation(classification.calculate(this.courseId));
+				Set<Recommendation> recommendations = classification.calculate(this.courseId);
+				for (Recommendation r : recommendations)
+					this.recommendations.addRecommendation(r);
 			}		
 			this.recommendations.setComplete();
 			this.lmsLayerIO.sendRecommendation(this.courseId, this.userId, this.recommendations);
