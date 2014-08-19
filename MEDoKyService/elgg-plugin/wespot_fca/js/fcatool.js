@@ -6,6 +6,7 @@ state = {
   backend_objects : {},
   backend_attributes : {},
   backend_l_objects : {},
+  current_l_objects: {},
   new_objects : {},
   new_attributes : {},
   active_l_objects : {},
@@ -818,7 +819,6 @@ logic = {
     $(".td_attr").css("width", tmp_h + 15);
     $(".td_attr").css("height", tmp_w + 15);
 
-    var los = [];
     for ( var f in state.files) {
       if (state.files[f].name && (state.files[f].name.trim() != "")) {
         if (state.files[f].name && (state.files[f].name.trim() != "")) {
@@ -829,38 +829,48 @@ logic = {
             "id" : Date.now(),
             "externalUID" : state.user.guid
           };
-          los.push(lo);
+          state.current_l_objects[lo.id]=lo;
         }
       }
     }
-
-    backend.create_l_objects(JSON.stringify(los), function(obj) {
-      backend.get_l_objects(function() {
-        if (!state.teacher) {
-          util.switch_student();
-          if (state.load_domain) {
-            backend.get_domains(state.gid, ui.show_initial_domain);
-          } else {
-            logic.enable_disable();
-          }
+    
+    backend.get_l_objects(function() {
+      if (!state.teacher) {
+        util.switch_student();
+        if (state.load_domain) {
+          backend.get_domains(state.gid, ui.show_initial_domain);
         } else {
-          if (state.load_domain) {
-            backend.get_domains('-1', ui.show_initial_domain);
-          } else {
-            logic.enable_disable();
-          }
+          logic.enable_disable();
         }
-        if (state.msie) {
-          console.debug("OH NO, IE! initilaizing objects and attributes on-demand");
-
+      } else {
+        if (state.load_domain) {
+          backend.get_domains('-1', ui.show_initial_domain);
         } else {
-          backend.get_objects(function() {
-            backend.get_attributes(function() {
-            });
+          logic.enable_disable();
+        }
+      }
+      if (state.msie) {
+        console.debug("OH NO, IE! initilaizing objects and attributes on-demand");
+
+      } else {
+        backend.get_objects(function() {
+          backend.get_attributes(function() {
           });
-        }
-      });
+        });
+      }
     });
+    /*
+     * backend.create_l_objects(JSON.stringify(los), function(obj) {
+     * backend.get_l_objects(function() { if (!state.teacher) {
+     * util.switch_student(); if (state.load_domain) {
+     * backend.get_domains(state.gid, ui.show_initial_domain); } else {
+     * logic.enable_disable(); } } else { if (state.load_domain) {
+     * backend.get_domains('-1', ui.show_initial_domain); } else {
+     * logic.enable_disable(); } } if (state.msie) { console.debug("OH NO, IE!
+     * initilaizing objects and attributes on-demand");
+     *  } else { backend.get_objects(function() {
+     * backend.get_attributes(function() { }); }); } }); });
+     */
 
     if (!state.teacher) {
       logic.log("open fca tool", {});
