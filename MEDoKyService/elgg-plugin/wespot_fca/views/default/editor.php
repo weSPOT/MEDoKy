@@ -17,7 +17,7 @@ foreach ( $files as $file ) {
     'data' => $CONFIG->url . 'file/view/' . $file->guid 
   );
   echo("<!-- ");
-  var_dump(get_object_vars($file));
+  echo(($file));
   echo("-->");
   $files_json [] = $json_file;
 }
