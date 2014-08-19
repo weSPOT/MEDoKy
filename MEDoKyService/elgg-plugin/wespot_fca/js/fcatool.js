@@ -476,9 +476,13 @@ util = {
     }
     if (state.owner_id == state.user.guid)
       state.teacher = true;
-
+    
     $("#btn_to_group")
         .attr("onclick", "window.location='" + elgg.get_site_url() + "/groups/profile/" + state.gid + "'");
+    
+    $("#btn_to_file")
+    .attr("onclick", "window.location='" + elgg.get_site_url() + "/file/group/" + state.gid + "'");
+  
   },
 
   init_state : function() {

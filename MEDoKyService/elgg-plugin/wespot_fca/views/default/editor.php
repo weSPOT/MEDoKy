@@ -66,10 +66,12 @@ logic.init("<?php echo $basedir; ?>","http://192.168.1.101:8080/MEDoKyService/re
       width="48px" height="48px" alt="Share" title="<?php echo elgg_echo('wespot_fca:domain:share'); ?>" id="btn_share"
       onclick="logic.display_share_dialog()" /></td>
     <td class="toolbar" style="vertical-align: middle; padding-left: 2em"><h1 id="h_domain_name"></h1></td>
-    <td class="toolbar fca_help"><input type="image" id="btn_help" class="input always_on"
-      src="<?php echo $basedir; ?>img/help.svg" width="48px" height="48px"
-      title="<?php echo elgg_echo('wespot_fca:displayhelp'); ?>" onclick="ui.display_help()"> <input type="image"
-      class="input always_on" title="<?php echo elgg_echo('wespot_fca:togroup'); ?>" id="btn_to_group"
+     <td class="toolbar fca_help">
+      <input type="image" class="input always_on" title="<?php echo elgg_echo('wespot_fca:tofile'); ?>" id="btn_to_file"
+      src="<?php echo $basedir; ?>img/back_group.svg" width="48px" height="48px">
+      <input type="image" id="btn_help" class="input always_on" src="<?php echo $basedir; ?>img/help.svg" width="48px" height="48px"
+      title="<?php echo elgg_echo('wespot_fca:displayhelp'); ?>" onclick="ui.display_help()"> 
+      <input type="image" class="input always_on" title="<?php echo elgg_echo('wespot_fca:togroup'); ?>" id="btn_to_group"
       src="<?php echo $basedir; ?>img/back_group.svg" width="48px" height="48px"></td>
   </tr>
 </table>
