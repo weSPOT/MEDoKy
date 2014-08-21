@@ -3,6 +3,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import at.tugraz.kmi.medokyservice.bl.CoreLogic;
+import at.tugraz.kmi.medokyservice.fca.db.IDGenerator;
 import at.tugraz.kmi.medokyservice.resources.RecommendationId;
 
 public class Recommendation{
@@ -19,16 +20,14 @@ public class Recommendation{
 	public Recommendation (String userId, RecommendationClassification type){
 		 this.type = type; 
 		 this.userId = userId;
-		 java.util.Date date= new java.util.Date();
-		 System.out.println(new Timestamp(date.getTime()));
-		 this.id = userId+this.type.toString()+date.getTime();
+		 this.id = userId+this.type.toString()+IDGenerator.getInstance().getID();
 		 System.out.println(this.id);
 	}
-    
+    /*
     public Recommendation(String text, String userId){
     	this.id = userId+this.type.toString();
     	this.recommendationText = text;
-    }
+    }*/
     
     public RecommendationClassification getType() {
 		return type;
