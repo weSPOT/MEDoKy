@@ -10,6 +10,7 @@ $english = array (
     'wespot_fca:owner_block' => "Formal Concept Analysis",
     'wespot_fca:displayhelp' => "Display Help",
     'wespot_fca:togroup' => "Back to Inquiry",
+	'wespot_fca:tofile' => "Upload Files",
 
     'wespot_fca:err_launch' => "Error! Please Launch the FCA Tool from a Group!",
     'wespot_fca:err_undefined' => "Some %s are undefined!",

@@ -9,7 +9,8 @@ $german = array (
     'wespot_fca:launch' => "Formale Konzeptanalyse starten",
     'wespot_fca:owner_block' => "Formale Konzeptanalyse",
     'wespot_fca:displayhelp' => "Hilfe Anzeigen",
-    'wespot_fca:togroup' => "Zurück zum Inquiry",
+    'wespot_fca:togroup' => "Zurück zur Inquiry",
+    'wespot_fca:tofile' => "Dokumente hinzufügen",
 
     'wespot_fca:err_launch' => "Fehler! Bitte rufen Sie das FCA Tool aus einer Gruppe auf!",
     'wespot_fca:err_undefined' => "Eingie %s sind undefiniert!",
