@@ -6,7 +6,7 @@ function fcatool_init() {
   
   // add to groups
   // add_group_tool_option('wespot_fca', 'FCA', true);
-  //elgg_extend_view ( 'groups/tool_latest', 'wespot_fca/group_module' );
+  elgg_extend_view ( 'groups/tool_latest', 'wespot_fca/group_module' );
   // elgg_register_widget_type('wespot_fca', elgg_echo('wespot_fca'), elgg_echo('wespot_fca'));
   //elgg_register_widget_type ( 'wespot_fca', elgg_echo ( 'wespot_fca:group' ), elgg_echo ( 'wespot_fca:launch' ), "groups" );
   
