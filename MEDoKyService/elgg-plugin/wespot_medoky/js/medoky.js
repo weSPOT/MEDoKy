@@ -51,7 +51,7 @@ function RecommendationContainer() {
     container[recommendation.getId()] = recommendation;
   };
 
-  this.getAndRemove = function(idOrRecommenation) {
+  this.getAndRemove = function(idOrRecommendation) {
     var id = idOrRecommendation;
     if (idOrRecommendation instanceof MEDoKyRecommendation)
       id = idOrRecommendation.getId();
@@ -89,6 +89,15 @@ function RecommendationContainer() {
     }
     return array;
   }
+
+  this.iterator = function() {
+    var array = this.toArray();
+    var i = 0;
+    return function() {
+      if (i < array.length)
+        return array[i++];
+    };
+  }
 }
 
 function MEDoKyREcommendations() {
@@ -109,6 +118,7 @@ function MEDoKyREcommendations() {
       id = idOrRecommendation.getId();
     var rec = this.get(id);
     this.remove(idOrRecommendation);
+    return rec;
   }
 
   this.get = function(id) {
@@ -117,8 +127,8 @@ function MEDoKyREcommendations() {
 
   this.remove = function(idOrRecommendation) {
     try {
-      var rec = recommendations.getAndRemove(idOrRecommenation);
-      recommendationsByType[rec.getId()].remove(idOrRecommendation);
+      var rec = recommendations.getAndRemove(idOrRecommendation);
+      recommendationsByType[rec.getType()].remove(idOrRecommendation);
     } catch (error) {
       throw error;
     }
@@ -138,6 +148,7 @@ var medoky_recommendation_state = {
   gid : elgg.get_page_owner_guid(),
   basedir : elgg.config.wwwroot + "/mod/wespot_medoky/",
   recommendations : new MEDoKyREcommendations(),
+  active_recommendations : [],
   lock : function(id) {
     medoky_recommendation_state.id_detail = id;
     medoky_recommendation_state.locked = true;
@@ -153,7 +164,7 @@ var medoky_ui = {
   prepareDialogs : function() {
     $("#dia_medoky_detail").dialog({
       autoOpen : false,
-      height : 350,
+      height : 310,
       width : 600,
       resizable : false,
       modal : true,
@@ -171,11 +182,12 @@ var medoky_ui = {
   },
 
   displayRecommendationInSidebar : function(recommendation) {
+    var clazz = "pointy"
     if (recommendation.fresh)
       clazz += " fresh";
     var rec = $("#medoky_sidebar_recommendations_" + recommendation.getType()).empty().create("a", {
       class : clazz,
-      onclick : "medoky.displayRecommendation(" + recommendation.getType() + ")"
+      onclick : "medoky_ui.displayRecommendationDialog('" + recommendation.getType() + "')"
     }).slideUp(0);
 
     rec.create("img", {
@@ -185,7 +197,6 @@ var medoky_ui = {
       class : "medoky_recommendation"
     });
     rec.create("txt", recommendation.getText()); // TODO FIXED TEXT
-    rec.data("id", recommendation.getId());
     rec.slideDown(300);
   },
 
@@ -208,9 +219,10 @@ var medoky_ui = {
     var footer = $("#medoky_recommendation_detail_footer").empty();
 
     header.create("txt", "Hello " + medoky_recommendation_state.user.name
-        + ", take a look at your personalised learning recommendations. You may find it useful ...");
+        + ", take a look at your personalised learning recommendations. You may find it useful …");
     var recsByType = medoky_recommendation_state.recommendations.getAllByType(type);
     var firstID;
+    medoky_recommendation_state.active_recommendations = [];
     for ( var i in recsByType) {
       var recommendation = recsByType[i];
       if (i == 0)
@@ -259,6 +271,7 @@ var medoky_ui = {
   },
 
   addRecommendationDetail : function(ul, recommendation, animate) {
+    medoky_recommendation_state.active_recommendations.push(recommendation);
     var clazz = "rec";
     if (recommendation.fresh)
       clazz += " fresh";
@@ -272,7 +285,7 @@ var medoky_ui = {
 
     var span = li.create("span", {
       class : "medoky_recommendation_title pointy",
-      onclick : "medoky_ui.showRecommendationDetail(" + recommendation.getId() + ")"
+      onclick : "medoky_ui.showRecommendationDetail('" + recommendation.getId() + "')"
     });
     span.create("img", {
       src : medoky_recommendation_state.basedir + recommendation.getIcon(),
@@ -357,7 +370,7 @@ var medoky_ui = {
       src : medoky_recommendation_state.basedir + "img/ok.svg",
       width : "22px",
       height : "22px",
-      onclick : "medoky_util.confirmRecommendation(" + recommendation.getId() + ")"
+      onclick : "medoky_util.confirmRecommendation('" + recommendation.getId() + "')"
     });
     var detail = li.create("div", {
       id : "medoky_recommendation_id_" + recommendation.getId(),
@@ -397,6 +410,7 @@ var medoky_backend = {
 
   url : "", // set in init function
   path_trigger : "trigger/userId/#/courseId/#/number/#/environment/#",
+  path_trigger_by_type : "triggerRecommendation/userId/#/courseId/#/environment/#/type/#",
   path_getrecommendation : "getRecommendation/recommendationId/",
 
   trigger : function(uid, callback, cid, num, environ) {
@@ -422,14 +436,44 @@ var medoky_backend = {
     });
   },
 
-  getRecommentations : function(rid, callback) {
+  triggerByType : function(uid, callback, cid, type, environ) {
+    cid = cid ? cid : 1;
+    environ = environ ? environ : "textBased";
+
+    var path_trigger_parts = medoky_backend.path_trigger_by_type.split("#");
+    var path_trigger = path_trigger_parts[0] + uid + path_trigger_parts[1] + cid + path_trigger_parts[2] + environ
+        + path_trigger_parts[3] + type;
+    $.ajax({
+      cache : false,
+      type : "GET",
+      url : medoky_backend.url + path_trigger,
+      success : function(obj) {
+        console.debug(obj);
+        if (callback)
+          callback(obj.recommendationId);
+      },
+      error : function(obj) {
+        console.error(JSON.stringify(obj));
+      }
+    });
+  },
+
+  getRecommentations : function(rid, overwrite, callback) {
     $.ajax({
       cache : false,
       type : "GET",
       url : medoky_backend.url + medoky_backend.path_getrecommendation + rid,
       success : function(obj) {
         console.debug(obj);
-        medoky_recommendation_state.recommendations = new MEDoKyREcommendations();
+        if (obj.status == "pending") {
+          setTimeout(function() {
+            medoky_backend.getRecommentations(rid, overwrite, callback);
+          }, 100);
+          return;
+        }
+
+        if (overwrite)
+          medoky_recommendation_state.recommendations = new MEDoKyREcommendations();
 
         for ( var i in obj.recommendations) {
           var rec = obj.recommendations[i];
@@ -473,7 +517,7 @@ var medoky = {
     if (!medoky_recommendation_state.gid)
       return;
     medoky_backend.trigger(medoky_recommendation_state.user.guid, function(recs_id) {
-      medoky_backend.getRecommentations(recs_id, function(recommendations) {
+      medoky_backend.getRecommentations(recs_id, true, function(recommendations) {
         if (callback)
           callback(refresh);
       });
@@ -484,61 +528,10 @@ var medoky = {
   displayInitialRecommendations : function() {
     $("#medoky_recommendation_detail_top3").empty();
     medoky_ui.displayRecommendationsInSidebar();
-/*
-    if (refresh) {
-      var lastRecommendations = [];
-      for ( var i in medoky_recommendation_state.recommendations) {
-        lastRecommendations.push(medoky_recommendation_state.recommendations[i]);
-      }
-      medoky_recommendation_state.recommendations = [];
-      $("#medoky_sidebar_recommendations").empty();
-      medoky_util.queueRecommendation(false, lastRecommendations[0]);
-      medoky_util.queueRecommendation(false, lastRecommendations[1]);
-      medoky_util.queueRecommendation(false, lastRecommendations[2]);
-      medoky_recommendation_state.animating = false;
-    } else {
-      medoky_util.queueRecommendation();
-      medoky_util.queueRecommendation();
-      medoky_util.queueRecommendation();
-
-    }*/
   }
 };
 
 var medoky_util = {
-
-  queueRecommendation : function(id, lastRecommendation) {
-    console.debug(medoky_recommendation_state.next_recommendations);
-    if (id)
-      medoky_recommendation_state.recommendations.splice(id, 1);
-
-    var newRec = medoky_recommendation_state.next_recommendations.splice(0, 1)[0];
-    if (lastRecommendation && (newRec != lastRecommendation))
-      newRec.fresh = true;
-    console.debug(newRec);
-    console.debug(lastRecommendation);
-    medoky_recommendation_state.recommendations[newRec.getId()] = newRec;
-    if (medoky_recommendation_state.next_recommendations.length < 1)
-      medoky.getRecommendations();
-    var clazz = "pointy";
-    if (newRec.fresh)
-      clazz += " fresh";
-    var rec = $("#medoky_sidebar_recommendations").create("li", {
-      id : "medoky_sidebar_recommendation_id_" + newRec.getId()
-    }).create("a", {
-      class : clazz,
-      onclick : "medoky.displayRecommendation(" + newRec.getId() + ")"
-    }).slideUp(0);
-    rec.create("img", {
-      src : medoky_recommendation_state.basedir + newRec.getIcon(),
-      width : "22px",
-      height : "22px",
-      class : "medoky_recommendation"
-    });
-    rec.create("txt", newRec.getText());
-    rec.slideDown(300);
-    return newRec.getId();
-  },
 
   confirmRecommendation : function(id) {
     if (medoky_recommendation_state.animating)
@@ -554,9 +547,39 @@ var medoky_util = {
     medoky.log("follow recommendation", {
       recommendationId : id
     });
-    var newId = medoky_util.queueRecommendation(id);
-    medoky_ui.addRecommendationDetail($("#medoky_recommendation_detail_top3"),
-        medoky_recommendation_state.recommendations[newId], true);
+    var rec = medoky_recommendation_state.recommendations.getAndRemove(id);
+    var type = rec.getType();
+
+    // remove from active recommendations, not needed, but keeps it clean
+    var recommendations = medoky_recommendation_state.recommendations.getAllByType(type);
+    var active_index = medoky_recommendation_state.active_recommendations.indexOf(rec);
+    medoky_recommendation_state.active_recommendations.splice(active_index, 1);
+
+    var ul = $("#medoky_recommendation_detail_top3");
+    for ( var i in recommendations) {
+      if (medoky_recommendation_state.active_recommendations.indexOf(recommendations[i]) != -1)
+        continue;
+      medoky_ui.addRecommendationDetail(ul, recommendations[i], true);
+      return;
+    }
+    medoky_util.getRecommendationByType(type, function() {
+      recommendations = medoky_recommendation_state.recommendations.getAllByType(type);
+      for ( var i in recommendations) {
+        if (medoky_recommendation_state.active_recommendations.indexOf(recommendations[i]) != -1)
+          continue;
+        medoky_ui.addRecommendationDetail(ul, recommendations[i], true);
+        return;
+      }
+    });
+  },
+
+  getRecommendationByType : function(type, callback) {
+    medoky_backend.triggerByType(medoky_recommendation_state.user.guid, function(recs_id) {
+      medoky_backend.getRecommentations(recs_id, false, function(recommendations) {
+        if (callback)
+          callback();
+      });
+    }, medoky_recommendation_state.gid, type);
   },
 
   pollRecommendations : function() {
@@ -566,8 +589,7 @@ var medoky_util = {
       medoky_ui.closeCallback = function() {
       }
       medoky_recommendation_state.animating = true;
-      medoky_recommendation_state.next_recommendations = [];
-      medoky.getRecommendations(medoky.displayInitialRecommendations, 3, true);
+      medoky.getRecommendations(medoky.displayInitialRecommendations);
     }
 
   }
