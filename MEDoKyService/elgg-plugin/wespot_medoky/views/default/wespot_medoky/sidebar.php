@@ -22,6 +22,9 @@ $(function(){
     </h3>
   </div>
   <ul class="elgg-menu medoky_main" id="medoky_sidebar_recommendations">
+  <li id="medoky_sidebar_recommendations_LearningActivity"></li>
+  <li id="medoky_sidebar_recommendations_LearningPeer"></li>
+  <li id="medoky_sidebar_recommendations_LearningResource"></li>
   </ul>
 </div>
 <div id="dia_medoky_detail" class="medoky_main" title="Your Recommendations">
