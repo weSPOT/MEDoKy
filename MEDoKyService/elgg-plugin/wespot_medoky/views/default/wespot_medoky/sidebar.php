@@ -7,11 +7,11 @@
 <script src="<?php echo $basedir; ?>js/medoky.js"></script>
 <script type="text/javascript">
 $(function(){
-  //medoky_backend.init("http://192.168.1.1:8080/MEDoKyService/rest/");
-  if(medoky_backend.init("http://192.168.1.101:8080/MEDoKyService/rest/")){
-    medoky_ui.prepareDialogs()
-    medoky.getRecommendations(medoky.displayInitialRecommendations);
-    setInterval(medoky_util.pollRecommendations, 150000);
+  if(medoky_backend.init("http://css-kmi.tugraz.at/MEDoKyService/rest/")){
+  //if(medoky_backend.init("http://192.168.1.101:8080/MEDoKyService/rest/")){
+    medoky_ui.prepareDialogs();
+    medoky.fetchRecommendations(medoky.resetView);
+    setInterval(medoky.pollRecommendations, 150000);
   }
  });
 </script>
@@ -22,9 +22,9 @@ $(function(){
     </h3>
   </div>
   <ul class="elgg-menu medoky_main" id="medoky_sidebar_recommendations">
-  <li id="medoky_sidebar_recommendations_LearningActivity"></li>
-  <li id="medoky_sidebar_recommendations_LearningPeer"></li>
-  <li id="medoky_sidebar_recommendations_LearningResource"></li>
+    <li id="medoky_sidebar_recommendations_LearningActivity"></li>
+    <li id="medoky_sidebar_recommendations_LearningPeer"></li>
+    <li id="medoky_sidebar_recommendations_LearningResource"></li>
   </ul>
 </div>
 <div id="dia_medoky_detail" class="medoky_main" title="Your Recommendations">

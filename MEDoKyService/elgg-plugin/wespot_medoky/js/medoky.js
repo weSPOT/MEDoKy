@@ -244,11 +244,11 @@ var medoky_ui = {
     });
 
     $("#dia_medoky_detail").dialog("open");
-    medoky_ui.showRecommendationDetail(firstID);
+    medoky_ui.displayRecommendationDetail(firstID);
 
   },
 
-  showRecommendationDetail : function(id) {
+  displayRecommendationDetail : function(id) {
     if (medoky_recommendation_state.locked)
       return;
     if (!(medoky_recommendation_state.id_detail === undefined))
@@ -285,7 +285,7 @@ var medoky_ui = {
 
     var span = li.create("span", {
       class : "medoky_recommendation_title pointy",
-      onclick : "medoky_ui.showRecommendationDetail('" + recommendation.getId() + "')"
+      onclick : "medoky_ui.displayRecommendationDetail('" + recommendation.getId() + "')"
     });
     span.create("img", {
       src : medoky_recommendation_state.basedir + recommendation.getIcon(),
@@ -370,7 +370,7 @@ var medoky_ui = {
       src : medoky_recommendation_state.basedir + "img/ok.svg",
       width : "22px",
       height : "22px",
-      onclick : "medoky_util.confirmRecommendation('" + recommendation.getId() + "')"
+      onclick : "medoky.confirmRecommendation('" + recommendation.getId() + "')"
     });
     var detail = li.create("div", {
       id : "medoky_recommendation_id_" + recommendation.getId(),
@@ -493,10 +493,6 @@ var medoky_backend = {
 };
 
 var medoky = {
-  displayRecommendation : function(id) {
-    medoky_ui.displayRecommendationDialog();
-    medoky_ui.showRecommendationDetail(id);
-  },
 
   log : function(verb, payload) {
     console.trace();
@@ -513,7 +509,7 @@ var medoky = {
     }
   },
 
-  getRecommendations : function(callback, num, refresh) {
+  fetchRecommendations : function(callback, num, refresh) {
     if (!medoky_recommendation_state.gid)
       return;
     medoky_backend.trigger(medoky_recommendation_state.user.guid, function(recs_id) {
@@ -525,13 +521,10 @@ var medoky = {
 
   },
 
-  displayInitialRecommendations : function() {
+  resetView : function() {
     $("#medoky_recommendation_detail_top3").empty();
     medoky_ui.displayRecommendationsInSidebar();
-  }
-};
-
-var medoky_util = {
+  },
 
   confirmRecommendation : function(id) {
     if (medoky_recommendation_state.animating)
@@ -562,18 +555,23 @@ var medoky_util = {
       medoky_ui.addRecommendationDetail(ul, recommendations[i], true);
       return;
     }
-    medoky_util.getRecommendationByType(type, function() {
-      recommendations = medoky_recommendation_state.recommendations.getAllByType(type);
-      for ( var i in recommendations) {
-        if (medoky_recommendation_state.active_recommendations.indexOf(recommendations[i]) != -1)
-          continue;
-        medoky_ui.addRecommendationDetail(ul, recommendations[i], true);
-        return;
-      }
-    });
+    if (medoky_recommendation_state.recommendations.getAllByType(type).length == 0) {
+      medoky.fetchRecommendationsByType(type, function() {
+        recommendations = medoky_recommendation_state.recommendations.getAllByType(type);
+        var num = 0;
+        for ( var i in recommendations) {
+          // should never happen
+          if (medoky_recommendation_state.active_recommendations.indexOf(recommendations[i]) != -1)
+            continue;
+          medoky_ui.addRecommendationDetail(ul, recommendations[i], true);
+          if (++num > 2)
+            return;
+        }
+      });
+    }
   },
 
-  getRecommendationByType : function(type, callback) {
+  fetchRecommendationsByType : function(type, callback) {
     medoky_backend.triggerByType(medoky_recommendation_state.user.guid, function(recs_id) {
       medoky_backend.getRecommentations(recs_id, false, function(recommendations) {
         if (callback)
@@ -584,12 +582,12 @@ var medoky_util = {
 
   pollRecommendations : function() {
     if (medoky_recommendation_state.dialog_open)
-      medoky_ui.closeCallback = medoky_util.pollRecommendations;
+      medoky_ui.closeCallback = medoky.pollRecommendations;
     else {
       medoky_ui.closeCallback = function() {
       }
       medoky_recommendation_state.animating = true;
-      medoky.getRecommendations(medoky.displayInitialRecommendations);
+      medoky.fetchRecommendations(medoky.resetView);
     }
 
   }
