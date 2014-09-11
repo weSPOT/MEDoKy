@@ -480,9 +480,8 @@ util = {
 
     $("#btn_to_group")
         .attr("onclick", "window.location='" + elgg.get_site_url() + "/groups/profile/" + state.gid + "'");
-    
-    $("#btn_to_file")
-        .attr("onclick", "window.location='" + elgg.get_site_url() + "/file/group/" + state.gid + "'");  
+
+    $("#btn_to_file").attr("onclick", "window.location='" + elgg.get_site_url() + "/file/group/" + state.gid + "'");
   },
 
   init_state : function() {
@@ -812,7 +811,7 @@ logic = {
         "teacher" : state.teacher
       },
       "cid" : state.gid,
-      "cOwner" : ""+state.owner_id,
+      "cOwner" : "" + state.owner_id,
       "cName" : state.g_name
     }), function(id) {
       state.internalUID = parseInt(id);
@@ -876,8 +875,11 @@ logic = {
 
   log : function(verb, payload) {
     console.trace();
-    //payload.userId = state.user.guid;
-    context = {course : elgg.get_page_owner_guid(), user: state.user.guid};
+    // payload.userId = state.user.guid;
+    context = {
+      course : elgg.get_page_owner_guid(),
+      user : state.user.guid
+    };
     try {
       post_to_stepup(window.location.href, verb, context, payload);
     } catch (error) {
@@ -886,11 +888,11 @@ logic = {
     console.log("POST TO STEPUP: " + verb);
     console.log("POST TO STEPUP add info:");
     console.log(context);
-    console.log(payload); 	
+    console.log(payload);
     console.log("POST TO STEPUP add info end");
   },
 
-  remove_lo : function(lo, object, o) {	
+  remove_lo : function(lo, object, o) {
     for ( var i in object.learningObjects) {
       if (object.learningObjects[i] == lo) {
         delete state.active_l_objects[object.learningObjects[i].id];
@@ -976,12 +978,12 @@ logic = {
     }
     if (!state.teacher) {
       logic.log("add learning object", {
-	loName: data.label,        
-	loUrl : state.backend_l_objects[data.data].data,
-        latticeItem: state.current_item.name,
-	itemId : state.current_item.id,
-	domainName: state.domain.name, 
-        domainId : state.domain.id 
+        loName : data.label,
+        loUrl : state.backend_l_objects[data.data].data,
+        latticeItem : state.current_item.name,
+        itemId : state.current_item.id,
+        domainName : state.domain.name,
+        domainId : state.domain.id
       });
     }
 
@@ -1410,10 +1412,10 @@ logic = {
 
         if (state.msie) {
           setTimeout(function() {
-            ui.display_lattice(teacher);
+            ui.display_lattice();
           }, 300);
         } else {
-          ui.display_lattice(teacher);
+          ui.display_lattice();
         }
 
         logic.enable_disable();
@@ -1467,13 +1469,13 @@ logic = {
     };
     backend.update_valuation(JSON.stringify(postdata), lattice.update_valuation);
     logic.log("consume learning object", {
-        loName: state.backend_l_objects[id].name,        
-	loUrl : state.backend_l_objects[id].data,
-        loId : id,
-	domainName: state.domain.name, 
-        domainId : state.domain.id	
+      loName : state.backend_l_objects[id].name,
+      loUrl : state.backend_l_objects[id].data,
+      loId : id,
+      domainName : state.domain.name,
+      domainId : state.domain.id
     });
-     $("#btn_lo_" + id).addClass("btn_lo_clicked");
+    $("#btn_lo_" + id).addClass("btn_lo_clicked");
   }
 };
 
@@ -2398,7 +2400,7 @@ ui = {
     $(".item_description").empty();
   },
 
-  display_lattice : function(hide) {
+  display_lattice : function() {
     if (state.teacher) {
       state.learner_lattice_learner = undefined;
       $("#btn_show_learner_lattice").remove();
@@ -2423,8 +2425,8 @@ ui = {
       });
       lattice.init("#canvas_lattice", $(window).width() - 350, $(window).height() - 100, "#div_lattice_info");
       lattice.draw();
-      if (!hide)
-        $("#vis_loading").show();
+
+      $("#vis_loading").show();
       $("#canvas_lattice").hide();
       $("#div_lattice_info").hide();
       setTimeout(function() {
@@ -2434,22 +2436,22 @@ ui = {
         lattice.switch_view();
       }, 1500);
       $("#cb_latticeview").prop("checked", false);
-      try {
-        $("#dia_vis").dialogExtend("restore");
-      } catch (not_an_error) {
-      }
       $("#dia_vis").dialog("option", "title", elgg.echo('wespot_fca:lattice:tax') + " '" + state.domain.name + "'");
       $("#dia_vis").dialog("option", "width", $("#canvas_lattice").prop("width") + 240);
       $("#dia_vis").dialog("option", "height", $("#canvas_lattice").prop("height") + 50);
       try {
-        $("#dia_vis").dialog("open").dialogExtend("restore");
+        $("#dia_vis").dialog("open").dialogExtend("minimize");
       } catch (error) {
       }
       $("#dia_vis").fadeTo(0, 0);
       $("#dia_vis").fadeTo(1000, 1);
+      if (state.domain.approved) {
+        ui.hide_learner_lattice_dropdown();
+      }
+      console.debug("MIN!");
+      $("#dia_vis").dialogExtend("minimize");
     } else {
-      if (!hide)
-        $("#dia_vis").show();
+      $("#dia_vis").show();
       $("#dia_vis").css("width", "100%");
       $("#dia_vis").css("height", $(window).height() - 150 + "px");
       lattice.init("#canvas_lattice", $("#dia_vis").width() - 220, $("#dia_vis").height(), "#div_lattice_info");
@@ -2467,9 +2469,6 @@ ui = {
 
       $("#dia_vis").fadeTo(0, 0);
       $("#dia_vis").fadeTo(1000, 1);
-    }
-    if (state.domain.approved && state.teacher) {
-      ui.hide_learner_lattice_dropdown();
     }
   },
 
