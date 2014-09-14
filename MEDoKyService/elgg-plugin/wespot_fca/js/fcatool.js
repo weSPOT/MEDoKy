@@ -1465,7 +1465,8 @@ logic = {
     var postdata = {
       "id" : state.domain.id,
       "externalUID" : state.user.guid.toString(),
-      "learningObjectId" : id
+      "learningObjectId" : id,
+      "course":false
     };
     backend.update_valuation(JSON.stringify(postdata), lattice.update_valuation);
     logic.log("consume learning object", {
