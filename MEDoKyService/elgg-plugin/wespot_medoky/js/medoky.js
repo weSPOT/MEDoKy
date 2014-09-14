@@ -1,4 +1,4 @@
-function MEDoKyRecommendation(type, text, link, linkTitle, description, id) {
+function MEDoKyRecommendation(type, text, link, linkTitle, description, id, learningObjectId) {
   this.fresh = false;
 
   this.getIcon = function() {
@@ -33,6 +33,10 @@ function MEDoKyRecommendation(type, text, link, linkTitle, description, id) {
   this.getLinkTitle = function() {
     return linkTitle;
   };
+
+  this.getLearningObjectId = function() {
+    return learningObjectId;
+  }
 }
 MEDoKyRecommendation.TYPE_ACTIVITY = "LearningActivity";
 MEDoKyRecommendation.TYPE_PEER = "LearningPeer";
@@ -380,10 +384,14 @@ var medoky_ui = {
     var recommendedResource = recommendation.getLink();
     if (recommendedResource) {
       detail.create("txt", "Recommended Resource: ");
-      detail.create("a", {
-        class : "pointy bold",
-        onclick : "window.open(\"" + recommendation.getLink() + "\", \"Learning Object\", \"width=800,height=600\");"
-      }).create("txt", recommendation.getLinkTitle());
+      detail.create(
+          "a",
+          {
+            class : "pointy bold",
+            onclick : "window.open(\"" + recommendation.getLink()
+                + "\", \"Learning Object\", \"width=800,height=600\"); medoky.storeLOClick("
+                + recommendation.getLearningObjectId() + ");"
+          }).create("txt", recommendation.getLinkTitle());
       detail.create("br");
     }
 
@@ -412,6 +420,7 @@ var medoky_backend = {
   path_trigger : "trigger/userId/#/courseId/#/number/#/environment/#",
   path_trigger_by_type : "triggerRecommendation/userId/#/courseId/#/environment/#/type/#",
   path_getrecommendation : "getRecommendation/recommendationId/",
+  path_valuation : "valuations",
 
   trigger : function(uid, callback, cid, num, environ) {
     cid = cid ? cid : 1;
@@ -478,7 +487,7 @@ var medoky_backend = {
         for ( var i in obj.recommendations) {
           var rec = obj.recommendations[i];
           medoky_recommendation_state.recommendations.put(new MEDoKyRecommendation(rec.type, rec.recommendationText,
-              rec.link, rec.linkTitle, rec.explanation, rec.id));
+              rec.link, rec.linkTitle, rec.explanation, rec.id, rec.learningObjectId));
         }
         if (callback) {
           callback();
@@ -486,6 +495,20 @@ var medoky_backend = {
       },
       error : function(obj) {
         console.error(JSON.stringify(obj));
+      }
+    });
+  },
+  updateValuation : function(payload, callback) {
+    $.ajax({
+      cache : false,
+      type : "POST",
+      url : medoky_backend.url + "FCATool/" + medoky_backend.path_valuation,
+      data : payload,
+      dataType : "json",
+      contentType : "application/json; charset=utf-8",
+      success : function(obj) {
+        if (callback)
+          callback(obj);
       }
     });
   }
@@ -507,6 +530,16 @@ var medoky = {
     } catch (error) {
       console.log(error);
     }
+  },
+
+  storeLOClick : function(lo_id) {
+    var postdata = {
+      "id" : parseInt(medoky_recommendation_state.gid),
+      "externalUID" : medoky_recommendation_state.user.guid.toString(),
+      "learningObjectId" : lo_id,
+      "course" : true
+    };
+    medoky_backend.updateValuation(JSON.stringify(postdata));
   },
 
   fetchRecommendations : function(callback, num, refresh) {

@@ -52,6 +52,7 @@ public class LearningObjectRecommendation extends UserClassification {
 			recommendation.setExplanation("This resource is related to a concept in your learning context you have not learned yet.");
 			recommendation.setLink(lo.getData());
 			recommendation.setLinkTitle(lo.getName());
+			recommendation.setLearningObjectId(lo.getId());
 			this.recommendations.add(recommendation);
 		}
 	} 
