@@ -2194,10 +2194,7 @@ ui = {
     var tdiv = div.create("div", {
       "class" : byLearner ? "txt_lo learner_lo" : "txt_lo"
     }).click(function() {
-      if (!state.teacher) {
-        logic.consume_lo(lo.id);
-      }
-      window.open(lo.data, "Learning Object", "width=800,height=600");
+      ui.show_lo_popup(lo.id, lo.data);
     });
     tdiv.create("txt", lo.name);
     var buttons = div.create("div", {
@@ -2482,11 +2479,11 @@ ui = {
     }
   },
 
-  show_lo_popup : function(id) {
+  show_lo_popup : function(id, url) {
     if (!state.teacher) {
       logic.consume_lo(id);
     }
-    window.open($(this).data("url"), "Learning Object", "width=800,height=600");
+    window.open(url, "Learning Object", "width=800,height=600");
   },
 
   show_learner_lattice_dropdown : function() {

@@ -574,7 +574,7 @@ lattice = {
 
       .click(function() {
         var loID = parseInt(this.id.split("_")[2]);
-        ui.show_lo_popup(loID);
+        ui.show_lo_popup(loID, $(this).data("url"));
         console.debug(this.id);
       }).hover(function() {
         $(this).addClass("lattice_lo_hover");
