@@ -589,8 +589,11 @@ public class FCAService {
     if (u == null) {
       u = new User(user.externalUID, user.name, user.description);
       log("New User " + u.getId() + ", " + u.getExternalUid() + ", " + u.getName() + ", " + u.getDescription());
-      Database.getInstance().put(u, true);
+    }else{
+      u.setName(user.name);
+      u.setDescription(user.description);
     }
+    Database.getInstance().put(u, true);
     if (!user.teacher)
       try {
         log("Creating learner Model for Inquiry: " + meta.cid);
