@@ -77,6 +77,7 @@ $english = array (
     'wespot_fca:domain' => "Domain",
     'wespot_fca:domains' => "Domains",
     'wespot_fca:domain:open' => "Open Existing Domain",
+    'wespot_fca:domain:from_existing' => 'New Domain from Current',
     'wespot_fca:domain:share' => "Share Domain",
     'wespot_fca:domain:new' => "New Domain",
     'wespot_fca:domain:save' => "Save Domain As...",

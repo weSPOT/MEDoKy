@@ -2262,12 +2262,12 @@ ui = {
     $(".descr_detail").show();
     $(".text_description").show();
     $(pack.textarea_descr).prop("readonly", true);
-    if(pack.items[id]){
+    if (pack.items[id]) {
       $(".text_description").val(pack.items[id].description);
       ui.display_learning_objects(pack.items[id], entityType);
       pack.select.val(pack.items[id].name);
       state.current_item = pack.items[id];
-    }else{
+    } else {
       state.current_item = pack.new_items[id];
       $(".text_description").val(pack.new_items[id].description);
       ui.display_learning_objects(pack.new_items[id], entityType);
@@ -2358,8 +2358,13 @@ ui = {
 
       if (courses[id].externalCourseID == state.gid) {
         for ( var d in courses[id].domains) {
-          logic.load(d, state.teacher);
-          return;
+          var dom = courses[id].domains[d];
+          console.debug(dom);
+          console.debug(state.user.guid);
+          if (dom.approved || dom.owner.externalUid == state.user.guid) {
+            logic.load(d, state.teacher);
+            return;
+          }
         }
       }
     }
