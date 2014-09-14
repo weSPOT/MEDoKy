@@ -1880,6 +1880,9 @@ ui = {
     }
     if (id)
       pack.select.blur();
+    else
+      pack.select.val("");
+    $("#btn_item_edit").hide();
   },
 
   prepare_dialog : function(entityType) {
@@ -2235,7 +2238,7 @@ ui = {
     for ( var i in object.learningObjectsByLearners) {
       ui.create_lo_div(object.learningObjectsByLearners[i], object, div_lo, entityType, true);
     }
-    if (!state.domain.global) {
+    if (!state.domain || !state.domain.global) {
       div_lo.append("<br>");
       div_lo.create("input", {
         type : "image",
@@ -2254,18 +2257,17 @@ ui = {
     $(".btn_edit").show();
 
     var pack = util.setup_by_type(entityType);
-
     state.item_id = id;
     $(".text_description").empty();
     $(".descr_detail").show();
     $(".text_description").show();
     $(pack.textarea_descr).prop("readonly", true);
-    try {
+    if(pack.items[id]){
       $(".text_description").val(pack.items[id].description);
       ui.display_learning_objects(pack.items[id], entityType);
       pack.select.val(pack.items[id].name);
       state.current_item = pack.items[id];
-    } catch (not_an_error) {
+    }else{
       state.current_item = pack.new_items[id];
       $(".text_description").val(pack.new_items[id].description);
       ui.display_learning_objects(pack.new_items[id], entityType);
