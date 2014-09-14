@@ -2396,9 +2396,12 @@ ui = {
             "--- " + elgg.echo("wespot_fca:course") + " " + decodeURIComponent(courses[id].name) + " ---");
         for ( var d in courses[id].domains) {
           courses[id].domains[d].id = d;
-          $("#sel_set_dom").create("option", {
-            value : JSON.stringify(courses[id].domains[d])
-          }).create("txt", "\u2192 " + courses[id].domains[d].name);
+          var dom = courses[id].domains[d];
+          if (dom.approved || dom.owner.externalUid == state.user.guid) {
+            $("#sel_set_dom").create("option", {
+              value : JSON.stringify(courses[id].domains[d])
+            }).create("txt", "\u2192 " + courses[id].domains[d].name);
+          }
         }
       }
     }
