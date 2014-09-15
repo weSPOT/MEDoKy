@@ -544,7 +544,8 @@ lattice = {
     }
 
     var rowspan;
-    Object.keys(concept.objects).length > 0 ? rowspan = "6" : rowspan = "7";
+    // Object.keys(concept.objects).length > 0 ? rowspan = "6" : rowspan = "7";
+    rowspan = "6";
     // learning object names
     for ( var lo in learningObjects) {
       var isClicked = false

@@ -200,7 +200,13 @@ var medoky_ui = {
       height : "22px",
       class : "medoky_recommendation"
     });
-    rec.create("txt", recommendation.getText()); // TODO FIXED TEXT
+    var txt = "Take a look at this resource."
+    var recType = recommendation.getType();
+    if (recType == MEDoKyRecommendation.TYPE_ACTIVITY)
+      txt = "Engage in a new activities."
+    else if (recType == MEDoKyRecommendation.TYPE_PEER)
+      txt = "Discuss your findings with others."
+    rec.create("txt", txt);
     rec.slideDown(300);
   },
 
