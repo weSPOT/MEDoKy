@@ -481,7 +481,7 @@ util = {
     $("#btn_to_group")
         .attr("onclick", "window.location='" + elgg.get_site_url() + "/groups/profile/" + state.gid + "'");
 
-    $("#btn_to_file").attr("onclick", "window.location='" + elgg.get_site_url() + "/file/group/" + state.gid + "'");
+    $("#btn_to_file").attr("onclick", "window.location='" + elgg.get_site_url() + "file/add/" + state.gid + "'");
   },
 
   init_state : function() {
@@ -1218,7 +1218,7 @@ logic = {
 
     $("#sel_set_lo").removeData();
 
-    if ((data.toLowerCase().indexOf("http://") == -1) || (data.toLowerCase().indexOf("https://") == -1))
+    if ((data.toLowerCase().indexOf("http://") == -1) && (data.toLowerCase().indexOf("https://") == -1))
       data = "http://" + data;
     var lo = {
       name : name,
@@ -1620,12 +1620,12 @@ ui = {
   },
 
   try_show_save_dialog : function() {
-    if (logic.check_save)
+    if (logic.check_save())
       logic.save_domain();
   },
 
   try_show_create_dialog : function() {
-    if (logic.check_save)
+    if (logic.check_save())
       $('#dia_create_domain').dialog('open');
   },
 
@@ -2367,13 +2367,14 @@ ui = {
       }
     }
     // if (!state.teacher)
-    for ( var id in courses) {
+    // loads IBL domain in case no other domain is assigned to the inquiry
+    /*for ( var id in courses) {
       if (courses[id].externalCourseID == "-1")
         for ( var d in courses[id].domains) {
           logic.load(d, state.teacher);
           return;
         }
-    }
+    }*/
     // $("#btn_approve, #btn_from_existing").hide();
   },
 
