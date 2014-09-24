@@ -551,9 +551,24 @@ public class FCAService {
   public Map<Long, ValuationWrapper> updateValuations(UpdateWrapper valuations) throws Exception {
     log("updateConcept");
 
-    LearnerDomain domain = Database.getInstance().get(valuations.id);
-    Updater.update(domain, valuations.learningObjectId);
-    return getValuations(domain.getId());
+    User u = Database.getInstance().getUserByExternalUID(valuations.externalUID);
+    if (u == null) {
+      u = new User(valuations.externalUID, "Anonymous", "generated at backend");
+      Database.getInstance().put(u, true);
+    }
+    if (valuations.course) {
+      Course c = Database.getInstance().getCourseByExternalID(Long.toString(valuations.id));
+      Magic.createLearnerModel(u, Long.toString(valuations.id));
+      for (Domain d : c.getDomains()) {
+        LearnerDomain domain = d.getLearnerDomain(u.getId());
+        Updater.update(domain, valuations.learningObjectId);
+      }
+      return new HashMap<Long, ValuationWrapper>();
+    } else {
+      LearnerDomain domain = Database.getInstance().get(valuations.id);
+      Updater.update(domain, valuations.learningObjectId);
+      return getValuations(domain.getId());
+    }
   }
 
   /**
@@ -574,8 +589,11 @@ public class FCAService {
     if (u == null) {
       u = new User(user.externalUID, user.name, user.description);
       log("New User " + u.getId() + ", " + u.getExternalUid() + ", " + u.getName() + ", " + u.getDescription());
-      Database.getInstance().put(u, true);
+    }else{
+      u.setName(user.name);
+      u.setDescription(user.description);
     }
+    Database.getInstance().put(u, true);
     if (!user.teacher)
       try {
         log("Creating learner Model for Inquiry: " + meta.cid);

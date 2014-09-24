@@ -10,5 +10,6 @@ public class UpdateWrapper extends AbstractWrapper {
 
   public long   learningObjectId;
   public String externalUID;
+  public boolean course;
 
 }

@@ -15,6 +15,7 @@ public class Recommendation{
     private String linkTitle;
     private String id;
     private String userId;
+    private long learningObjectId;
     
 
 	public Recommendation (String userId, RecommendationClassification type){
@@ -85,5 +86,13 @@ public class Recommendation{
 	public String toString(){
 		return "id:"+this.id+", text:"+this.recommendationText;
 	}
+
+  public long getLearningObjectId() {
+    return learningObjectId;
+  }
+
+  public void setLearningObjectId(long learningObjectId) {
+    this.learningObjectId = learningObjectId;
+  }
 	
 }

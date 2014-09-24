@@ -43,8 +43,8 @@ foreach ( $g as $obj ) {
 <script>
 $(function(){
 //logic.init("<?php echo $basedir; ?>","http://berndpruenster.org/webapps/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
-//logic.init("<?php echo $basedir; ?>","http://192.168.1.101:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
-logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
+logic.init("<?php echo $basedir; ?>","http://192.168.1.101:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
+//logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
 
 });
 </script>

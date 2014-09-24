@@ -74,6 +74,7 @@ $german = array (
     'wespot_fca:domain' => "Domäne",
     'wespot_fca:domains' => "Domänen",
     'wespot_fca:domain:open' => "Vorhandene Domäne Öffnen",
+    'wespot_fca:domain:from_existing' => 'Neue Domäne auf Basis der aktuellen',
     'wespot_fca:domain:share' => "Domäne Teilen",
     'wespot_fca:domain:new' => "Neue Domäne",
     'wespot_fca:domain:save' => "Domäne Speichern Unter...",

@@ -3,13 +3,13 @@
     "-1125899906842620": {
       "id": -1125899906842620,
       "name": "Bernd Prünster",
-      "description": "http://wespot.kmi.open.ac.uk/profile/BerndPrünster",
+      "description": "http://inquiry.wespot.net/profile/BerndPrünster",
       "externalUid": "215"
     },
     "-1125899906842619": {
       "id": -1125899906842619,
       "name": "Simone Kopeinik",
-      "description": "http://wespot.kmi.open.ac.uk/profile/SimoneKopeinik",
+      "description": "http://inquiry.wespot.net/profile/SimoneKopeinik",
       "externalUid": "173"
     },
     "-1125899906842618": {
@@ -21,19 +21,19 @@
     "-1125899906842623": {
       "id": -1125899906842623,
       "name": "Jose Luis Santos",
-      "description": "http://wespot.kmi.open.ac.uk/profile/JoseLuisSantos",
+      "description": "http://inquiry.wespot.net/profile/JoseLuisSantos",
       "externalUid": "203"
     },
     "-1125899906842622": {
       "id": -1125899906842622,
       "name": "Michael Bedek",
-      "description": "http://wespot.kmi.open.ac.uk/profile/michbed",
+      "description": "http://inquiry.wespot.net/profile/michbed",
       "externalUid": "1034"
     },
     "-1125899906842621": {
       "id": -1125899906842621,
       "name": "Gudrun Wesiak",
-      "description": "http://wespot.kmi.open.ac.uk/profile/GudrunWesiak",
+      "description": "http://inquiry.wespot.net/profile/GudrunWesiak",
       "externalUid": "4521"
     }
   },
@@ -56,7 +56,7 @@
       "id": -1125899906842550,
       "name": "Diet chocolate cookies.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6687",
+      "data": "http://inquiry.wespot.net/file/view/6687",
       "owner": -1125899906842619
     },
     "-1125899906842549": {
@@ -70,42 +70,42 @@
       "id": -1125899906842548,
       "name": "041 Morphology of a bee.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/5906",
+      "data": "http://inquiry.wespot.net/file/view/5906",
       "owner": -1125899906842620
     },
     "-1125899906842547": {
       "id": -1125899906842547,
       "name": "Danone ACTIVIA Müsli.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6686",
+      "data": "http://inquiry.wespot.net/file/view/6686",
       "owner": -1125899906842619
     },
     "-1125899906842546": {
       "id": -1125899906842546,
       "name": "Burger King Big King.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6133",
+      "data": "http://inquiry.wespot.net/file/view/6133",
       "owner": -1125899906842620
     },
     "-1125899906842545": {
       "id": -1125899906842545,
       "name": "Morgan et al. (2009). Environmental Education in Botanic Gardens: Exploring Brooklyn Botanic Garden’s Project Green Reach",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/4358",
+      "data": "http://inquiry.wespot.net/file/view/4358",
       "owner": -1125899906842620
     },
     "-1125899906842560": {
       "id": -1125899906842560,
       "name": "salt-effects-fact sheet2.pdf",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6765",
+      "data": "http://inquiry.wespot.net/file/view/6765",
       "owner": -1125899906842622
     },
     "-1125899906842559": {
       "id": -1125899906842559,
       "name": "Sausage.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6766",
+      "data": "http://inquiry.wespot.net/file/view/6766",
       "owner": -1125899906842619
     },
     "-1125899906842558": {
@@ -119,7 +119,7 @@
       "id": -1125899906842557,
       "name": "The health effects of dietary unsaturated fatty acids.pdf",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6768",
+      "data": "http://inquiry.wespot.net/file/view/6768",
       "owner": -1125899906842622
     },
     "-1125899906842556": {
@@ -154,105 +154,105 @@
       "id": -1125899906842595,
       "name": "Spotted Tree Frog",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/5937",
+      "data": "http://inquiry.wespot.net/file/view/5937",
       "owner": -1125899906842619
     },
     "-1125899906842596": {
       "id": -1125899906842596,
       "name": "Bounty.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6132",
+      "data": "http://inquiry.wespot.net/file/view/6132",
       "owner": -1125899906842622
     },
     "-1125899906842593": {
       "id": -1125899906842593,
       "name": "Pear",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6771",
+      "data": "http://inquiry.wespot.net/file/view/6771",
       "owner": -1125899906842622
     },
     "-1125899906842594": {
       "id": -1125899906842594,
       "name": "Clover",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/5938",
+      "data": "http://inquiry.wespot.net/file/view/5938",
       "owner": -1125899906842619
     },
     "-1125899906842599": {
       "id": -1125899906842599,
       "name": "Donaldson (?) Botanic gardens science for conservation and global change",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/4349",
+      "data": "http://inquiry.wespot.net/file/view/4349",
       "owner": -1125899906842620
     },
     "-1125899906842600": {
       "id": -1125899906842600,
       "name": "Raven",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/5939",
+      "data": "http://inquiry.wespot.net/file/view/5939",
       "owner": -1125899906842620
     },
     "-1125899906842597": {
       "id": -1125899906842597,
       "name": "Voles",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/5936",
+      "data": "http://inquiry.wespot.net/file/view/5936",
       "owner": -1125899906842623
     },
     "-1125899906842598": {
       "id": -1125899906842598,
       "name": "Johnson (2012). Reconceptualising gardening to promote inclusive education for sustainable development",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/4355",
+      "data": "http://inquiry.wespot.net/file/view/4355",
       "owner": -1125899906842620
     },
     "-1125899906842603": {
       "id": -1125899906842603,
       "name": "McDonald`s Grilled Chicken Salad.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6756",
+      "data": "http://inquiry.wespot.net/file/view/6756",
       "owner": -1125899906842619
     },
     "-1125899906842604": {
       "id": -1125899906842604,
       "name": "Hazelnut chocolate spread.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6751",
+      "data": "http://inquiry.wespot.net/file/view/6751",
       "owner": -1125899906842619
     },
     "-1125899906842601": {
       "id": -1125899906842601,
       "name": "Sellmann \u0026amp; Bogner (2012). Climate change education: quantitatively assessing the impact of a botanical garden as an informal learning environment",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/4352",
+      "data": "http://inquiry.wespot.net/file/view/4352",
       "owner": -1125899906842620
     },
     "-1125899906842602": {
       "id": -1125899906842602,
       "name": "salt-effects.pdf",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6762",
+      "data": "http://inquiry.wespot.net/file/view/6762",
       "owner": -1125899906842619
     },
     "-1125899906842607": {
       "id": -1125899906842607,
       "name": "Gouda.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6746",
+      "data": "http://inquiry.wespot.net/file/view/6746",
       "owner": -1125899906842619
     },
     "-1125899906842608": {
       "id": -1125899906842608,
       "name": "Ham.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6750",
+      "data": "http://inquiry.wespot.net/file/view/6750",
       "owner": -1125899906842619
     },
     "-1125899906842605": {
       "id": -1125899906842605,
       "name": "Kelloggs Frosties.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6752",
+      "data": "http://inquiry.wespot.net/file/view/6752",
       "owner": -1125899906842619
     },
     "-1125899906842606": {
@@ -266,14 +266,14 @@
       "id": -1125899906842612,
       "name": "Mozzarella.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6758",
+      "data": "http://inquiry.wespot.net/file/view/6758",
       "owner": -1125899906842619
     },
     "-1125899906842611": {
       "id": -1125899906842611,
       "name": "Potato Salad.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6760",
+      "data": "http://inquiry.wespot.net/file/view/6760",
       "owner": -1125899906842619
     },
     "-1125899906842610": {
@@ -294,7 +294,7 @@
       "id": -1125899906842616,
       "name": "Pringles.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6761",
+      "data": "http://inquiry.wespot.net/file/view/6761",
       "owner": -1125899906842619
     },
     "-1125899906842615": {
@@ -308,14 +308,14 @@
       "id": -1125899906842614,
       "name": "Potato Chips.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6759",
+      "data": "http://inquiry.wespot.net/file/view/6759",
       "owner": -1125899906842619
     },
     "-1125899906842613": {
       "id": -1125899906842613,
       "name": "McDonald`s Hamburger.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6757",
+      "data": "http://inquiry.wespot.net/file/view/6757",
       "owner": -1125899906842619
     },
     "-1125899906842617": {
@@ -329,28 +329,28 @@
       "id": -1125899906842561,
       "name": "Earthworm Fact sheet",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6763",
+      "data": "http://inquiry.wespot.net/file/view/6763",
       "owner": -1125899906842619
     },
     "-1125899906842562": {
       "id": -1125899906842562,
       "name": "Vegetable Soup.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6769",
+      "data": "http://inquiry.wespot.net/file/view/6769",
       "owner": -1125899906842622
     },
     "-1125899906842563": {
       "id": -1125899906842563,
       "name": "Sugar-fact-sheet.pdf",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6767",
+      "data": "http://inquiry.wespot.net/file/view/6767",
       "owner": -1125899906842622
     },
     "-1125899906842564": {
       "id": -1125899906842564,
       "name": "salt-effects-fact sheet.pdf",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6764",
+      "data": "http://inquiry.wespot.net/file/view/6764",
       "owner": -1125899906842622
     },
     "-1125899906842565": {
@@ -371,28 +371,28 @@
       "id": -1125899906842567,
       "name": "Garlic Sauce.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6736",
+      "data": "http://inquiry.wespot.net/file/view/6736",
       "owner": -1125899906842622
     },
     "-1125899906842568": {
       "id": -1125899906842568,
       "name": "Fruit-Yogurt.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6735",
+      "data": "http://inquiry.wespot.net/file/view/6735",
       "owner": -1125899906842622
     },
     "-1125899906842569": {
       "id": -1125899906842569,
       "name": "Duplo.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6733",
+      "data": "http://inquiry.wespot.net/file/view/6733",
       "owner": -1125899906842622
     },
     "-1125899906842570": {
       "id": -1125899906842570,
       "name": "Frozen Pizza.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6734",
+      "data": "http://inquiry.wespot.net/file/view/6734",
       "owner": -1125899906842622
     },
     "-1125899906842571": {
@@ -406,21 +406,21 @@
       "id": -1125899906842572,
       "name": "Langnese Callipo Cola.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6754",
+      "data": "http://inquiry.wespot.net/file/view/6754",
       "owner": -1125899906842619
     },
     "-1125899906842573": {
       "id": -1125899906842573,
       "name": "Magnum Ice Cream.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6755",
+      "data": "http://inquiry.wespot.net/file/view/6755",
       "owner": -1125899906842619
     },
     "-1125899906842574": {
       "id": -1125899906842574,
       "name": "Ketchup.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6753",
+      "data": "http://inquiry.wespot.net/file/view/6753",
       "owner": -1125899906842619
     },
     "-1125899906842575": {
@@ -434,7 +434,7 @@
       "id": -1125899906842576,
       "name": "creme cheese.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6685",
+      "data": "http://inquiry.wespot.net/file/view/6685",
       "owner": -1125899906842622
     },
     "-1125899906842578": {
@@ -462,7 +462,7 @@
       "id": -1125899906842579,
       "name": "ants.jpg",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6773",
+      "data": "http://inquiry.wespot.net/file/view/6773",
       "owner": -1125899906842619
     },
     "-1125899906842582": {
@@ -483,14 +483,14 @@
       "id": -1125899906842584,
       "name": "Morphology of a snail",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6772",
+      "data": "http://inquiry.wespot.net/file/view/6772",
       "owner": -1125899906842619
     },
     "-1125899906842583": {
       "id": -1125899906842583,
       "name": "Apple Tree",
       "description": "",
-      "data": "http://wespot.kmi.open.ac.uk/file/view/6770",
+      "data": "http://inquiry.wespot.net/file/view/6770",
       "owner": -1125899906842619
     },
     "-1125899906842586": {
