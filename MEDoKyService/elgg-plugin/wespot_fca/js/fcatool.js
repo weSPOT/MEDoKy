@@ -1798,7 +1798,7 @@ ui = {
   },
 
   set_item : function(index, entityType, id) {
-
+    $("#lo_item").show();
     state.select_do_create = false;
     var pack = util.setup_by_type(entityType);
 
@@ -2290,7 +2290,7 @@ ui = {
     state.editing = false;
     state.current_item = undefined;
     var pack = util.setup_by_type(entityType);
-
+    $("#lo_item").show();
     $(pack.textarea_descr).val(item.description);
     pack.select.val(item.name);
     ui.set_item(pack.index, entityType, item.id);
@@ -2304,7 +2304,7 @@ ui = {
     }
     $(".btn_edit").hide();
     var pack = util.setup_by_type(entityType);
-
+    $("#lo_item").hide();
     try {
       pack.select.autocomplete("destroy");
     } catch (not_an_error) {
