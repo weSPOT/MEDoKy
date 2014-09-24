@@ -1466,7 +1466,7 @@ logic = {
       "id" : state.domain.id,
       "externalUID" : state.user.guid.toString(),
       "learningObjectId" : id,
-      "course":false
+      "course" : false
     };
     backend.update_valuation(JSON.stringify(postdata), lattice.update_valuation);
     logic.log("consume learning object", {
@@ -1799,6 +1799,7 @@ ui = {
 
   set_item : function(index, entityType, id) {
     $("#lo_item").show();
+    $("#label_lo").show();
     state.select_do_create = false;
     var pack = util.setup_by_type(entityType);
 
@@ -1812,8 +1813,9 @@ ui = {
 
     if (!id && data.data(pack.key))
       id = data.data(pack.key).id;
-    if (id)
+    if (id) {
       ui.display_item_description(id, entityType);
+    }
 
     if (state.msie && !(pack.inited)) {
       if (entityType == entity_types.attribute) {
@@ -1881,9 +1883,10 @@ ui = {
     }
     if (id)
       pack.select.blur();
-    else
+    else {
       pack.select.val("");
-    $("#btn_item_edit").hide();
+      $("#btn_item_edit").hide();
+    }
   },
 
   prepare_dialog : function(entityType) {
@@ -2290,10 +2293,17 @@ ui = {
     state.editing = false;
     state.current_item = undefined;
     var pack = util.setup_by_type(entityType);
-    $("#lo_item").show();
-    $(pack.textarea_descr).val(item.description);
-    pack.select.val(item.name);
-    ui.set_item(pack.index, entityType, item.id);
+    // no item was selected, a new one was being created
+    if (!item) {
+      $(pack.textarea_descr).val("");
+      ui.set_item(pack.index, entityType);
+    } else {
+      $("#lo_item").show();
+      $("#label_lo").show();
+      $(pack.textarea_descr).val(item.description);
+      pack.select.val(item.name);
+      ui.set_item(pack.index, entityType, item.id);
+    }
   },
 
   prepare_item_edit : function(entityType, clear) {
@@ -2305,6 +2315,7 @@ ui = {
     $(".btn_edit").hide();
     var pack = util.setup_by_type(entityType);
     $("#lo_item").hide();
+    $("#label_lo").hide();
     try {
       pack.select.autocomplete("destroy");
     } catch (not_an_error) {
@@ -2368,13 +2379,10 @@ ui = {
     }
     // if (!state.teacher)
     // loads IBL domain in case no other domain is assigned to the inquiry
-    /*for ( var id in courses) {
-      if (courses[id].externalCourseID == "-1")
-        for ( var d in courses[id].domains) {
-          logic.load(d, state.teacher);
-          return;
-        }
-    }*/
+    /*
+     * for ( var id in courses) { if (courses[id].externalCourseID == "-1") for (
+     * var d in courses[id].domains) { logic.load(d, state.teacher); return; } }
+     */
     // $("#btn_approve, #btn_from_existing").hide();
   },
 

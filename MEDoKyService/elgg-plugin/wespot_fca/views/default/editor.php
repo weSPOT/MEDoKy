@@ -306,7 +306,7 @@ logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at/MEDoKyService/res
         <td></td>
       </tr>
       <tr class="descr_detail">
-        <td class="layout_select"><?php echo elgg_echo('wespot_fca:l_objs'); ?></td>
+        <td class="layout_select" id="label_lo"><?php echo elgg_echo('wespot_fca:l_objs'); ?></td>
         <td>
           <div id="lo_item" class="div_lo"></div>
         </td>
