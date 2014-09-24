@@ -2365,15 +2365,24 @@ ui = {
         return;
       }
 
+      var dId = undefined;
       if (courses[id].externalCourseID == state.gid) {
         for ( var d in courses[id].domains) {
           var dom = courses[id].domains[d];
           console.debug(dom);
           console.debug(state.user.guid);
           if (dom.approved || dom.owner.externalUid == state.user.guid) {
-            logic.load(d, state.teacher);
-            return;
+            if (dId === undefined)
+              dId = d;
+            else {
+              if (dId > d)
+                dId = d;
+            }
           }
+        }
+        if (!(dId === undefined)) {
+          logic.load(dId, state.teacher);
+          return;
         }
       }
     }
