@@ -27,64 +27,61 @@ import com.google.gson.GsonBuilder;
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public final class GsonHandler implements MessageBodyWriter<Object>,
-    MessageBodyReader<Object> {
+public final class GsonHandler implements MessageBodyWriter<Object>, MessageBodyReader<Object> {
 
   private Gson gson;
 
   private Gson gson() {
     if (gson == null)
-      gson = new GsonBuilder().setExclusionStrategies(
-          new AnnotationExclusionStrategy()).create();
+      gson = new GsonBuilder().setExclusionStrategies(new AnnotationExclusionStrategy()).create();
     return gson;
   }
 
   @Override
-  public boolean isReadable(Class<?> type, Type genericType,
-      java.lang.annotation.Annotation[] annotations, MediaType mediaType) {
+  public boolean isReadable(Class<?> type, Type genericType, java.lang.annotation.Annotation[] annotations,
+      MediaType mediaType) {
     return true;
   }
 
   @Override
-  public Object readFrom(Class<Object> type, Type genericType,
-      Annotation[] annotations, MediaType mediaType,
-      MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
-      throws IOException {
-    InputStreamReader in = new InputStreamReader(entityStream,
-        Charset.forName("UTF-8"));
+  public Object readFrom(Class<Object> type, Type genericType, Annotation[] annotations, MediaType mediaType,
+      MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException {
+    InputStreamReader in = new InputStreamReader(entityStream, Charset.forName("UTF-8"));
     if (type.equals(genericType))
       genericType = type;
     try {
-      return gson().fromJson(in, genericType);
+      Object result = gson().fromJson(in, genericType);
+      return result;
+    } catch (Throwable t) {
+      t.printStackTrace();
+      throw new IOException(t.getMessage());
     } finally {
       in.close();
     }
-
   }
 
   @Override
-  public boolean isWriteable(Class<?> type, Type genericType,
-      Annotation[] annotations, MediaType mediaType) {
+  public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
     return true;
   }
 
   @Override
-  public long getSize(Object object, Class<?> type, Type genericType,
-      Annotation[] annotations, MediaType mediaType) {
+  public long getSize(Object object, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
     return -1;
   }
 
   @Override
-  public void writeTo(Object object, Class<?> type, Type genericType,
-      Annotation[] annotations, MediaType mediaType,
-      MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
-      throws IOException, WebApplicationException {
-    OutputStreamWriter writer = new OutputStreamWriter(entityStream,
-        Charset.forName("UTF-8"));
+  public void writeTo(Object object, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
+      MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException,
+      WebApplicationException {
+    OutputStreamWriter writer = new OutputStreamWriter(entityStream, Charset.forName("UTF-8"));
     if (type.equals(genericType))
       genericType = type;
     try {
       gson().toJson(object, genericType, writer);
+    } catch (Throwable t) {
+      t.printStackTrace();
+      new IOException(t.getMessage());
     } finally {
       writer.close();
     }

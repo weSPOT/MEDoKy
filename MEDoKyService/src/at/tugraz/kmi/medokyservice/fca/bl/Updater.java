@@ -31,67 +31,74 @@ public abstract class Updater {
    *           when saving the database failed
    */
   public static synchronized void update(LearnerDomain domain, long source) throws Exception {
-    domain.setMetadata();
-    LearningObject clickedObject = Database.getInstance().get(source);
-    LearnerLattice lattice = domain.getFormalContext();
-    Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects();
-    clickedLearningObjects.add(clickedObject);
-    System.out.println(clickedLearningObjects);
-    System.out.println(clickedObject);
-    for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
-      FCAAttribute[] domainAttrs = c.getAttributes().keySet().toArray(new FCAAttribute[c.getAttributes().size()]);
-      for (FCAAttribute a : domainAttrs) {
-        if (a.containsLearningObject(clickedObject)) {
+    Database db = Database.getInstance();
+    synchronized (db) {
+      domain.setMetadata();
+      LearningObject clickedObject = Database.getInstance().get(source);
+      LearnerLattice lattice = domain.getFormalContext();
+      Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects();
+      clickedLearningObjects.add(clickedObject);
+      System.out.println(clickedLearningObjects);
+      System.out.println(clickedObject);
+      for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
+        FCAAttribute[] domainAttrs = c.getAttributes().keySet().toArray(new FCAAttribute[c.getAttributes().size()]);
+        for (FCAAttribute a : domainAttrs) {
+          if (a.containsLearningObject(clickedObject)) {
 
+            Set<LearningObject> intersection = new HashSet<LearningObject>(clickedLearningObjects);
+            Set<LearningObject> combinedLearningObjects = new HashSet<LearningObject>(a.getLearningObjects());
+            combinedLearningObjects.addAll(a.getLearningObjectsByLearners());
+            intersection.retainAll(combinedLearningObjects);
+            float valuation = ((float) (intersection.size())) / ((float) (combinedLearningObjects.size()));
+            c.getAttributes().put(a, valuation);
+          }
+        }
+        FCAObject[] domainObjs = c.getObjects().keySet().toArray(new FCAObject[c.getObjects().size()]);
+        for (FCAObject o : domainObjs) {
+          if (o.containsLearningObject(clickedObject)) {
+            Set<LearningObject> intersection = new HashSet<LearningObject>(clickedLearningObjects);
+            Set<LearningObject> combinedLearningObjects = new HashSet<LearningObject>(o.getLearningObjects());
+            combinedLearningObjects.addAll(o.getLearningObjectsByLearners());
+            intersection.retainAll(combinedLearningObjects);
+            float valuation = ((float) (intersection.size())) / ((float) (combinedLearningObjects.size()));
+            c.getObjects().put(o, valuation);
+          }
+        }
+      }
+      db.save();
+    }
+  }
+
+  public static synchronized void update(LearnerDomain domain) throws Exception {
+    Database db = Database.getInstance();
+
+    synchronized (db) {
+      domain.setMetadata();
+      LearnerLattice lattice = domain.getFormalContext();
+      Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects();
+      for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
+        FCAAttribute[] domainAttrs = c.getAttributes().keySet().toArray(new FCAAttribute[c.getAttributes().size()]);
+        for (FCAAttribute a : domainAttrs) {
           Set<LearningObject> intersection = new HashSet<LearningObject>(clickedLearningObjects);
           Set<LearningObject> combinedLearningObjects = new HashSet<LearningObject>(a.getLearningObjects());
           combinedLearningObjects.addAll(a.getLearningObjectsByLearners());
           intersection.retainAll(combinedLearningObjects);
-          float valuation = ((float) (intersection.size())) / ((float) (a.getLearningObjects().size()));
+          float valuation = combinedLearningObjects.isEmpty() ? 1f : ((float) (intersection.size()))
+              / ((float) (combinedLearningObjects.size()));
           c.getAttributes().put(a, valuation);
         }
-      }
-      FCAObject[] domainObjs = c.getObjects().keySet().toArray(new FCAObject[c.getObjects().size()]);
-      for (FCAObject o : domainObjs) {
-        if (o.containsLearningObject(clickedObject)) {
+        FCAObject[] domainObjs = c.getObjects().keySet().toArray(new FCAObject[c.getObjects().size()]);
+        for (FCAObject o : domainObjs) {
           Set<LearningObject> intersection = new HashSet<LearningObject>(clickedLearningObjects);
           Set<LearningObject> combinedLearningObjects = new HashSet<LearningObject>(o.getLearningObjects());
           combinedLearningObjects.addAll(o.getLearningObjectsByLearners());
           intersection.retainAll(combinedLearningObjects);
-          float valuation = ((float) (intersection.size())) / ((float) (o.getLearningObjects().size()));
+          float valuation = combinedLearningObjects.isEmpty() ? 1f : ((float) (intersection.size()))
+              / ((float) (combinedLearningObjects.size()));
           c.getObjects().put(o, valuation);
         }
       }
+      db.save();
     }
-    Database.getInstance().save();
-  }
-
-  public static synchronized void update(LearnerDomain domain) throws Exception {
-    domain.setMetadata();
-    LearnerLattice lattice = domain.getFormalContext();
-    Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects();
-    for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
-      FCAAttribute[] domainAttrs = c.getAttributes().keySet().toArray(new FCAAttribute[c.getAttributes().size()]);
-      for (FCAAttribute a : domainAttrs) {
-        Set<LearningObject> intersection = new HashSet<LearningObject>(clickedLearningObjects);
-        Set<LearningObject> combinedLearningObjects = new HashSet<LearningObject>(a.getLearningObjects());
-        combinedLearningObjects.addAll(a.getLearningObjectsByLearners());
-        intersection.retainAll(combinedLearningObjects);
-        float valuation = a.getLearningObjects().isEmpty() ? 0f : ((float) (intersection.size()))
-            / ((float) (a.getLearningObjects().size()));
-        c.getAttributes().put(a, valuation);
-      }
-      FCAObject[] domainObjs = c.getObjects().keySet().toArray(new FCAObject[c.getObjects().size()]);
-      for (FCAObject o : domainObjs) {
-        Set<LearningObject> intersection = new HashSet<LearningObject>(clickedLearningObjects);
-        Set<LearningObject> combinedLearningObjects = new HashSet<LearningObject>(o.getLearningObjects());
-        combinedLearningObjects.addAll(o.getLearningObjectsByLearners());
-        intersection.retainAll(combinedLearningObjects);
-        float valuation = o.getLearningObjects().isEmpty() ? 0f : ((float) (intersection.size()))
-            / ((float) (o.getLearningObjects().size()));
-        c.getObjects().put(o, valuation);
-      }
-    }
-    Database.getInstance().save();
   }
 }

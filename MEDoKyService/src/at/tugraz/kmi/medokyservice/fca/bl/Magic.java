@@ -1,7 +1,5 @@
 package at.tugraz.kmi.medokyservice.fca.bl;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
@@ -55,16 +53,14 @@ public abstract class Magic {
         LearnerDomain dom = new LearnerDomain(learner, domain);
         domain.addLearnerDomain(learner.getId(), dom);
         Database.getInstance().put(dom, false);
+        try {
+          Updater.update(dom);
+        } catch (Exception e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
       }
-      try {
-        Database.getInstance().save();
-      } catch (FileNotFoundException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+     
     }
   }
 
