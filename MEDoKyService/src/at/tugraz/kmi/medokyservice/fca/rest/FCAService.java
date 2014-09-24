@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import java.util.concurrent.BlockingDeque;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -246,13 +247,27 @@ public class FCAService {
     Domain domain = Database.getInstance().<Domain> get(id);
     domain.setMetadata();
     User learner = Database.getInstance().getUserByExternalUID(uid);
-    if (domain.getLearnerDomains().containsKey(learner.getId()))
-      return new DomainWrapper(domain.getLearnerDomains().get(learner.getId()));
+    if (domain.getLearnerDomains().containsKey(learner.getId())){
+      
+      LearnerDomain learnerDomain = domain.getLearnerDomains().get(learner.getId());
+      try {
+        Updater.update(learnerDomain);
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      return new DomainWrapper(learnerDomain);
+    }
     log("Creating new LearnerDomain on Demand for Domain: " + domain.getName() + " (" + domain.getId() + ")");
     LearnerDomain dom = new LearnerDomain(Database.getInstance().<User> get(learner.getId()), domain);
     domain.addLearnerDomain(learner.getId(), dom);
     Database.getInstance().put(dom, false);
-    Database.getInstance().save();
+    try {
+      Updater.update(dom);
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     return new DomainWrapper(dom);
 
   }
@@ -583,13 +598,14 @@ public class FCAService {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.TEXT_PLAIN)
   public String identify(CourseMeta meta) {
+   
     UserWrapper user = meta.user;
     log("identify");
     User u = Database.getInstance().getUserByExternalUID(user.externalUID);
     if (u == null) {
       u = new User(user.externalUID, user.name, user.description);
       log("New User " + u.getId() + ", " + u.getExternalUid() + ", " + u.getName() + ", " + u.getDescription());
-    }else{
+    } else {
       u.setName(user.name);
       u.setDescription(user.description);
     }
