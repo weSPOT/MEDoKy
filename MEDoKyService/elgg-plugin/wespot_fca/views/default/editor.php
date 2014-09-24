@@ -273,7 +273,7 @@ logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at/MEDoKyService/res
 
               <td class="cb_attr td_attr_0"><input type="checkbox" class="input check" id="obj_4_attr_0" /></td>
               <td class="cb_attr td_attr_1"><input type="checkbox" class="input check" id="obj_4_attr_1" /></td>
-              <td class="cb_attr td_attr_2"><input type="checkbox" class="input check" id="obj_4_attr_2" /></td>
+              <td class="cb_atthttp://cafeerde.com/r td_attr_2"><input type="checkbox" class="input check" id="obj_4_attr_2" /></td>
               <td class="cb_attr td_attr_3"><input type="checkbox" class="input check" id="obj_4_attr_3" /></td>
               <td class="tail" style="background-color: #fff"></td>
             </tr>
