@@ -16,8 +16,6 @@ $german = array (
     'wespot_fca:err_undefined' => "Eingie %s sind undefiniert!",
     'wespot_fca:err_rem_only' => "Das einzige %s kann nicht entfernt werden!",
     'wespot_fca:info_saved' => "Domäne erfolgreich gespeichert!",
-    'wespot_fca:new' => "<Neues %s>",
-
     'wespot_fca:course' => "Kurs",
 
     'wespot_fca:dummy' => "Dummy",

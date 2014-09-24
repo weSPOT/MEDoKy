@@ -16,9 +16,7 @@ $english = array (
     'wespot_fca:err_undefined' => "Some %s are undefined!",
     'wespot_fca:err_rem_only' => "Cannot remove the only %s!",
     'wespot_fca:info_saved' => "Domain successfully saved!",
-    'wespot_fca:new' => "<New %s>",
-
-
+    
     'wespot_fca:course' => "Course",
 
     'wespot_fca:dummy' => "Dummy",
