@@ -14,14 +14,14 @@ import at.tugraz.kmi.medokyservice.fca.db.domainmodel.LearningObject;
 /**
  * Base class of {@link FCAObject} and {@link FCAAttribute}. Those classes serve
  * semantics. Every FCAAbstract contains a set of {@link LearningObject}s
- * 
+ *
  * @author Bernd Prünster <mail@berndpruenster.org>
- * 
+ *
  */
 public class FCAAbstract extends DataObject {
 
   /**
-   * 
+   *
    */
   private static final long   serialVersionUID = -6632084060702601592L;
   private Set<LearningObject> learningObjects;
@@ -93,12 +93,13 @@ public class FCAAbstract extends DataObject {
   }
 
   public void setLearningObjectsByLearners(Set<LearningObject> learningObjectsByLearners) {
-    this.learningObjectsByLearners = Collections.synchronizedSet(learningObjectsByLearners);
+    if(learningObjectsByLearners!=null)
+      this.learningObjectsByLearners = Collections.synchronizedSet(learningObjectsByLearners);
   }
 
   public Set<LearningObject> getAllLearningObjects() {
 	  Set<LearningObject> allLos = new HashSet<LearningObject>(learningObjectsByLearners);
 	  allLos.addAll(this.learningObjects);
 	  return allLos;
-  } 
+  }
 }
