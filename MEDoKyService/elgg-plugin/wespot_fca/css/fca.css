@@ -462,6 +462,13 @@ input {
   position: absolute;
 }
 
+.select_basic option:disabled {
+    background: #aaaaaa;
+    font-weight:bold;
+    color: #E8E8E8;
+    font-size: 110%;	
+}
+
 .txt_lo {
   display: inline-block;
   background-color: rgba(255, 255, 255, 0.9);
@@ -484,7 +491,7 @@ input {
   margin-bottom: 5px;
   right: 0;
   left: 0;
-  right: 0
+  right: 0; 
 }
 
 .descr_detail {
