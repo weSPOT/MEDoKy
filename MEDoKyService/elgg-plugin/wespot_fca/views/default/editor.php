@@ -42,8 +42,10 @@ foreach ( $g as $obj ) {
 <script type="text/javascript" src="<?php echo $basedir; ?>js/jquery.dialogextend.js"></script>
 <script>
 $(function(){
-//logic.init("<?php echo $basedir; ?>","http://berndpruenster.org/webapps/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
-//logic.init("<?php echo $basedir; ?>","http://192.168.1.101:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
+// production server
+//logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
+
+// test server
 logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
 
 });
@@ -64,7 +66,7 @@ logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at/MEDoKyService/res
       onclick="ui.try_show_save_dialog()" /></td>
     <td class="toolbar"><input type="image" class="input" src="<?php echo $basedir; ?>img/approve.svg" width="48px"
       height="48px" alt="Approve" title="<?php echo elgg_echo('wespot_fca:domain:approve'); ?>" id="btn_approve"
-      onclick="logic.approve_domain()" /></td>
+      onclick="$('#dia_publish_domain').dialog('open')"/></td>
     <td class="toolbar"><input type="image" class="input always_on" src="<?php echo $basedir; ?>img/share.svg"
       width="48px" height="48px" alt="Share" title="<?php echo elgg_echo('wespot_fca:domain:share'); ?>" id="btn_share"
       onclick="logic.display_share_dialog()" /></td>
@@ -390,6 +392,17 @@ logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at/MEDoKyService/res
     <hr>
     <input id="btn_rem_attr_no" type="button" class="input_pad" value="No" onclick="$('#dia_rem_attr').dialog('close')" />
     <input id="btn_rem_attr_yes" type="button" class="input_pad" value="Yes" />
+  </div>
+</div>
+
+<div id="dia_publish_domain" title="<?php echo elgg_echo('wespot_fca:domain:approve'); ?>">
+  <p id="dia_publish_domain_content">
+    <?php echo elgg_echo('wespot_fca:domain:approve_sure'); ?><span id="span_publish_domain"></span>
+  </p>
+  <div class="choice">
+    <hr>
+    <input id="btn_publish_domain_no" type="button" class="input_pad" value="No" onclick="$('#dia_publish_domain').dialog('close')"/>
+    <input id="btn_publish_domain_yes" type="button" class="input_pad" value="Yes" onclick="logic.approve_domain()"/>
   </div>
 </div>
 
