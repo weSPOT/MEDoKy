@@ -1251,7 +1251,11 @@ logic = {
     });
   },
 
+
+
+   	
   approve_domain : function() {
+    $("#dia_rem_attr").dialog("close");
     backend.approve_domain(state.domain.id, function() {
       state.domain.approved = true;
       logic.enable_disable();
@@ -1545,6 +1549,13 @@ ui = {
       modal : true
     });
     $("#dia_rem_obj").dialog({
+      autoOpen : false,
+      height : 200,
+      width : 400,
+      resizable : false,
+      modal : true
+    });
+    $("#dia_publish_domain").dialog({
       autoOpen : false,
       height : 200,
       width : 400,
@@ -2398,7 +2409,9 @@ ui = {
   list_domains : function(courses) {
     $("#sel_set_dom").empty();
     for ( var id in courses) {
+      // this is true for teh domain IBL. Since IBL is considered global.
       if (courses[id].externalCourseID == "-1") {
+        continue; // uncomment this if IBL shell be displayed again.
         for ( var d in courses[id].domains) {
           courses[id].domains[d].id = d;
           $("#sel_set_dom").create("option", {
@@ -2406,20 +2419,26 @@ ui = {
           }).create("txt", courses[id].domains[d].name);
         }
       } else {
-        $("#sel_set_dom").create("option", {
-          value : "-1"
-        }).prop("disabled", true).create("txt",
-            "--- " + elgg.echo("wespot_fca:course") + " " + decodeURIComponent(courses[id].name) + " ---");
-        for ( var d in courses[id].domains) {
+       
+       var showInquiry = true;
+       for ( var d in courses[id].domains) {
+          if (showInquiry){
+          $("#sel_set_dom").create("option", {
+           value : "-1"
+       	   }).prop("disabled", true).create("txt",
+           elgg.echo("wespot_fca:course") + ": " + decodeURIComponent(courses[id].name));
+           showInquiry = false;
+          }
           courses[id].domains[d].id = d;
           var dom = courses[id].domains[d];
           if (dom.approved || dom.owner.externalUid == state.user.guid) {
             $("#sel_set_dom").create("option", {
               value : JSON.stringify(courses[id].domains[d])
-            }).create("txt", "\u2192 " + courses[id].domains[d].name);
+            }).create("txt", "   \u2192 " + courses[id].domains[d].name);
           }
         }
       }
+
     }
     $("#sel_set_dom").prop("selectedIndex", "-1");
     $("#dia_set_dom").dialog("open");

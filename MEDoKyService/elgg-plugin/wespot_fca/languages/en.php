@@ -17,7 +17,7 @@ $english = array (
     'wespot_fca:err_rem_only' => "Cannot remove the only %s!",
     'wespot_fca:info_saved' => "Domain successfully saved!",
     
-    'wespot_fca:course' => "Course",
+    'wespot_fca:course' => "Inquiry",
 
     'wespot_fca:dummy' => "Dummy",
     'wespot_fca:name' => "Name",
@@ -80,6 +80,8 @@ $english = array (
     'wespot_fca:domain:new' => "New Domain",
     'wespot_fca:domain:save' => "Save Domain As...",
     'wespot_fca:domain:sel' => "Select a Domain",
+    'wespot_fca:domain:approve' => "Approve and Publish Domain",
+    'wespot_fca:domain:approve_sure' => "If you publish your domain it will be assigned to the inquiry. After this, attributes and objects can not be changed anymore. Are you sure your domain is complete?",
 
     'wespot_fca:course:sel' => "Inquiry:",
     
