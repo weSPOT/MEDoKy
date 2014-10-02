@@ -256,8 +256,23 @@ public class ImportExport {
     Set<Entry<String, JsonElement>> entries = block.entrySet();
     for (Entry<String, JsonElement> u : entries) {
       JsonObject jsUser = u.getValue().getAsJsonObject();
-      User user = new User(jsUser.get(E_UID).getAsString(), jsUser.get(NAME).getAsString(), jsUser.get(DESCRIPTION)
-          .getAsString());
+      System.out.println(jsUser.toString());
+      String uname;
+      if (jsUser.has(NAME))
+        uname = jsUser.get(NAME).getAsString();
+      else
+        uname = "";
+      String uDescr;
+      if (jsUser.has(DESCRIPTION))
+        uDescr = jsUser.get(DESCRIPTION).getAsString();
+      else
+        uDescr = "";
+      String externalUID;
+      if (jsUser.has(E_UID))
+        externalUID = jsUser.get(E_UID).getAsString();
+      else
+        externalUID = "";
+      User user = new User(externalUID, uname, uDescr);
       users.put(Long.parseLong(u.getKey()), user);
     }
     return users;
