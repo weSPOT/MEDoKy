@@ -2,6 +2,7 @@ package at.tugraz.kmi.medokyservice.fca.db.domainmodel;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,15 +25,15 @@ public class Domain extends DataObject {
   /**
    * 
    */
-  private static final long        serialVersionUID = -9169088905113687870L;
-  private IncidenceMatrix          mapping;
-  private Lattice                  formalContext;
-  private User                     owner;
-  private boolean                  global;
-  private boolean                  approved;
+  private static final long                   serialVersionUID = -9169088905113687870L;
+  private IncidenceMatrix                     mapping;
+  private Lattice                             formalContext;
+  private User                                owner;
+  private boolean                             global;
+  private boolean                             approved;
 
   @JsonIgnore
-  private Map<Long, LearnerDomain> learnerDomains;
+  private Map<Long, Map<Long, LearnerDomain>> learnerDomains;
 
   /**
    * Creates a new domain form an {@link IncidenceMatrix} computing a
@@ -54,7 +55,7 @@ public class Domain extends DataObject {
     this.owner = owner;
     this.global = global;
     this.approved = false;
-    this.learnerDomains = Collections.synchronizedMap(new HashMap<Long, LearnerDomain>());
+    this.learnerDomains = Collections.synchronizedMap(new HashMap<Long, Map<Long, LearnerDomain>>());
   }
 
   /**
@@ -83,25 +84,31 @@ public class Domain extends DataObject {
     this.owner = owner;
   }
 
-  public Map<Long, LearnerDomain> getLearnerDomains() {
+  public Map<Long, Map<Long, LearnerDomain>> getLearnerDomains() {
     return learnerDomains;
   }
 
-  public boolean containsLearnerDomain(long userID) {
-    return learnerDomains.containsKey(userID);
+  public boolean containsLearnerDomain(long userID, long courseID) {
+    return learnerDomains.containsKey(courseID) && learnerDomains.get(courseID).containsKey(userID);
   }
 
-  public LearnerDomain getLearnerDomain(long userID) {
-    return learnerDomains.get(userID);
+  public LearnerDomain getLearnerDomain(long userID, long courseID) {
+    return learnerDomains.get(courseID).get(userID);
   }
 
-  public void addLearnerDomain(long userID, LearnerDomain domain) {
-    learnerDomains.put(userID, domain);
+  public void addLearnerDomain(long userID, long courseID, LearnerDomain domain) {
+    if (!learnerDomains.containsKey(courseID))
+      learnerDomains.put(courseID, new HashMap<Long, LearnerDomain>());
+    learnerDomains.get(courseID).put(userID, domain);
 
   }
 
   public Set<Long> getLearnerIDs() {
-    return learnerDomains.keySet();
+    Set<Long> result = new HashSet<Long>();
+    for (Map<Long, LearnerDomain> d : learnerDomains.values()) {
+      result.addAll(d.keySet());
+    }
+    return result;
   }
 
   public boolean isGlobal() {
