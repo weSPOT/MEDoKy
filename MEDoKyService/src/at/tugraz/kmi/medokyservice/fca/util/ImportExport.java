@@ -157,11 +157,13 @@ public class ImportExport {
       jso.addProperty(O_ID, o.getItemID());
       LinkedList<Long> loIds = new LinkedList<Long>();
       for (LearningObject lo : o.getLearningObjects()) {
-        loIds.add(lo.getId());
+        if (lo != null)
+          loIds.add(lo.getId());
       }
       LinkedList<Long> loByLernerIds = new LinkedList<Long>();
       for (LearningObject lo : o.getLearningObjectByLearner()) {
-        loByLernerIds.add(lo.getId());
+        if (lo != null)
+          loByLernerIds.add(lo.getId());
       }
       jso.add(SECTION_LO, gson.toJsonTree(loIds, new TypeToken<List<Long>>() {
       }.getType()));
