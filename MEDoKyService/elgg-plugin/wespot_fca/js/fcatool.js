@@ -1389,6 +1389,7 @@ logic = {
           var attribute = JSON.parse(a);
           $(id).data(logic.key_item, attribute);
           $(id).prop("value", attribute.name);
+          $(id).prop("title", attribute.name);
           ++index;
         }
 
@@ -1401,6 +1402,7 @@ logic = {
 
           $(id).data(logic.key_item, object);
           $(id).prop("value", object.name);
+          $(id).prop("title", object.name);
           var mapped = domain.mapping.objects[o];
 
           for (var m = 0; m < mapped.length; ++m) {
@@ -1999,7 +2001,7 @@ ui = {
           alt : "&gt",
           title : elgg.echo('wespot_fca:move_right'),
           class : "input btn_move_right",
-          onclick : "ui.move_left(" + id + ")"
+          onclick : "ui.move_right(" + id + ")"
         });
         td.create("input", {
           type : "button",
@@ -2257,7 +2259,8 @@ ui = {
         src : state.basedir + "img/add.svg",
         width : "22px",
         height : "22px",
-        class : "input btn_add_lo always_on"
+        class : "input btn_add_lo always_on",
+        title: elgg.echo("wespot_fca:l_objs:add")
       }).click(function() {
         logic.set_l_object(object, entityType);
       });
