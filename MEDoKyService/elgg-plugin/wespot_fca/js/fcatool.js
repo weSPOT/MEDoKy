@@ -47,8 +47,7 @@ backend = {
   path_learning_objects : "learningObjects",
   path_domain : "domain",
   path_domainheaders : "domainHeaders",
-  path_learner_domain : "learnerDomain",
-  path_learner_lattice : "learnerLattice",
+  path_courses : "courses",
   path_concept : "concept",
   path_valuation : "valuations",
   path_course_domains : "courseDomains",
@@ -178,13 +177,10 @@ backend = {
     $.ajax({
       cache : false,
       type : "GET",
-      data : {
-        id : state.domain.id,
-        externalUID : learnerId
-      },
       dataType : "json",
       contentType : "application/json; charset=utf-8",
-      url : backend.url + backend.path_learner_lattice,
+      url : backend.url + backend.path_courses + "/" + state.gid + "/domains/" + state.domain.id + "/"
+          + backend.path_learners_for_domain + "/" + learnerId + "/lattice",
       success : function(obj) {
         if (callback)
           callback(obj);
@@ -434,16 +430,13 @@ backend = {
   },
 
   get_learner_domain : function(did, uid, callback) {
-    var payload = {
-      "id" : did,
-      "externalUID" : uid
-    };
+   
     $.ajax({
       cache : false,
       type : "GET",
-      data : payload,
       contentType : "text/plain; charset=utf-8",
-      url : backend.url + backend.path_learner_domain,
+      url : backend.url + backend.path_courses + "/" + state.gid + "/domains/" + did + "/"
+      + backend.path_learners_for_domain + "/" + uid+"/",
       success : function(obj) {
         callback(obj);
       },
@@ -1251,9 +1244,6 @@ logic = {
     });
   },
 
-
-
-   	
   approve_domain : function() {
     $("#dia_rem_attr").dialog("close");
     backend.approve_domain(state.domain.id, function() {
@@ -2422,15 +2412,15 @@ ui = {
           }).create("txt", courses[id].domains[d].name);
         }
       } else {
-       
-       var showInquiry = true;
-       for ( var d in courses[id].domains) {
-          if (showInquiry){
-          $("#sel_set_dom").create("option", {
-           value : "-1"
-       	   }).prop("disabled", true).create("txt",
-           elgg.echo("wespot_fca:course") + ": " + decodeURIComponent(courses[id].name));
-           showInquiry = false;
+
+        var showInquiry = true;
+        for ( var d in courses[id].domains) {
+          if (showInquiry) {
+            $("#sel_set_dom").create("option", {
+              value : "-1"
+            }).prop("disabled", true).create("txt",
+                elgg.echo("wespot_fca:course") + ": " + decodeURIComponent(courses[id].name));
+            showInquiry = false;
           }
           courses[id].domains[d].id = d;
           var dom = courses[id].domains[d];
@@ -2538,7 +2528,7 @@ ui = {
       }).create("txt", "Default");
       for ( var i in learners) {
         sel.create("option", {
-          value : learners[i].id
+          value : learners[i].externalUid
         }).create("txt", learners[i].name);
       }
       sel.prop("selectedIndex", -1);

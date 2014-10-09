@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-import java.util.concurrent.BlockingDeque;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +25,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 
 import at.tugraz.kmi.medokyservice.fca.FCAException;
 import at.tugraz.kmi.medokyservice.fca.bl.Magic;
@@ -241,15 +242,18 @@ public class FCAService {
   @GET
   @Path(RestConfig.PATH_LEARNERDOMAIN)
   @Produces(MediaType.APPLICATION_JSON)
-  public DomainWrapper getLearnerDomain(@QueryParam(RestConfig.KEY_ID) long id,
-      @QueryParam(RestConfig.KEY_EXTERNALUID) String uid) throws FileNotFoundException, IOException {
-    log("getLearnerDomain");
-    Domain domain = Database.getInstance().<Domain> get(id);
+  public DomainWrapper getLearnerDomain(@PathParam(RestConfig.KEY_EXTERNALCOURSEID) String courseID,
+      @PathParam(RestConfig.KEY_DOMAINID) long domainID, @PathParam(RestConfig.KEY_EXTERNALUID) String uid,
+      @Context UriInfo uriInfo) throws FileNotFoundException, IOException {
+    log("getLearnerDomain " + domainID + " course: " + courseID + " learner " + uid);
+    System.out.println(uriInfo.getRequestUri());
+    System.out.println(RestConfig.PATH_LEARNERDOMAIN);
+    Domain domain = Database.getInstance().<Domain> get(domainID);
     domain.setMetadata();
     User learner = Database.getInstance().getUserByExternalUID(uid);
-    if (domain.getLearnerDomains().containsKey(learner.getId())){
-      
-      LearnerDomain learnerDomain = domain.getLearnerDomains().get(learner.getId());
+    Course c = Database.getInstance().getCourseByExternalID(courseID);
+    if (domain.containsLearnerDomain(learner.getId(), c.getId())) {
+      LearnerDomain learnerDomain = domain.getLearnerDomain(learner.getId(), c.getId());
       try {
         Updater.update(learnerDomain);
       } catch (Exception e) {
@@ -260,7 +264,7 @@ public class FCAService {
     }
     log("Creating new LearnerDomain on Demand for Domain: " + domain.getName() + " (" + domain.getId() + ")");
     LearnerDomain dom = new LearnerDomain(Database.getInstance().<User> get(learner.getId()), domain);
-    domain.addLearnerDomain(learner.getId(), dom);
+    domain.addLearnerDomain(learner.getId(), c.getId(), dom);
     Database.getInstance().put(dom, false);
     try {
       Updater.update(dom);
@@ -286,20 +290,17 @@ public class FCAService {
   @GET
   @Path(RestConfig.PATH_LEARNERLATTICE)
   @Produces(MediaType.APPLICATION_JSON)
-  public LatticeWrapper getLearnerLattice(@QueryParam(RestConfig.KEY_ID) long id,
-      @QueryParam(RestConfig.KEY_EXTERNALUID) long uid) throws FileNotFoundException, IOException {
-    log("getLearnerDomain");
-    Domain domain = Database.getInstance().<Domain> get(id);
-    System.out.println(uid);
-    System.out.println(domain.getOwner().getId());
-    for (long d : domain.getLearnerDomains().keySet()) {
-      System.out.println("learnerID: " + d);
-      System.out.println("LearnerDomainId: " + domain.getLearnerDomains().get(d).getId());
-    }
+  public LatticeWrapper getLearnerLattice(@PathParam(RestConfig.KEY_EXTERNALCOURSEID) String courseID,
+      @PathParam(RestConfig.KEY_DOMAINID) long domainID, @PathParam(RestConfig.KEY_EXTERNALUID) String uid)
+      throws FileNotFoundException, IOException {
+    log("getLearnerLattice");
+    Domain domain = Database.getInstance().get(domainID);
+    User learner = Database.getInstance().getUserByExternalUID(uid);
+    Course c = Database.getInstance().getCourseByExternalID(courseID);
     // TODO: clean up
-    if (!(domain.getLearnerDomains().containsKey(uid)))
+    if (!(domain.containsLearnerDomain(learner.getId(), c.getId())))
       return new DomainWrapper(domain).formalContext;
-    return new DomainWrapper(domain.getLearnerDomains().get(uid)).formalContext;
+    return new DomainWrapper(domain.getLearnerDomain(learner.getId(), c.getId())).formalContext;
   }
 
   /**
@@ -575,7 +576,7 @@ public class FCAService {
       Course c = Database.getInstance().getCourseByExternalID(Long.toString(valuations.id));
       Magic.createLearnerModel(u, Long.toString(valuations.id));
       for (Domain d : c.getDomains()) {
-        LearnerDomain domain = d.getLearnerDomain(u.getId());
+        LearnerDomain domain = d.getLearnerDomain(u.getId(), c.getId());
         Updater.update(domain, valuations.learningObjectId);
       }
       return new HashMap<Long, ValuationWrapper>();
@@ -598,7 +599,7 @@ public class FCAService {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.TEXT_PLAIN)
   public String identify(CourseMeta meta) {
-   
+
     UserWrapper user = meta.user;
     log("identify");
     User u = Database.getInstance().getUserByExternalUID(user.externalUID);

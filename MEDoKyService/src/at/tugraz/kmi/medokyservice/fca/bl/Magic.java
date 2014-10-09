@@ -1,6 +1,5 @@
 package at.tugraz.kmi.medokyservice.fca.bl;
 
-import java.util.Map;
 import java.util.Set;
 
 import at.tugraz.kmi.medokyservice.fca.FCAException;
@@ -47,11 +46,10 @@ public abstract class Magic {
       Set<Domain> domains = c.getDomains();
       for (Domain domain : domains) {
         domain.setMetadata();
-        Map<Long, LearnerDomain> learnerDomains = domain.getLearnerDomains();
-        if (learnerDomains.containsKey(learner.getId()))
+        if (domain.containsLearnerDomain(learner.getId(), c.getId()))
           continue;
         LearnerDomain dom = new LearnerDomain(learner, domain);
-        domain.addLearnerDomain(learner.getId(), dom);
+        domain.addLearnerDomain(learner.getId(), c.getId(), dom);
         Database.getInstance().put(dom, false);
         try {
           Updater.update(dom);
@@ -60,7 +58,7 @@ public abstract class Magic {
           e.printStackTrace();
         }
       }
-     
+
     }
   }
 

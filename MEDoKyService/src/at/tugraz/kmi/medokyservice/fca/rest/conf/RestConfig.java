@@ -21,8 +21,6 @@ public interface RestConfig {
   public static final String PATH_DOMAINHEADERS     = "domainHeaders";
   public static final String PATH_DOMAINS           = "domains";
   public static final String PATH_LEARNERS          = "learners";
-  public static final String PATH_LEARNERDOMAIN     = "learnerDomain";
-  public static final String PATH_LEARNERLATTICE    = "learnerLattice";
   public static final String PATH_DOMAIN            = "domain";
   public static final String PATH_OBJECT            = "object";
   public static final String PATH_OBJECTS           = "objects";
@@ -34,6 +32,10 @@ public interface RestConfig {
   public static final String PATH_CONCEPT           = "concept";
   public static final String PATH_VALUATIONS        = "valuations";
   public static final String PATH_COURSE_DOMAINS    = "courseDomains";
+  public static final String PATH_LEARNERDOMAIN     = "courses/{" + KEY_EXTERNALCOURSEID + "}/" + PATH_DOMAINS + "/{"
+                                                        + KEY_DOMAINID + "}/" + PATH_LEARNERS + "/{" + KEY_EXTERNALUID
+                                                        + "}";
+  public static final String PATH_LEARNERLATTICE    = PATH_LEARNERDOMAIN+"/lattice";
   public static final String PATH_UPDATEATTRIBUTE   = PATH_DOMAIN + "/{" + KEY_DOMAINID + "}/" + PATH_ATTRIBUTE;
   public static final String PATH_UPDATEOBJECT      = PATH_DOMAIN + "/{" + KEY_DOMAINID + "}/" + PATH_OBJECT;
   public static final String PATH_UPDATEATTRIBUTES  = PATH_DOMAIN + "/{" + KEY_DOMAINID + "}/" + PATH_ATTRIBUTES;
@@ -42,8 +44,7 @@ public interface RestConfig {
   public static final String PATH_DOMAIN_APPROVE    = PATH_DOMAIN + "/{" + KEY_DOMAINID + "}/approve";
   public static final String PATH_DOMAIN_SHARE      = PATH_DOMAIN + "/{" + KEY_DOMAINID + "}/shareTo/{"
                                                         + KEY_EXTERNALCOURSEID + "}/{" + KEY_NAME + "}";
-  public static final String PATH_DOMAIN_VALUATIONS = PATH_LEARNERDOMAIN + "/{" + KEY_ID + "}/" + PATH_VALUATIONS;
-  public static final String PATH_VIEWCONCEPT      = PATH_CONCEPT + "/{"
-                                                        + KEY_ID + "}/view";
+  public static final String PATH_DOMAIN_VALUATIONS = "learnerDomain/{" + KEY_ID + "}/" + PATH_VALUATIONS;
+  public static final String PATH_VIEWCONCEPT       = PATH_CONCEPT + "/{" + KEY_ID + "}/view";
 
 }

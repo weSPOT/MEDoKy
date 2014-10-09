@@ -15,7 +15,6 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerConcept;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerLattice;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
-import at.tugraz.kmi.medokyservice.fca.rest.FCAService;
 
 public abstract class FCAInterface {
 
@@ -34,30 +33,31 @@ public abstract class FCAInterface {
     }
   }
 
-  public static Long getLearnerID(String learnerId){
-   User u = Database.getInstance().getUserByExternalUID(learnerId);
-   if(u==null){
-     u = new User(learnerId, "Anonymous", "generated at backend");
-     //log("New User " + u.getId() + ", " + u.getExternalUid() + ", " + u.getName() + ", " + u.getDescription());
-     Database.getInstance().put(u, true);
-   }
+  public static Long getLearnerID(String learnerId) {
+    User u = Database.getInstance().getUserByExternalUID(learnerId);
+    if (u == null) {
+      u = new User(learnerId, "Anonymous", "generated at backend");
+      // log("New User " + u.getId() + ", " + u.getExternalUid() + ", " +
+      // u.getName() + ", " + u.getDescription());
+      Database.getInstance().put(u, true);
+    }
     return Database.getInstance().getUserByExternalUID(learnerId).getId();
   }
-  
-  public static Long getInquiryID(String learnerId) throws FCAException{
-    Course c= Database.getInstance().getCourseByExternalID(learnerId);
-    if(c==null)
+
+  public static Long getInquiryID(String learnerId) throws FCAException {
+    Course c = Database.getInstance().getCourseByExternalID(learnerId);
+    if (c == null)
       throw new FCAException("Inquiry does not Exists");
     return c.getId();
   }
-  
+
   public static Collection<LearnerLattice> getLearnerModel(long inquiryId, long learnerId) throws FCAException {
     Course c = Database.getInstance().get(inquiryId);
     Magic.createLearnerModel(learnerId, inquiryId);
     HashSet<LearnerLattice> result = new HashSet<LearnerLattice>();
     for (Domain d : c.getDomains()) {
-      if (d.containsLearnerDomain(learnerId)) {
-        LearnerDomain domain = d.getLearnerDomain(learnerId);
+      if (d.containsLearnerDomain(learnerId, inquiryId)) {
+        LearnerDomain domain = d.getLearnerDomain(learnerId, inquiryId);
         domain.setMetadata();
         result.add(domain.getFormalContext());
       }
@@ -69,8 +69,8 @@ public abstract class FCAInterface {
     Course c = Database.getInstance().get(inquiryId);
     HashSet<Long> resultIds = new HashSet<Long>();
     for (Domain d : c.getDomains()) {
-      if (d.containsLearnerDomain(learnerId)) {
-        LearnerLattice lattice = d.getLearnerDomain(learnerId).getFormalContext();
+      if (d.containsLearnerDomain(learnerId, inquiryId)) {
+        LearnerLattice lattice = d.getLearnerDomain(learnerId, inquiryId).getFormalContext();
         for (LearnerConcept concept : lattice.getConcepts()) {
           if (concept.getPercentagedValuations()[0] != 0f || concept.getPercentagedValuations()[0] != 0f) {
             resultIds.add(concept.getDomainConceptId());
@@ -84,14 +84,14 @@ public abstract class FCAInterface {
   public static void setVisitedLO(long inquiryId, long learnerId, long learningObjectId) throws Exception {
     Course c = Database.getInstance().get(inquiryId);
     for (Domain d : c.getDomains()) {
-      if (d.containsLearnerDomain(learnerId)) {
-        Updater.update(d.getLearnerDomain(learnerId), learningObjectId);
+      if (d.containsLearnerDomain(learnerId, inquiryId)) {
+        Updater.update(d.getLearnerDomain(learnerId, inquiryId), learningObjectId);
         return;
       }
     }
   }
 
   public static void setCompletedActivity(long inquiryId, long learnerId, Object activity) {
-	  //TODO: implement functionality;
+    // TODO: implement functionality;
   }
 }
