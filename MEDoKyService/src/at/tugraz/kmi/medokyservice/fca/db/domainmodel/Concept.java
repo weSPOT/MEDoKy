@@ -228,6 +228,7 @@ public class Concept extends DataObject {
   @SuppressWarnings("rawtypes")
   public void filterCharacteristics() {
     ComparableSet sucAttribs = new ComparableHashSet();
+    partOfTaxonomy = false;
     for (Concept s : successors) {
       sucAttribs.addAll(s.getAttributes());
     }
@@ -237,8 +238,10 @@ public class Concept extends DataObject {
 
     if (uniqueAttributes.isEmpty())
       attributeConcept = false;
-    else
+    else{
       attributeConcept = true;
+      partOfTaxonomy = true;
+    }
 
     ComparableSet preObjects = new ComparableHashSet();
     for (Concept s : predecessors) {
@@ -249,7 +252,6 @@ public class Concept extends DataObject {
     uniqueObjects.addAll(objects);
     uniqueObjects.removeAll(preObjects);
     if (uniqueObjects.isEmpty()) {
-      partOfTaxonomy = false;
       objectConcept = false;
     } else {
       partOfTaxonomy = true;
