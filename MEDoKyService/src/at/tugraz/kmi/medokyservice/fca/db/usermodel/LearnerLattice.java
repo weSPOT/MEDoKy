@@ -1,9 +1,8 @@
 package at.tugraz.kmi.medokyservice.fca.db.usermodel;
 
-import java.util.Collection;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -27,18 +26,15 @@ public class LearnerLattice extends DataObject {
   /**
    * 
    */
-  private static final long serialVersionUID = 4677352490936383590L;
-  private Set<LearnerConcept> concepts;
-  private LearnerConcept bottom, top;
-  private Map<FCAObject, Float> objects;
-  private Map<FCAAttribute, Float> attributes;
-  private Set<LearningObject> clickedLearningObjects;
-  
-  
-  
-  //TODO: init list of objects and attributes 
-  
-  
+  private static final long         serialVersionUID = 4677352490936383590L;
+  private Set<LearnerConcept>       concepts;
+  private LearnerConcept            bottom, top;
+  private Map<FCAObject, Float>     objects;
+  private Map<FCAAttribute, Float>  attributes;
+  private Map<LearningObject, Long> clickedLearningObjects;
+
+  // TODO: init list of objects and attributes
+
   /**
    * Creates a LearnerLattice based upon a {@link Lattice} from the domain
    * model.
@@ -50,10 +46,10 @@ public class LearnerLattice extends DataObject {
    */
   public LearnerLattice(Lattice lattice) {
     super("Learner" + lattice.getName(), lattice.getDescription());
-    this.attributes = new HashMap<FCAAttribute, Float>(); 
+    this.attributes = new HashMap<FCAAttribute, Float>();
     this.objects = new HashMap<FCAObject, Float>();
 
-    clickedLearningObjects = new HashSet<LearningObject>();
+    clickedLearningObjects = new HashMap<LearningObject, Long>();
     concepts = Collections.synchronizedSet(new LinkedHashSet<LearnerConcept>());
     synchronized (concepts) {
       HashMap<Long, LearnerConcept> registry = new HashMap<Long, LearnerConcept>();
@@ -98,28 +94,27 @@ public class LearnerLattice extends DataObject {
     }
   }
 
-  
-  private void initObjectAndAttributeSets(){
-	  for (LearnerConcept concept : concepts){
-		  this.attributes.putAll(concept.getAttributes());
-		  this.objects.putAll(concept.getObjects());
-	  } 
+  private void initObjectAndAttributeSets() {
+    for (LearnerConcept concept : concepts) {
+      this.attributes.putAll(concept.getAttributes());
+      this.objects.putAll(concept.getObjects());
+    }
   }
-  
-  public Map<FCAAttribute, Float> getAttributes(){
-	  if (this.attributes.size()>0)
-		  return this.attributes;
-	  this.initObjectAndAttributeSets();
-	  return this.attributes;
+
+  public Map<FCAAttribute, Float> getAttributes() {
+    if (this.attributes.size() > 0)
+      return this.attributes;
+    this.initObjectAndAttributeSets();
+    return this.attributes;
   }
-  
-  public Map<FCAObject, Float> getObjects(){
-	  if (this.objects.size()>0)
-		  return this.objects;
-	  this.initObjectAndAttributeSets();
-	  return this.objects;
+
+  public Map<FCAObject, Float> getObjects() {
+    if (this.objects.size() > 0)
+      return this.objects;
+    this.initObjectAndAttributeSets();
+    return this.objects;
   }
-  
+
   public Set<LearnerConcept> getConcepts() {
     return concepts;
   }
@@ -133,13 +128,13 @@ public class LearnerLattice extends DataObject {
   }
 
   public void addClickedLearningObject(LearningObject obj) {
-    clickedLearningObjects.add(obj);
+    clickedLearningObjects.put(obj, Calendar.getInstance().getTimeInMillis());
   }
 
-  public Set<LearningObject> getClickedLearningObjects() {
+  public Map<LearningObject, Long> getClickedLearningObjects() {
     return clickedLearningObjects;
   }
-  
+
   /**
    * Return a String representation of this object. The string value returned is
    * subject to change and therefore only suitable for debugging purposes.

@@ -342,7 +342,7 @@ public class FCAService {
     LearnerDomain domain = Database.getInstance().get(learnerDomaindId);
     for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
       Set<LearningObject> intersection = new HashSet<LearningObject>(domain.getFormalContext()
-          .getClickedLearningObjects());
+          .getClickedLearningObjects().keySet());
       // FIXME clickedLearningobjects
       Set<LearningObject> conceptLearningObjects = new HashSet<LearningObject>();
       for (FCAObject o : c.getObjects().keySet()) {

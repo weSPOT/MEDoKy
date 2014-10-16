@@ -36,7 +36,7 @@ public abstract class Updater {
       domain.setMetadata();
       LearningObject clickedObject = Database.getInstance().get(source);
       LearnerLattice lattice = domain.getFormalContext();
-      Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects();
+      Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects().keySet();
       clickedLearningObjects.add(clickedObject);
       System.out.println(clickedLearningObjects);
       System.out.println(clickedObject);
@@ -75,7 +75,7 @@ public abstract class Updater {
     synchronized (db) {
       domain.setMetadata();
       LearnerLattice lattice = domain.getFormalContext();
-      Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects();
+      Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects().keySet();
       for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
         FCAAttribute[] domainAttrs = c.getAttributes().keySet().toArray(new FCAAttribute[c.getAttributes().size()]);
         for (FCAAttribute a : domainAttrs) {

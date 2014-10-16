@@ -50,7 +50,7 @@ public class FCARecommendation {
 
 	private Set<LearningObject> processLearnerLattice(LearnerLattice lattice){
 		
-		Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects();
+		Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects().keySet();
 		Set<LearnerConcept> learnerConcepts = lattice.getConcepts();	
 		Set<LearningObject> selectedLos = new HashSet<LearningObject>();
 		
