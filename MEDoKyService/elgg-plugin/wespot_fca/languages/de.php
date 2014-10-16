@@ -79,6 +79,7 @@ $german = array (
     'wespot_fca:domain:new' => "Neue Domäne",
     'wespot_fca:domain:save' => "Domäne Speichern Unter...",
     'wespot_fca:domain:sel' => "Domäne:",
+    'wespot_fca:domain:csv' => "Domäne als CSV-Datei exportieren",
 
     'wespot_fca:course:sel' => "Inquiry:",
 

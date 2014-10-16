@@ -81,6 +81,10 @@
   display: inline-block;
 }
 
+#btn_csv {
+  display: none;
+}
+
 #sel_show_learner_lattice {
   margin-left: 10px;
   display: inline-block;
@@ -463,10 +467,10 @@ input {
 }
 
 .select_basic option:disabled {
-    background: #aaaaaa;
-    font-weight:bold;
-    color: #E8E8E8;
-    font-size: 110%;	
+  background: #aaaaaa;
+  font-weight: bold;
+  color: #E8E8E8;
+  font-size: 110%;
 }
 
 .txt_lo {
@@ -491,7 +495,7 @@ input {
   margin-bottom: 5px;
   right: 0;
   left: 0;
-  right: 0; 
+  right: 0;
 }
 
 .descr_detail {

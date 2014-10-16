@@ -4,7 +4,7 @@ $basedir = $CONFIG->url . "/mod/wespot_fca/";
 $options = array (
   'type' => 'object',
   'subtype' => 'file',
- // 'owner_guid' => get_entity ( $inquiryId )->owner_guid,
+  // 'owner_guid' => get_entity ( $inquiryId )->owner_guid,
   'container_guid' => $inquiryId 
 );
 
@@ -16,9 +16,9 @@ foreach ( $files as $file ) {
     'description' => $file->description,
     'data' => $CONFIG->url . 'file/view/' . $file->guid 
   );
-  echo("<!-- ");
-  echo(($file));
-  echo("-->");
+  echo ("<!-- ");
+  echo (($file));
+  echo ("-->");
   $files_json [] = $json_file;
 }
 $user_entity = elgg_get_logged_in_user_entity ();
@@ -65,19 +65,22 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
     <td class="toolbar"><input type="image" class="input" src="<?php echo $basedir; ?>img/save.svg" width="48px"
       height="48px" alt="Save" title="<?php echo elgg_echo('wespot_fca:domain:save'); ?>" id="btn_save"
       onclick="ui.try_show_save_dialog()" /></td>
+    <td class="toolbar"><input type="image" class="input" src="<?php echo $basedir; ?>img/excel.svg" width="48px"
+      height="48px" alt="Export to CSV" title="<?php echo elgg_echo('wespot_fca:domain:csv'); ?>" id="btn_csv"
+      onclick="logic.export_csv()" /></td>
     <td class="toolbar"><input type="image" class="input" src="<?php echo $basedir; ?>img/approve.svg" width="48px"
       height="48px" alt="Approve" title="<?php echo elgg_echo('wespot_fca:domain:approve'); ?>" id="btn_approve"
-      onclick="$('#dia_publish_domain').dialog('open')"/></td>
+      onclick="$('#dia_publish_domain').dialog('open')" /></td>
     <td class="toolbar"><input type="image" class="input always_on" src="<?php echo $basedir; ?>img/share.svg"
       width="48px" height="48px" alt="Share" title="<?php echo elgg_echo('wespot_fca:domain:share'); ?>" id="btn_share"
       onclick="logic.display_share_dialog()" /></td>
     <td class="toolbar" style="vertical-align: middle; padding-left: 2em"><h1 id="h_domain_name"></h1></td>
-     <td class="toolbar fca_help">
-      <input type="image" class="input always_on" title="<?php echo elgg_echo('wespot_fca:tofile'); ?>" id="btn_to_file"
-      src="<?php echo $basedir; ?>img/upload.svg" width="48px" height="48px">
-      <input type="image" id="btn_help" class="input always_on" src="<?php echo $basedir; ?>img/help.svg" width="48px" height="48px"
-      title="<?php echo elgg_echo('wespot_fca:displayhelp'); ?>" onclick="ui.display_help()"> 
-      <input type="image" class="input always_on" title="<?php echo elgg_echo('wespot_fca:togroup'); ?>" id="btn_to_group"
+    <td class="toolbar fca_help"><input type="image" class="input always_on"
+      title="<?php echo elgg_echo('wespot_fca:tofile'); ?>" id="btn_to_file" src="<?php echo $basedir; ?>img/upload.svg"
+      width="48px" height="48px"> <input type="image" id="btn_help" class="input always_on"
+      src="<?php echo $basedir; ?>img/help.svg" width="48px" height="48px"
+      title="<?php echo elgg_echo('wespot_fca:displayhelp'); ?>" onclick="ui.display_help()"> <input type="image"
+      class="input always_on" title="<?php echo elgg_echo('wespot_fca:togroup'); ?>" id="btn_to_group"
       src="<?php echo $basedir; ?>img/back_group.svg" width="48px" height="48px"></td>
   </tr>
 </table>
@@ -276,7 +279,8 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
 
               <td class="cb_attr td_attr_0"><input type="checkbox" class="input check" id="obj_4_attr_0" /></td>
               <td class="cb_attr td_attr_1"><input type="checkbox" class="input check" id="obj_4_attr_1" /></td>
-              <td class="cb_atthttp://cafeerde.com/r td_attr_2"><input type="checkbox" class="input check" id="obj_4_attr_2" /></td>
+              <td class="cb_atthttp://cafeerde.com/r td_attr_2"><input type="checkbox" class="input check"
+                id="obj_4_attr_2" /></td>
               <td class="cb_attr td_attr_3"><input type="checkbox" class="input check" id="obj_4_attr_3" /></td>
               <td class="tail" style="background-color: #fff"></td>
             </tr>
@@ -402,8 +406,9 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
   </p>
   <div class="choice">
     <hr>
-    <input id="btn_publish_domain_no" type="button" class="input_pad" value="No" onclick="$('#dia_publish_domain').dialog('close')"/>
-    <input id="btn_publish_domain_yes" type="button" class="input_pad" value="Yes" onclick="logic.approve_domain()"/>
+    <input id="btn_publish_domain_no" type="button" class="input_pad" value="No"
+      onclick="$('#dia_publish_domain').dialog('close')" /> <input id="btn_publish_domain_yes" type="button"
+      class="input_pad" value="Yes" onclick="logic.approve_domain()" />
   </div>
 </div>
 

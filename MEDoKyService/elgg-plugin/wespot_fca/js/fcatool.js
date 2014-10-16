@@ -430,13 +430,13 @@ backend = {
   },
 
   get_learner_domain : function(did, uid, callback) {
-   
+
     $.ajax({
       cache : false,
       type : "GET",
       contentType : "text/plain; charset=utf-8",
       url : backend.url + backend.path_courses + "/" + state.gid + "/domains/" + did + "/"
-      + backend.path_learners_for_domain + "/" + uid+"/",
+          + backend.path_learners_for_domain + "/" + uid + "/",
       success : function(obj) {
         callback(obj);
       },
@@ -992,6 +992,39 @@ logic = {
 
   },
 
+  export_csv : function() {
+    var objs = [];
+    var attrs = [ "\"\"" ];
+
+    $(".btn_attr").each(function() {
+      var attr_name = "\"" + $(this).val().replace(/\"/g, "\\\"") + "\"";
+      attrs.push(attr_name);
+    });
+    objs.push(attrs);
+    $(".btn_obj").each(function() {
+      var obj_name = "\"" + $(this).val().replace(/\"/g, "\\\"") + "\"";
+      var o = [ obj_name ];
+      objs.push(o);
+    });
+    var index = 0;
+    $("#matrix_main > table > tbody > tr").each(function() {
+      var current_obj = objs[++index];
+      $(this).find("input").each(function() {
+        current_obj.push(this.checked);
+      });
+    });
+    var csv = "";
+    for ( var line in objs) {
+      for (var i = 0; i < objs[line].length; ++i) {
+        if (i > 0)
+          csv += ", ";
+        csv += objs[line][i];
+      }
+      csv += "\n";
+    }
+    window.location.href = 'data:text/csv;charset=UTF-8,' + encodeURIComponent(csv);
+  },
+
   save_item : function(object, entityType, hideDialog, newLO) {
     console.trace();
     console.debug(state);
@@ -1329,8 +1362,11 @@ logic = {
       $("#btn_save, #btn_approve, #btn_approve").hide();
       $(".btn_move_right, .btn_move_left, .btn_move_up, .btn_move_down").hide();
       $(".to_be_hidden").hide();
-      if (state.teacher)
+      if (state.teacher){
         $("#btn_show_learner_lattice").prop("disabled", false);
+        $("#btn_csv").show();
+        $("#btn_csv").prop("disabled",false);
+      }
       else
         $("#btn_show_learner_lattice").hide();
     } else {
@@ -1345,7 +1381,7 @@ logic = {
     }
     $(".always_on").removeProp("disabled");
     if (!state.domain) {
-      $("#btn_from_existing, #btn_approve").hide();
+      $("#btn_from_existing, #btn_approve, #btn_csv").hide();
     }
   },
 
@@ -2250,7 +2286,7 @@ ui = {
         width : "22px",
         height : "22px",
         class : "input btn_add_lo always_on",
-        title: elgg.echo("wespot_fca:l_objs:add")
+        title : elgg.echo("wespot_fca:l_objs:add")
       }).click(function() {
         logic.set_l_object(object, entityType);
       });

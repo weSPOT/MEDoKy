@@ -82,7 +82,7 @@ $english = array (
     'wespot_fca:domain:sel' => "Select a Domain",
     'wespot_fca:domain:approve' => "Approve and Publish Domain",
     'wespot_fca:domain:approve_sure' => "If you publish your domain it will be assigned to the inquiry. After this, attributes and objects can not be changed anymore. Are you sure your domain is complete?",
-
+    'wespot_fca:domain:csv' => "Export Domain to CSV File",
     'wespot_fca:course:sel' => "Inquiry:",
     
     'wespot_fca:created_by' => "created by"
