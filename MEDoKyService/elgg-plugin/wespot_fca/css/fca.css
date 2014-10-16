@@ -85,6 +85,10 @@
   display: none;
 }
 
+#btn_share {
+  display: none;
+}
+
 #sel_show_learner_lattice {
   margin-left: 10px;
   display: inline-block;
