@@ -3,6 +3,7 @@ package at.tugraz.kmi.medokyservice.fca.db.usermodel;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -131,7 +132,11 @@ public class LearnerLattice extends DataObject {
     clickedLearningObjects.put(obj, Calendar.getInstance().getTimeInMillis());
   }
 
-  public Map<LearningObject, Long> getClickedLearningObjects() {
+  public Set<LearningObject> getClickedLearningObjects() {
+    return new HashSet<LearningObject>(clickedLearningObjects.keySet());
+  }
+
+  public Map<LearningObject, Long> getClickedLearningObjectsWithTimestamp() {
     return clickedLearningObjects;
   }
 

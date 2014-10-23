@@ -36,15 +36,14 @@ public abstract class Updater {
       domain.setMetadata();
       LearningObject clickedObject = Database.getInstance().get(source);
       LearnerLattice lattice = domain.getFormalContext();
-      Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects().keySet();
-      clickedLearningObjects.add(clickedObject);
+      lattice.addClickedLearningObject(clickedObject);
+      Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects();
       System.out.println(clickedLearningObjects);
       System.out.println(clickedObject);
       for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
         FCAAttribute[] domainAttrs = c.getAttributes().keySet().toArray(new FCAAttribute[c.getAttributes().size()]);
         for (FCAAttribute a : domainAttrs) {
           if (a.containsLearningObject(clickedObject)) {
-
             Set<LearningObject> intersection = new HashSet<LearningObject>(clickedLearningObjects);
             Set<LearningObject> combinedLearningObjects = new HashSet<LearningObject>(a.getLearningObjects());
             combinedLearningObjects.addAll(a.getLearningObjectsByLearners());
@@ -75,7 +74,7 @@ public abstract class Updater {
     synchronized (db) {
       domain.setMetadata();
       LearnerLattice lattice = domain.getFormalContext();
-      Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects().keySet();
+      Set<LearningObject> clickedLearningObjects = lattice.getClickedLearningObjects();
       for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
         FCAAttribute[] domainAttrs = c.getAttributes().keySet().toArray(new FCAAttribute[c.getAttributes().size()]);
         for (FCAAttribute a : domainAttrs) {

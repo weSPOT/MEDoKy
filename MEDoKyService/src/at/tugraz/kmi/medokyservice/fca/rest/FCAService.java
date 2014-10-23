@@ -298,6 +298,12 @@ public class FCAService {
     User learner = Database.getInstance().getUserByExternalUID(uid);
     Course c = Database.getInstance().getCourseByExternalID(courseID);
     // TODO: clean up
+    System.out.print("domain: ");
+    System.out.println(domain);
+    System.out.print("learner: ");
+    System.out.println(learner);
+    System.out.print("course: ");
+    System.out.println(c);
     if (!(domain.containsLearnerDomain(learner.getId(), c.getId())))
       return new DomainWrapper(domain).formalContext;
     return new DomainWrapper(domain.getLearnerDomain(learner.getId(), c.getId())).formalContext;
@@ -342,7 +348,7 @@ public class FCAService {
     LearnerDomain domain = Database.getInstance().get(learnerDomaindId);
     for (LearnerConcept c : domain.getFormalContext().getConcepts()) {
       Set<LearningObject> intersection = new HashSet<LearningObject>(domain.getFormalContext()
-          .getClickedLearningObjects().keySet());
+          .getClickedLearningObjects());
       // FIXME clickedLearningobjects
       Set<LearningObject> conceptLearningObjects = new HashSet<LearningObject>();
       for (FCAObject o : c.getObjects().keySet()) {
