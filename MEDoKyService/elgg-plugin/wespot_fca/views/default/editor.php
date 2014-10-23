@@ -4,6 +4,7 @@ $basedir = $CONFIG->url . "/mod/wespot_fca/";
 $options = array (
   'type' => 'object',
   'subtype' => 'file',
+  
   // 'owner_guid' => get_entity ( $inquiryId )->owner_guid,
   'container_guid' => $inquiryId 
 );
@@ -43,10 +44,10 @@ foreach ( $g as $obj ) {
 <script>
 $(function(){
 // production server
-logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
+//logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
 
 // test server
-//logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
+logic.init("<?php echo $basedir; ?>","http://css-kmi.tugraz.at/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
 //logic.init("<?php echo $basedir; ?>","http://192.168.1.101:8080/MEDoKyService/rest/FCATool/", <?php echo json_encode($files_json); ?>, <?php echo json_encode($grps); ?> );
 
 });
@@ -303,13 +304,13 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
     <table>
       <tr>
         <td class="layout_select_name"></td>
-        <td><input id="sel_set_item" type="text" class="sel_set" /></td>
-        <td><input type="image" id="btn_item_edit" class="btn_edit to_be_hidden"
-          src="<?php echo $basedir; ?>img/edit.svg" width="24px" height="24px" /></td>
+        <td><input id="sel_set_item" type="text" class="sel_set" title="" /></td>
+        <td><input type="image" id="btn_item_edit" class="btn_edit to_be_hidden" title=""
+          src="<?php echo $basedir; ?>img/edit.svg" width="24px" height="24px" title="" /></td>
       </tr>
       <tr class="descr_detail">
         <td class="layout_select"><?php echo elgg_echo('wespot_fca:description'); ?></td>
-        <td><textarea id="text_descr_item" rows="5" cols="35" class="text_description"></textarea></td>
+        <td><textarea id="text_descr_item" rows="5" cols="35" class="text_description" title=""></textarea></td>
         <td></td>
       </tr>
       <tr class="descr_detail">
@@ -324,23 +325,25 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
   <div class="choice">
     <hr>
     <input id="btn_choose_item_cancel" type="button" class="input_pad to_be_hidden"
-      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" onclick="$('#dia_set_item').dialog('close')" /> <input
-      id="btn_choose_item_ok" class="input_pad to_be_hidden" type="button"
-      value="<?php echo elgg_echo('wespot_fca:ok'); ?>" />
+      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" onclick="$('#dia_set_item').dialog('close')"
+      title="<?php echo elgg_echo('wespot_fca:cancel'); ?>" /> <input id="btn_choose_item_ok"
+      class="input_pad to_be_hidden" type="button" value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
+      title="<?php echo elgg_echo('wespot_fca:ok'); ?>" />
   </div>
 </div>
 <div id="dia_set_lo" title="<?php echo elgg_echo('wespot_fca:l_objs:add'); ?>">
   <div id="dia_set_lo_content">
     <span style="line-height: 2em;"><?php echo elgg_echo('wespot_fca:l_obj:sel'); ?></span> <input type="text"
-      id="sel_set_lo" class="select_basic"></input>
+      id="sel_set_lo" class="select_basic" title=""></input>
     <p class="item_description">
   
   </div>
   <hr>
   <div class="choice">
     <input id="btn_choose_lo_cancel" type="button" class="input_pad"
-      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" onclick="$('#dia_set_lo').dialog('close')" /> <input
-      id="btn_choose_lo_ok" class="input_pad" type="button" value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
+      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" title="<?php echo elgg_echo('wespot_fca:cancel'); ?>"
+      onclick="$('#dia_set_lo').dialog('close')" /> <input id="btn_choose_lo_ok" class="input_pad" type="button"
+      value="<?php echo elgg_echo('wespot_fca:ok'); ?>" title="<?php echo elgg_echo('wespot_fca:ok'); ?>"
       onclick="logic.set_lo()" />
   </div>
 </div>
@@ -348,31 +351,31 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
 <div id="dia_set_dom" title="<?php echo elgg_echo('wespot_fca:domain:open'); ?>">
   <div id="dia_set_dom_content">
   <?php echo elgg_echo('wespot_fca:domain:sel'); ?><select id="sel_set_dom" class="select_basic"
-      onchange="ui.display_description(this, entity_types.domain)"></select>
+      onchange="ui.display_description(this, entity_types.domain)" title=""></select>
     <p class="item_description"></p>
   </div>
   <div class="choice">
     <hr>
     <input id="btn_choose_dom_cancel" type="button" class="input_pad"
-      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" onclick="$('#dia_set_dom').dialog('close')" /> <input
-      id="btn_choose_dom_ok" class="input_pad" class="input_pad" type="button"
-      value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
+      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" title="<?php echo elgg_echo('wespot_fca:cancel'); ?>"
+      onclick="$('#dia_set_dom').dialog('close')" /> <input id="btn_choose_dom_ok" class="input_pad" class="input_pad"
+      type="button" value="<?php echo elgg_echo('wespot_fca:ok'); ?>" title="<?php echo elgg_echo('wespot_fca:ok'); ?>"
       onclick="logic.load(JSON.parse($('#sel_set_dom').get(0).options[$('#sel_set_dom').get(0).selectedIndex].value).id, state.teacher)" />
   </div>
 </div>
 
 <div id="dia_share_dom" title="<?php echo elgg_echo('wespot_fca:domain:share'); ?>">
   <div id="dia_share_dom_content">
-  <?php echo elgg_echo('wespot_fca:course:sel'); ?><select id="sel_set_course" class="select_basic"
+  <?php echo elgg_echo('wespot_fca:course:sel'); ?><select id="sel_set_course" class="select_basic" title=""
       onchange="$('#btn_share_dom_ok').enable()"></select>
     <p class="item_description"></p>
   </div>
   <div class="choice">
     <hr>
     <input id="btn_share_dom_cancel" type="button" class="input_pad"
-      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" onclick="$('#dia_share_dom').dialog('close')" /> <input
-      id="btn_share_dom_ok" class="input_pad" class="input_pad" type="button"
-      value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
+      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" title="<?php echo elgg_echo('wespot_fca:cancel'); ?>"
+      onclick="$('#dia_share_dom').dialog('close')" /> <input id="btn_share_dom_ok" class="input_pad" class="input_pad"
+      type="button" value="<?php echo elgg_echo('wespot_fca:ok'); ?>" title="<?php echo elgg_echo('wespot_fca:ok'); ?>"
       onclick="backend.share_domain({id:$('#sel_set_course').get(0).options[$('#sel_set_course').get(0).selectedIndex].value, name:$('#sel_set_course').get(0).options[$('#sel_set_course').get(0).selectedIndex].textContent},ui.display_share_ok_error)" />
   </div>
 </div>
@@ -384,8 +387,10 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
   </p>
   <div class="choice">
     <hr>
-    <input id="btn_rem_obj_no" type="button" class="input_pad" value="No" onclick="$('#dia_rem_obj').dialog('close')" />
-    <input id="btn_rem_obj_yes" type="button" class="input_pad" value="Yes" />
+    <input id="btn_rem_obj_no" type="button" class="input_pad" value="<?php echo elgg_echo('wespot_fca:no'); ?>"
+      title="<?php echo elgg_echo('wespot_fca:no'); ?>" onclick="$('#dia_rem_obj').dialog('close')" /> <input
+      id="btn_rem_obj_yes" type="button" class="input_pad" value="<?php echo elgg_echo('wespot_fca:yes'); ?>"
+      title="<?php echo elgg_echo('wespot_fca:yes'); ?>" />
   </div>
 </div>
 
@@ -395,8 +400,10 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
   </p>
   <div class="choice">
     <hr>
-    <input id="btn_rem_attr_no" type="button" class="input_pad" value="No" onclick="$('#dia_rem_attr').dialog('close')" />
-    <input id="btn_rem_attr_yes" type="button" class="input_pad" value="Yes" />
+    <input id="btn_rem_attr_no" type="button" class="input_pad" value="<?php echo elgg_echo('wespot_fca:no'); ?>"
+      title="<?php echo elgg_echo('wespot_fca:no'); ?>" onclick="$('#dia_rem_attr').dialog('close')" /> <input
+      id="btn_rem_attr_yes" type="button" class="input_pad" value="<?php echo elgg_echo('wespot_fca:yes'); ?>"
+      title="<?php echo elgg_echo('wespot_fca:yes'); ?>" />
   </div>
 </div>
 
@@ -406,9 +413,10 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
   </p>
   <div class="choice">
     <hr>
-    <input id="btn_publish_domain_no" type="button" class="input_pad" value="No"
-      onclick="$('#dia_publish_domain').dialog('close')" /> <input id="btn_publish_domain_yes" type="button"
-      class="input_pad" value="Yes" onclick="logic.approve_domain()" />
+    <input id="btn_publish_domain_no" type="button" class="input_pad" value="<?php echo elgg_echo('wespot_fca:no'); ?>"
+      title="<?php echo elgg_echo('wespot_fca:no'); ?>" onclick="$('#dia_publish_domain').dialog('close')" /> <input
+      id="btn_publish_domain_yes" type="button" class="input_pad" value="<?php echo elgg_echo('wespot_fca:yes'); ?>"
+      title="<?php echo elgg_echo('wespot_fca:yes'); ?>" onclick="logic.approve_domain()" />
   </div>
 </div>
 
@@ -416,18 +424,19 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
   <table>
     <tr>
       <td><?php echo elgg_echo('wespot_fca:name'); ?>:</td>
-      <td><input type="text" id="input_create_obj_name" /></td>
+      <td><input type="text" id="input_create_obj_name" title="" /></td>
     </tr>
     <tr>
       <td><?php echo elgg_echo('wespot_fca:description'); ?>:</td>
-      <td><input type="text" id="input_create_obj_description" /></td>
+      <td><input type="text" id="input_create_obj_description" title="" /></td>
     </tr>
   </table>
   <div class="choice">
     <hr>
     <input id="btn_create_obj_cancel" type="button" class="input_pad"
-      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" onclick="ui.set_item(state.obj_index,0)" /> <input
-      id="btn_create_obj_ok" class="input_pad" type="button" value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
+      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" title="<?php echo elgg_echo('wespot_fca:cancel'); ?>"
+      onclick="ui.set_item(state.obj_index,0)" /> <input id="btn_create_obj_ok" class="input_pad" type="button"
+      value="<?php echo elgg_echo('wespot_fca:ok'); ?>" title="<?php echo elgg_echo('wespot_fca:ok'); ?>"
       onclick="logic.create_object($('#input_create_obj_name').prop('value'),$('#input_create_obj_description').prop('value'))" />
   </div>
 </div>
@@ -436,18 +445,19 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
   <table>
     <tr>
       <td><?php echo elgg_echo('wespot_fca:name'); ?>:</td>
-      <td><input type="text" id="input_create_attr_name" /></td>
+      <td><input type="text" id="input_create_attr_name" title="" /></td>
     </tr>
     <tr>
       <td><?php echo elgg_echo('wespot_fca:description'); ?>:</td>
-      <td><input type="text" id="input_create_attr_description" /></td>
+      <td><input type="text" id="input_create_attr_description" title="" /></td>
     </tr>
   </table>
   <div class="choice">
     <hr>
     <input id="btn_create_attr_cancel" type="button" class="input_pad"
-      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" onclick="ui.set_item(state.attr_index,1)" /> <input
-      id="btn_create_attr_ok" class="input_pad" type="button" value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
+      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" title="<?php echo elgg_echo('wespot_fca:cancel'); ?>"
+      onclick="ui.set_item(state.attr_index,1)" /> <input id="btn_create_attr_ok" class="input_pad" type="button"
+      value="<?php echo elgg_echo('wespot_fca:ok'); ?>" title="<?php echo elgg_echo('wespot_fca:ok'); ?>"
       onclick="logic.create_attribute($('#input_create_attr_name').prop('value'),$('#input_create_attr_description').prop('value'))" />
   </div>
 </div>
@@ -456,18 +466,20 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
   <table>
     <tr>
       <td><?php echo elgg_echo('wespot_fca:name'); ?>:</td>
-      <td><input type="text" id="input_create_domain_name" /></td>
+      <td><input type="text" id="input_create_domain_name" title="" /></td>
     </tr>
     <tr>
       <td><?php echo elgg_echo('wespot_fca:description'); ?>:</td>
-      <td><input type="text" id="input_create_domain_description" /></td>
+      <td><input type="text" id="input_create_domain_description" title="" /></td>
     </tr>
   </table>
   <div class="choice">
     <hr>
     <input id="btn_create_domain_cancel" type="button" class="input_pad"
-      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" onclick="$('#dia_create_domain').dialog('close')" /> <input
-      id="btn_create_domain_ok" type="button" class="input_pad" value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
+      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" title="<?php echo elgg_echo('wespot_fca:cancel'); ?>"
+      onclick="$('#dia_create_domain').dialog('close')" /> <input id="btn_create_domain_ok" type="button"
+      class="input_pad" value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
+      title="<?php echo elgg_echo('wespot_fca:ok'); ?>"
       onclick="logic.create_domain($('#input_create_domain_name').prop('value'),$('#input_create_domain_description').prop('value'))" />
   </div>
 </div>
@@ -476,18 +488,20 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
   <table>
     <tr>
       <td><?php echo elgg_echo('wespot_fca:name'); ?>:</td>
-      <td><input type="text" id="input_create_lo_name" /></td>
+      <td><input type="text" id="input_create_lo_name" title="" /></td>
     </tr>
     <tr>
       <td>Url:</td>
-      <td><input type="text" id="input_create_lo_description" /></td>
+      <td><input type="text" id="input_create_lo_description" title="" /></td>
     </tr>
   </table>
   <div class="choice">
     <hr>
     <input id="btn_create_lo_cancel" type="button" class="input_pad always_on"
-      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" onclick="$('#dia_create_lo').dialog('close')" /> <input
-      id="btn_create_lo_ok" type="button" class="input_pad always_on" value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
+      value="<?php echo elgg_echo('wespot_fca:cancel'); ?>" title="<?php echo elgg_echo('wespot_fca:cancel'); ?>"
+      onclick="$('#dia_create_lo').dialog('close')" /> <input id="btn_create_lo_ok" type="button"
+      class="input_pad always_on" value="<?php echo elgg_echo('wespot_fca:ok'); ?>"
+      title="<?php echo elgg_echo('wespot_fca:ok'); ?>"
       onclick="logic.create_lo($('#input_create_lo_name').prop('value'),'',$('#input_create_lo_description').prop('value'))" />
   </div>
 </div>
@@ -500,7 +514,8 @@ logic.init("<?php echo $basedir; ?>","http://css-kti.tugraz.at:8080/MEDoKyServic
       <td><span id="span_latticeview"> <input type="checkbox" id="cb_latticeview" style="width: 20px"
           onclick="lattice.switch_view()" /> <?php echo elgg_echo('wespot_fca:lattice:show_full'); ?> <span
           id="span_taxonomy_selectall"><input type="button" class="input always_on" id="btn_taxonomy_selectall"
-            onclick="lattice.enable_all()" value="<?php echo elgg_echo('wespot_fca:lattice:selectall'); ?>"></span>
+            onclick="lattice.enable_all()" value="<?php echo elgg_echo('wespot_fca:lattice:selectall'); ?>"
+            title="<?php echo elgg_echo('wespot_fca:lattice:selectall'); ?>" /></span>
       </span></td>
       <td>
         <div id="div_lattice_vis">

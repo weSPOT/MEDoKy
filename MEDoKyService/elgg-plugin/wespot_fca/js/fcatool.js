@@ -1010,7 +1010,7 @@ logic = {
     $("#matrix_main > table > tbody > tr").each(function() {
       var current_obj = objs[++index];
       $(this).find("input").each(function() {
-        current_obj.push(this.checked);
+        current_obj.push((this.checked ? "x" : ""));
       });
     });
     var csv = "";
@@ -1362,12 +1362,11 @@ logic = {
       $("#btn_save, #btn_approve, #btn_approve").hide();
       $(".btn_move_right, .btn_move_left, .btn_move_up, .btn_move_down").hide();
       $(".to_be_hidden").hide();
-      if (state.teacher){
+      if (state.teacher) {
         $("#btn_show_learner_lattice").prop("disabled", false);
         $("#btn_csv").show();
-        $("#btn_csv").prop("disabled",false);
-      }
-      else
+        $("#btn_csv").prop("disabled", false);
+      } else
         $("#btn_show_learner_lattice").hide();
     } else {
       $("#btn_show_learner_lattice").hide();
