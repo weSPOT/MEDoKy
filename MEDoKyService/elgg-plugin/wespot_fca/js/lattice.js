@@ -971,7 +971,7 @@ lattice = {
   },
 
   display_learner_lattice : function(select) {
-    if (select.selectedIndex != -1) {
+    if (select.selectedIndex >0) {
       var learnerId = select.options[select.selectedIndex].value;
       console.debug(learnerId);
       backend.get_learner_lattice(learnerId, function(obj) {
@@ -981,6 +981,12 @@ lattice = {
         state.learner_lattice_learner = $(select.options[select.selectedIndex]).text();
         ui.hide_learner_lattice_dropdown();
       });
+    }else{
+      state.domain.formalContext = state.teacher_lattice;
+      lattice.update_vis(state.domain);
+      lattice.renderer.redraw();
+      state.learner_lattice_learner = "";
+      ui.hide_learner_lattice_dropdown();
     }
   },
 

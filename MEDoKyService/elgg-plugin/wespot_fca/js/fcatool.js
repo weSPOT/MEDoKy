@@ -1448,7 +1448,7 @@ logic = {
         } else {
           ui.display_lattice();
         }
-
+        state.teacher_lattice = state.domain.formalContext;
         logic.enable_disable();
       }, 1000);
     }));
