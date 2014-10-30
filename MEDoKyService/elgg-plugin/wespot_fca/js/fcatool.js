@@ -65,6 +65,9 @@ backend = {
       success : function(obj) {
         if (callback)
           callback(obj);
+      },
+      error: function(){
+        alert("Could not connect to Back-End! The FCA Tool will not work!");
       }
     });
   },
@@ -2596,7 +2599,7 @@ ui = {
       lattice.resize($("#dia_vis").width() - 220, $("#dia_vis").height());
     }
   },
-
+  
   display_ie_warning : function(flag) {
     var y;
 
