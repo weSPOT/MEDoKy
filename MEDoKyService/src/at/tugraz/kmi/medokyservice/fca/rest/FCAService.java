@@ -170,9 +170,9 @@ public class FCAService {
     log("getDomainHeaders");
     Set<Course> courses = new LinkedHashSet<Course>();
     LinkedHashMap<Long, CourseWrapper> result = new LinkedHashMap<Long, CourseWrapper>();
-
+    User nullUser=null;
     // This is a botch, fixme!
-    Course course = new Course("", "", 0, "-1");
+    Course course = new Course("", "", nullUser, "-1");
     for (Domain d : Database.getInstance().getAll(Domain.class)) {
       if (d.isGlobal()) {
         course.addDomain(d);
@@ -202,7 +202,7 @@ public class FCAService {
         domains.addAll(c.getDomains());
       }
       for (Domain d : c.getDomains()) {
-        map.put(d.getId(), new DomainBlueprint(d.getName(), d.getDescription(), d.getOwner(), d.isApproved()));
+        map.put(d.getId(), new DomainBlueprint(d.getName(), d.getDescription(), d.getOwners(), d.isApproved()));
       }
       wrapper.domains = map;
       result.put(c.getId(), wrapper);
@@ -780,8 +780,8 @@ public class FCAService {
     Database.getInstance().putAll(domain.getFormalContext().getConcepts(), false);
     Course course = Database.getInstance().getCourseByExternalID(relation.externalCourseID);
     if (course == null) {
-      course = new Course(relation.courseName, "", Database.getInstance().getUserByExternalUID(relation.externalUID)
-          .getId(), relation.externalCourseID);
+      course = new Course(relation.courseName, "", Database.getInstance().getUserByExternalUID(relation.externalUID),
+          relation.externalCourseID);
     }
     course.addDomain(domain);
     Database.getInstance().put(course, false);
@@ -853,8 +853,7 @@ public class FCAService {
     if (!d.isApproved())
       throw new Exception("Domain is not approved");
     if (c == null) {
-      c = new Course(courseName, "",
-          Database.getInstance().getUserByExternalUID(d.getOwner().getExternalUid()).getId(), courseID);
+      c = new Course(courseName, "", d.getOwners(), courseID);
       Database.getInstance().put(c, false);
     }
     c.addDomain(d);

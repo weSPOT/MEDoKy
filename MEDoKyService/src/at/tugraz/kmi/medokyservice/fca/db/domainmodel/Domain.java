@@ -28,7 +28,7 @@ public class Domain extends DataObject {
   private static final long                   serialVersionUID = -9169088905113687870L;
   private IncidenceMatrix                     mapping;
   private Lattice                             formalContext;
-  private User                                owner;
+  private Set<User>                           owners;
   private boolean                             global;
   private boolean                             approved;
 
@@ -52,7 +52,8 @@ public class Domain extends DataObject {
     super(name, description);
     mapping = matrix;
     formalContext = new Lattice(matrix);
-    this.owner = owner;
+    owners = new HashSet<User>();
+    owners.add(owner);
     this.global = global;
     this.approved = false;
     this.learnerDomains = Collections.synchronizedMap(new HashMap<Long, Map<Long, LearnerDomain>>());
@@ -76,12 +77,12 @@ public class Domain extends DataObject {
     return formalContext;
   }
 
-  public User getOwner() {
-    return owner;
+  public Set<User> getOwners() {
+    return owners;
   }
 
-  public void setOwner(User owner) {
-    this.owner = owner;
+  public void setOwners(Set<User> owners) {
+    this.owners = owners;
   }
 
   public Map<Long, Map<Long, LearnerDomain>> getLearnerDomains() {

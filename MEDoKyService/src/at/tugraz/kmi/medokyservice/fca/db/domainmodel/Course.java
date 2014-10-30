@@ -19,25 +19,41 @@ public class Course extends DataObject {
    * 
    */
   private static final long serialVersionUID = 4916381247554634834L;
-  private Set<Domain> domains;
-  private Set<User> participants;
-  private long ownerId;
-  private String externalCourseID;
+  private Set<Domain>       domains;
+  private Set<User>         participants;
+  private Set<User>         owners;
+  private String            externalCourseID;
 
   /**
    * @param name
    *          the curse name
    * @param description
    *          the description of the course
-   * @param ownerId
-   *          The id of the user (teacher) responsible for this course
+   * @param owner
+   *          The user (teacher) responsible for this course
    */
-  public Course(String name, String description, long ownerId,
-      String externalCourseID) {
+  public Course(String name, String description, User owner, String externalCourseID) {
     super(name, description);
     domains = new HashSet<Domain>();
     participants = new HashSet<User>();
-    this.ownerId = ownerId;
+    owners = new HashSet<User>();
+    if (owner != null)
+      owners.add(owner);
+    this.externalCourseID = externalCourseID;
+  }
+  /**
+   * @param name
+   *          the curse name
+   * @param description
+   *          the description of the course
+   * @param owners
+   *          The users (teachers) responsible for this course
+   */
+  public Course(String name, String description, Set<User> owners, String externalCourseID) {
+    super(name, description);
+    domains = new HashSet<Domain>();
+    participants = new HashSet<User>();
+    owners = new HashSet<User>(owners);   
     this.externalCourseID = externalCourseID;
   }
 
@@ -70,12 +86,12 @@ public class Course extends DataObject {
     participants.add(participant);
   }
 
-  public long getOwnerId() {
-    return ownerId;
+  public Set<User> getOwners() {
+    return owners;
   }
 
-  public void setOwnerId(long owner) {
-    this.ownerId = owner;
+  public void setOwners(Set<User> owners) {
+    this.owners = owners;
   }
 
   public String getExternalCourseID() {

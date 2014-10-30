@@ -1,5 +1,8 @@
 package at.tugraz.kmi.medokyservice.fca.rest.wrappers;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.Domain;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.IncidenceMatrix;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
@@ -13,7 +16,7 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
  */
 public class DomainWrapper extends AbstractWrapper {
 
-  public User owner;
+  public Set<User> owners;
   public LatticeWrapper formalContext;
   public IncidenceMatrix mapping;
   public boolean global;
@@ -26,7 +29,7 @@ public class DomainWrapper extends AbstractWrapper {
     super.id = domain.getId();
     super.name = domain.getName();
     super.description = domain.getDescription();
-    owner = domain.getOwner();
+    owners = domain.getOwners();
     formalContext = new LatticeWrapper(domain.getFormalContext());
     mapping = domain.getMapping();
     global=domain.isGlobal();
@@ -38,7 +41,8 @@ public class DomainWrapper extends AbstractWrapper {
     super.id = domain.getId();
     super.name = domain.getName();
     super.description = domain.getDescription();
-    owner = domain.getOwner();
+    owners = new HashSet<User>();
+    owners.add(domain.getOwner());
     formalContext = new LatticeWrapper(domain.getFormalContext());
     mapping = domain.getMapping();
     System.out.println(domain.isGlobal());

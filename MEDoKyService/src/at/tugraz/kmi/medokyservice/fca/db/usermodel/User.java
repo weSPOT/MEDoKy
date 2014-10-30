@@ -20,8 +20,6 @@ public class User extends DataObject {
 
   private static final long serialVersionUID = -6963436680153937339L;
   private String externalUid;
-  private Set<Course> coursesOwned;
-  private Set<Long> coursesAttendingIDs;
 
   /**
    * Creates a new User with a unique id (see {@link IDGenerator}
@@ -36,8 +34,6 @@ public class User extends DataObject {
   public User(String externalUid, String name, String description) {
     super(name, description);
     this.externalUid = externalUid;
-    coursesOwned = new LinkedHashSet<Course>();
-    coursesAttendingIDs = new HashSet<Long>();
   }
 
   public String getExternalUid() {
@@ -47,27 +43,4 @@ public class User extends DataObject {
   public void setExternalUid(String external_uid) {
     this.externalUid = external_uid;
   }
-/*
-  public Set<Course> getCoursesOwned() {
-    return coursesOwned;
-  }
-
-  /**
-   * Adds a course to the set of managed courses. Sets the course's ownerId to
-   * the id of this teacher.
-   * 
-   * @param course
-   * /
-  public void addCourseOwned(Course course) {
-    coursesOwned.add(course);
-    course.setOwnerId(id);
-  }
-
-  public Set<Long> getCoursesAttendingIDs() {
-    return coursesAttendingIDs;
-  }
-
-  public void addCousesAttending(long id) {
-    coursesAttendingIDs.add(id);
-  }*/
 }

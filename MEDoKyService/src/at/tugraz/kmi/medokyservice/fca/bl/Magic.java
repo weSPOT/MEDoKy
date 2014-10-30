@@ -18,7 +18,7 @@ public abstract class Magic {
       if (owner == null)
         owner = new User(externalCourseOwnerID, "Anaonymous", "");
       Database.getInstance().put(owner, false);
-      c = new Course(courseName, "", owner.getId(), externalCourseId);
+      c = new Course(courseName, "", owner, externalCourseId);
       Database.getInstance().put(c, false);
     }
     createLearnerModelInternal(learner, c);

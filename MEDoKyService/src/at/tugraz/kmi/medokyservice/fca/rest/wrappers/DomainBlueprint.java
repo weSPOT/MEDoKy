@@ -2,6 +2,7 @@ package at.tugraz.kmi.medokyservice.fca.rest.wrappers;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAAttribute;
 import at.tugraz.kmi.medokyservice.fca.db.domainmodel.FCAObject;
@@ -19,10 +20,10 @@ public class DomainBlueprint extends AbstractWrapper {
   public DomainBlueprint() {
   }
 
-  public DomainBlueprint(String name, String description, User owner, boolean approved) {
+  public DomainBlueprint(String name, String description, Set<User> owners, boolean approved) {
     super.name = name;
     super.description = description;
-    this.owner = owner;
+    this.owners = owners;
     this.approved = approved;
   }
 
@@ -34,7 +35,6 @@ public class DomainBlueprint extends AbstractWrapper {
   public String                                   externalCourseID;
 
   public String                                   courseName;
-
 
   /**
    * the set of {@link FCAAttribute} IDs part of this domain
@@ -54,7 +54,7 @@ public class DomainBlueprint extends AbstractWrapper {
   /**
    * The Domain's owner/creator
    */
-  public User                                     owner;
+  public Set<User>                                owners;
 
   /**
    * Flag indicating whethet this domain is approved
