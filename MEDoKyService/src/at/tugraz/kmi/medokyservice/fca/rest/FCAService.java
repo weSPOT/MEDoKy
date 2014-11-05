@@ -764,8 +764,16 @@ public class FCAService {
           Database.getInstance().<FCAAttribute> get(relation.mapping.get(iobjectId)));
     }
 
-    Domain domain = new Domain(relation.name, relation.description, matrix, Database.getInstance()
-        .getUserByExternalUID(relation.externalUID), false);
+    Set<User> owners = new HashSet<User>();
+    for (String str : relation.externalUIDs) {
+      User userByExternalUID = Database.getInstance().getUserByExternalUID(str);
+      // TODO: what if user is not in db?
+      if (userByExternalUID != null) {
+        owners.add(userByExternalUID);
+      }
+    }
+
+    Domain domain = new Domain(relation.name, relation.description, matrix, owners, false);
     Database.getInstance().put(domain, false);
     Database.getInstance().putAll(domain.getFormalContext().getConcepts(), false);
     Course course = Database.getInstance().getCourseByExternalID(relation.externalCourseID);

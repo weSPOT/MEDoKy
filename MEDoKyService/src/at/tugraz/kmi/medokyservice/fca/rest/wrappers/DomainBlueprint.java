@@ -30,7 +30,7 @@ public class DomainBlueprint extends AbstractWrapper {
   /**
    * external UID of the teacher that created this domain
    */
-  public String                                   externalUID;
+  public Set<String>                                   externalUIDs;
 
   public String                                   externalCourseID;
 

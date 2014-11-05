@@ -28,7 +28,8 @@ state = {
   edit_current_item : true,
   select_do_create : false,
   type : undefined,
-  learner_lattice_learner : undefined
+  learner_lattice_learner : undefined,
+  adminIDs : []
 };
 
 entity_types = {
@@ -66,7 +67,7 @@ backend = {
         if (callback)
           callback(obj);
       },
-      error: function(){
+      error : function() {
         alert("Could not connect to Back-End! The FCA Tool will not work!");
       }
     });
@@ -472,7 +473,7 @@ util = {
         state.load_domain = param[1];
     }
     if (state.owner_id == state.user.guid)
-      state.teacher = true;
+      state.teacher = true; //TODO PHP call
 
     $("#btn_to_group")
         .attr("onclick", "window.location='" + elgg.get_site_url() + "/groups/profile/" + state.gid + "'");
@@ -790,6 +791,7 @@ logic = {
     state.files = files;
     state.groups = groups;
     state.user = elgg.get_logged_in_user_entity();
+
     util.parse_params();
     util.init_state();
     ui.prepare_table();
@@ -811,7 +813,7 @@ logic = {
       "cName" : state.g_name
     }), function(id) {
       state.internalUID = parseInt(id);
-
+      state.adminIDs = [ state.user.guid.toString() ];
       ui.setup_btn_hover();
       ui.prepare_dialogs();
       util.setup_msie();
@@ -1225,7 +1227,7 @@ logic = {
   create_domain : function(name, description) {
     logic.save(function() {
       var domain = logic.create_mapping(name, description);
-      domain.externalUID = state.user.guid.toString();
+      domain.externalUIDs = state.adminIDs;
       domain.externalCourseID = state.gid;
       domain.courseName = state.g_name;
       backend.create_domain(JSON.stringify(domain), function(obj) {
@@ -1293,7 +1295,7 @@ logic = {
     if (state.domain) {
       logic.save(function() {
         var domain = logic.create_mapping(state.domain.name, state.domain.description);
-        domain.externalUID = state.user.guid.toString();
+        domain.externalUIDs = state.adminIDs;
         domain.externalCourseID = state.gid;
         domain.courseName = state.g_name;
         backend.update_domain(JSON.stringify(domain), function(obj) {
@@ -1355,7 +1357,8 @@ logic = {
   enable_disable : function() {
     $("#btn_share").hide();
     if (state.domain && state.domain.approved) {
-      if (state.owner_id == state.domain.owner.externalUid)
+      if (state.domain.owners.indexOf(state.owner_id) > -1)
+        // if (state.owner_id == state.domain.owner.externalUid)
         $("#btn_share").show();
       $(".input").prop("disabled", true);
       $(".btn_del_attr").css("visibility", "hidden");
@@ -2413,7 +2416,14 @@ ui = {
           var dom = courses[id].domains[d];
           console.debug(dom);
           console.debug(state.user.guid);
-          if (dom.approved || dom.owner.externalUid == state.user.guid) {
+          var owned = false;
+          for ( var x in dom.owners) {
+            if (dom.owners[x].externalUid == state.user.guid) {
+              owned = true;
+              break;
+            }
+          }
+          if (dom.approved || owned) {
             if (dId === undefined)
               dId = d;
             else {
@@ -2462,7 +2472,14 @@ ui = {
           }
           courses[id].domains[d].id = d;
           var dom = courses[id].domains[d];
-          if (dom.approved || dom.owner.externalUid == state.user.guid) {
+          var owned = false;
+          for ( var x in dom.owners) {
+            if (dom.owners[x].externalUid == state.user.guid) {
+              owned = true;
+              break;
+            }
+          }
+          if (dom.approved || owned) {
             $("#sel_set_dom").create("option", {
               value : JSON.stringify(courses[id].domains[d])
             }).create("txt", "   \u2192 " + courses[id].domains[d].name);
@@ -2599,7 +2616,7 @@ ui = {
       lattice.resize($("#dia_vis").width() - 220, $("#dia_vis").height());
     }
   },
-  
+
   display_ie_warning : function(flag) {
     var y;
 
