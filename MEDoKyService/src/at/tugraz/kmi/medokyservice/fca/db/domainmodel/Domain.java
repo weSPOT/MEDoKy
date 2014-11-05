@@ -13,9 +13,8 @@ import at.tugraz.kmi.medokyservice.fca.db.usermodel.LearnerDomain;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 
 /**
- * Class representing a Knowledge Domain. Every Domain has an owner an
- * {@link IncidenceMatrix} and a {@link Lattice} computed from the
- * IncidenceMatrix.
+ * Class representing a Knowledge Domain. Every Domain has an owner an {@link IncidenceMatrix} and a {@link Lattice}
+ * computed from the IncidenceMatrix.
  * 
  * @author Bernd Prünster <mail@berndpruenster.org>
  * 
@@ -36,8 +35,7 @@ public class Domain extends DataObject {
   private Map<Long, Map<Long, LearnerDomain>> learnerDomains;
 
   /**
-   * Creates a new domain form an {@link IncidenceMatrix} computing a
-   * {@link Lattice}.
+   * Creates a new domain form an {@link IncidenceMatrix} computing a {@link Lattice}.
    * 
    * @param name
    *          The domain name
@@ -54,6 +52,17 @@ public class Domain extends DataObject {
     formalContext = new Lattice(matrix);
     owners = new HashSet<User>();
     owners.add(owner);
+    this.global = global;
+    this.approved = false;
+    this.learnerDomains = Collections.synchronizedMap(new HashMap<Long, Map<Long, LearnerDomain>>());
+  }
+
+  public Domain(String name, String description, IncidenceMatrix matrix, Set<User> owner, boolean global) {
+    super(name, description);
+    mapping = matrix;
+    formalContext = new Lattice(matrix);
+    owners = new HashSet<User>();
+    owners.addAll(owner);
     this.global = global;
     this.approved = false;
     this.learnerDomains = Collections.synchronizedMap(new HashMap<Long, Map<Long, LearnerDomain>>());

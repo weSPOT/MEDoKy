@@ -186,7 +186,12 @@ public class ImportExport {
         jsM.addProperty(Long.toString(mId), mat.getItemMetadata().get(mId).getId());
       }
       jso.add(SECTION_M, jsM);
-      jso.addProperty(OWNER, d.getOwner().getId());
+      List<Long> ownerIDs = new LinkedList<Long>();
+      for (User o : d.getOwners()) {
+        ownerIDs.add(o.getId());
+      }
+      jso.add(OWNER, gson.toJsonTree(ownerIDs, new TypeToken<List<Long>>() {
+      }.getType()));
       jso.addProperty(GLOBAL, d.isGlobal());
       jso.addProperty(APPROVED, d.isApproved());
       JsonObject jsMapping = new JsonObject();
@@ -216,8 +221,12 @@ public class ImportExport {
 
       jso.add(SECTION_D, gson.toJsonTree(dIds, new TypeToken<List<Long>>() {
       }.getType()));
-
-      jso.addProperty(OWNER, o.getOwnerId());
+      List<Long> ownerIDs = new LinkedList<Long>();
+      for (User u : o.getOwners()) {
+        ownerIDs.add(u.getId());
+      }
+      jso.add(OWNER, gson.toJsonTree(ownerIDs, new TypeToken<List<Long>>() {
+      }.getType()));
       jso.addProperty(E_CID, o.getExternalCourseID());
       List<Long> participants = new LinkedList<Long>();
       for (User u : o.getParticipants())
@@ -409,7 +418,18 @@ public class ImportExport {
         mat.add(object, attribs);
       }
       boolean global = (d.get(GLOBAL) == null) ? false : d.get(GLOBAL).getAsBoolean();
-      Domain domain = new Domain(mat.getName(), mat.getDescription(), mat, users.get(d.get(OWNER).getAsLong()), global);
+      Domain domain;
+      // compat
+      try {
+        domain = new Domain(mat.getName(), mat.getDescription(), mat, users.get(d.get(OWNER).getAsLong()), global);
+      } catch (Exception e) {
+        // new format
+        Iterator<JsonElement> uIds = d.getAsJsonArray(OWNER).iterator();
+        Set<User> owners = new HashSet<User>();
+        while (uIds.hasNext())
+          owners.add(users.get(uIds.next().getAsLong()));
+        domain = new Domain(mat.getName(), mat.getDescription(), mat, owners, global);
+      }
       if (d.get(APPROVED) == null) {
         domain.setApproved(true);
       } else {
@@ -438,8 +458,20 @@ public class ImportExport {
         User u = users.get(userIds.next().getAsLong());
         uusers.add(u);
       }
-      Course course = new Course(c.get(NAME).getAsString(), c.get(DESCRIPTION).getAsString(), c.get(OWNER).getAsLong(),
-          c.get(E_CID).getAsString());
+      Course course;
+      // compat
+      try {
+        course = new Course(c.get(NAME).getAsString(), c.get(DESCRIPTION).getAsString(), users.get(c.get(OWNER)
+            .getAsLong()), c.get(E_CID).getAsString());
+      } catch (Exception e) {
+        // new format: Multiple Owners/Admins per course
+        Iterator<JsonElement> uIds = c.getAsJsonArray(OWNER).iterator();
+        Set<User> owners = new HashSet<User>();
+        while (uIds.hasNext())
+          owners.add(users.get(uIds.next().getAsLong()));
+        course = new Course(c.get(NAME).getAsString(), c.get(DESCRIPTION).getAsString(), owners, c.get(E_CID)
+            .getAsString());
+      }
       for (Domain d : ddomains)
         course.addDomain(d);
       for (User u : uusers)
