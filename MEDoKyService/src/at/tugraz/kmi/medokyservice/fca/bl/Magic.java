@@ -14,11 +14,8 @@ public abstract class Magic {
       String courseName) throws FCAException {
     Course c = Database.getInstance().getCourseByExternalID(externalCourseId);
     if (c == null) {
-      User owner = Database.getInstance().getUserByExternalUID(externalCourseOwnerID);
-      if (owner == null)
-        owner = new User(externalCourseOwnerID, "Anaonymous", "");
-      Database.getInstance().put(owner, false);
-      c = new Course(courseName, "", owner, externalCourseId);
+
+      c = new Course(courseName, "", externalCourseId);
       Database.getInstance().put(c, false);
     }
     createLearnerModelInternal(learner, c);

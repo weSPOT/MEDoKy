@@ -7,9 +7,8 @@ import at.tugraz.kmi.medokyservice.fca.db.DataObject;
 import at.tugraz.kmi.medokyservice.fca.db.usermodel.User;
 
 /**
- * Class representing a course. A Course must have an owner ({@link User}) id, a
- * (possibly empty) set of {@link User}s and a(possibly empty) set of
- * {@link Domain}s. Only the teacher may add/remove domains and learners.
+ * Class representing a course. A Course must have an owner ({@link User}) id, a (possibly empty) set of {@link User}s
+ * and a(possibly empty) set of {@link Domain}s. Only the teacher may add/remove domains and learners.
  * 
  * @author Bernd Prünster <mail@berndpruenster.org>
  * 
@@ -21,7 +20,7 @@ public class Course extends DataObject {
   private static final long serialVersionUID = 4916381247554634834L;
   private Set<Domain>       domains;
   private Set<User>         participants;
-  private Set<User>         owners;
+  // private Set<User> owners;
   private String            externalCourseID;
 
   /**
@@ -29,31 +28,11 @@ public class Course extends DataObject {
    *          the curse name
    * @param description
    *          the description of the course
-   * @param owner
-   *          The user (teacher) responsible for this course
    */
-  public Course(String name, String description, User owner, String externalCourseID) {
+  public Course(String name, String description, String externalCourseID) {
     super(name, description);
     domains = new HashSet<Domain>();
     participants = new HashSet<User>();
-    owners = new HashSet<User>();
-    if (owner != null)
-      owners.add(owner);
-    this.externalCourseID = externalCourseID;
-  }
-  /**
-   * @param name
-   *          the curse name
-   * @param description
-   *          the description of the course
-   * @param owners
-   *          The users (teachers) responsible for this course
-   */
-  public Course(String name, String description, Set<User> owners, String externalCourseID) {
-    super(name, description);
-    domains = new HashSet<Domain>();
-    participants = new HashSet<User>();
-    owners = new HashSet<User>(owners);   
     this.externalCourseID = externalCourseID;
   }
 
@@ -86,13 +65,14 @@ public class Course extends DataObject {
     participants.add(participant);
   }
 
-  public Set<User> getOwners() {
-    return owners;
-  }
-
-  public void setOwners(Set<User> owners) {
-    this.owners = owners;
-  }
+  //
+  // public Set<User> getOwners() {
+  // return owners;
+  // }
+  //
+  // public void setOwners(Set<User> owners) {
+  // this.owners = owners;
+  // }
 
   public String getExternalCourseID() {
     return externalCourseID;

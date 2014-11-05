@@ -157,9 +157,8 @@ public class FCAService {
   }
 
   /**
-   * retrieves a Map of Courses containing their Domains as
-   * {@link DomainBlueprint}s containing only id, name and description for all
-   * {@link Domain}s stored in the Database.
+   * retrieves a Map of Courses containing their Domains as {@link DomainBlueprint}s containing only id, name and
+   * description for all {@link Domain}s stored in the Database.
    * 
    * @return all {@link DomainBlueprint}s mapped by their id
    */
@@ -170,9 +169,7 @@ public class FCAService {
     log("getDomainHeaders");
     Set<Course> courses = new LinkedHashSet<Course>();
     LinkedHashMap<Long, CourseWrapper> result = new LinkedHashMap<Long, CourseWrapper>();
-    User nullUser=null;
-    // This is a botch, fixme!
-    Course course = new Course("", "", nullUser, "-1");
+    Course course = new Course("", "", "-1");
     for (Domain d : Database.getInstance().getAll(Domain.class)) {
       if (d.isGlobal()) {
         course.addDomain(d);
@@ -379,8 +376,7 @@ public class FCAService {
    * Updates an {@link FCAObject} and returns the updated object
    * 
    * @param obj
-   *          The FCAObject containing new information not present in the
-   *          database
+   *          The FCAObject containing new information not present in the database
    * @return the updated FCAObject
    */
   // should be PUT, but MSIE screws this up!
@@ -446,8 +442,7 @@ public class FCAService {
    * Updates an {@link FCAAttribute} and returns the updated object
    * 
    * @param obj
-   *          The FCAAttribute containing new information not present in the
-   *          database
+   *          The FCAAttribute containing new information not present in the database
    * @return the updated FCAAttribute
    */
   // should be PUT, but MSIE screws this up!
@@ -516,14 +511,12 @@ public class FCAService {
   }
 
   /**
-   * Updates a {@link Concept} (for example concept name, description, is this
-   * concept part of the taxonomy, ...). Since Changes to a concept can have
-   * effects on other concepts part of a {@link Domain} the whole domain needs
-   * to be updated and returned to ensure current data.
+   * Updates a {@link Concept} (for example concept name, description, is this concept part of the taxonomy, ...). Since
+   * Changes to a concept can have effects on other concepts part of a {@link Domain} the whole domain needs to be
+   * updated and returned to ensure current data.
    * 
    * @param concept
-   *          the concept to update -- wrapped in a helper class reducing
-   *          overhead
+   *          the concept to update -- wrapped in a helper class reducing overhead
    * @return the updated domain this concept belongs to
    * @throws NullPointerException
    *           if the Concept is not in the database
@@ -594,8 +587,8 @@ public class FCAService {
   }
 
   /**
-   * Identifies an external user. If the user does not exist a new {@link User}
-   * is created referencing the external user by UID
+   * Identifies an external user. If the user does not exist a new {@link User} is created referencing the external user
+   * by UID
    * 
    * @param user
    *          The user to identify wrapped in a helper class
@@ -633,8 +626,8 @@ public class FCAService {
    * Adds the specified {@link FCAObject}s to the database
    * 
    * @param objects
-   *          the objects to add containing an invalid (but unique) id. A
-   *          mapping of a valid IDs to the objects with invalid IDs is returned
+   *          the objects to add containing an invalid (but unique) id. A mapping of a valid IDs to the objects with
+   *          invalid IDs is returned
    * @return a mapping of valid IDs to objects with invalid (but unique) IDs
    */
   @POST
@@ -672,8 +665,8 @@ public class FCAService {
    * Adds the specified {@link LearningObject}s to the database
    * 
    * @param objects
-   *          the objects to add containing an invalid (but unique) id. A
-   *          mapping of a valid IDs to the objects with invalid IDs is returned
+   *          the objects to add containing an invalid (but unique) id. A mapping of a valid IDs to the objects with
+   *          invalid IDs is returned
    * @return a mapping of valid IDs to objects with invalid (but unique) IDs
    */
   @POST
@@ -711,9 +704,8 @@ public class FCAService {
    * Adds the specified {@link FCAAttribute}s to the database
    * 
    * @param attributes
-   *          the attributes to add containing an invalid (but unique) id. A
-   *          mapping of a valid IDs to the attributes with invalid IDs is
-   *          returned
+   *          the attributes to add containing an invalid (but unique) id. A mapping of a valid IDs to the attributes
+   *          with invalid IDs is returned
    * @return a mapping of valid IDs to attributes with invalid (but unique) IDs
    */
   @POST
@@ -749,12 +741,10 @@ public class FCAService {
   }
 
   /**
-   * Creates a new {@link Domain} and returns it based on the
-   * {@link DomainBlueprint} provided
+   * Creates a new {@link Domain} and returns it based on the {@link DomainBlueprint} provided
    * 
    * @param relation
-   *          the DomainWrapper containing a mapping of {@link FCAObject}s to
-   *          {@link FCAAttribute}s
+   *          the DomainWrapper containing a mapping of {@link FCAObject}s to {@link FCAAttribute}s
    * @return a new domain based on the domain wrapper provided
    */
   @POST
@@ -780,8 +770,7 @@ public class FCAService {
     Database.getInstance().putAll(domain.getFormalContext().getConcepts(), false);
     Course course = Database.getInstance().getCourseByExternalID(relation.externalCourseID);
     if (course == null) {
-      course = new Course(relation.courseName, "", Database.getInstance().getUserByExternalUID(relation.externalUID),
-          relation.externalCourseID);
+      course = new Course(relation.courseName, "", relation.externalCourseID);
     }
     course.addDomain(domain);
     Database.getInstance().put(course, false);
@@ -853,7 +842,7 @@ public class FCAService {
     if (!d.isApproved())
       throw new Exception("Domain is not approved");
     if (c == null) {
-      c = new Course(courseName, "", d.getOwners(), courseID);
+      c = new Course(courseName, "", courseID);
       Database.getInstance().put(c, false);
     }
     c.addDomain(d);
