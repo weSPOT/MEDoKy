@@ -35,16 +35,16 @@ public class ErrorLogNotifier {
 	public static void errorEmail(String msg) {
 		
 		Email email = new SimpleEmail();
-		email.setHostName("smtp.mail.yahoo.com");
+		email.setHostName("something.com");
 		email.setSmtpPort(465);
-		DefaultAuthenticator auth = new DefaultAuthenticator("fera.bluem", "12!!test");
+		DefaultAuthenticator auth = new DefaultAuthenticator("username", "pwd");
 		email.setAuthenticator(auth);
 		email.setSSLOnConnect(true);
 		try {
-			email.setFrom("fera.bluem@yahoo.com");
+			email.setFrom("email address");
 			email.setSubject("[MEDoKyService] Error");
 			email.setMsg(msg);
-			email.addTo("simone.kopeinik@tugraz.at");
+			email.addTo("yourmail.com");
 			email.send();
 		} catch (EmailException e) {
 			e.printStackTrace();
