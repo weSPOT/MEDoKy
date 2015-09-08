@@ -30,12 +30,28 @@
         <h1>
 <a id="about" class="anchor" href="#about" aria-hidden="true"><span class="octicon octicon-link"></span></a>About</h1>
 
-<p>The Formal Concept Analysis Tool Plugin relies on the Medoky service to present concepts to the user.</p>
+<p>The software that can be found at <a href="https://github.com/weSPOT/weSpot_MEDoKy_FCA">https://github.com/weSPOT/weSpot_MEDoKy_FCA</a> contains: </p>
+
+<p>In the folder <a href="https://github.com/weSPOT/weSpot_MEDoKy_FCA/tree/master/MEDoKyService">https://github.com/weSPOT/weSpot_MEDoKy_FCA/tree/master/MEDoKyService</a></p>
+
+<ul>
+<li>The medoky backend service (WebService component)</li>
+</ul>
+
+<p>In the folder <a href="https://github.com/weSPOT/weSpot_MEDoKy_FCA/tree/master/ellg-plugins">https://github.com/weSPOT/weSpot_MEDoKy_FCA/tree/master/ellg-plugins</a></p>
+
+<ul>
+<li>FCA plugin: Domain structuring and learner modelling tool based on the Formal Concept Analysis</li>
+<li>MEDoKy plugin: Resource recommendation front end</li>
+<li>Tag plugin: Tag recommendation plugin extending ellgs tag view.</li>
+</ul>
+
+<p>All three plugins rely on the Medoky backend service to present domain concepts and learner models to the user and personalized recommendations to the learner. All calculations, updates and data management is handled by the backend service, which includes the implementation of various learning resource and tag recommendation strategies.</p>
 
 <h1>
 <a id="architecture" class="anchor" href="#architecture" aria-hidden="true"><span class="octicon octicon-link"></span></a>Architecture</h1>
 
-<p>The following diagram illustrates how the FCA plugin communicates with the Medoky backend services. The Medoky architecture relies on user data that is managed by Event Data Store.</p>
+<p>The following diagram exemplary illustrates how the FCA plugin communicates with the Medoky backend services. The Medoky architecture relies on user data that is managed by Event Data Store.</p>
 
 <p><img src="http://wespot.net/en/c/wiki/get_page_attachment?p_l_id=21015442&amp;nodeId=7299941&amp;title=ElggFCA&amp;fileName=ElggFCA.png" alt=""></p>
       </section>
