@@ -1,0 +1,834 @@
+Furthermore an API for performing Formal Concept Analysis is available.
+
+Formal Concept Analysis
+
+A module that implements Formal Concept Analysis (FCA) is part of the MEDoKyService.
+It is based on a [https://code.google.com/p/colibri-java/ Java version of the Colibri] library and implements a REST interface which is used by the FCATool Elgg Plugin.
+
+API Overview
+All FCA related REST endpoint are located at /MEDoKyService/rest/FCATool/
+Using this API objects, attributes, learning domains, as well as learning objects can be queried, created and modified in the context of FCA.
+A rough overview listing method names, HTTP method types and parameters  /MEDoKyService/rest/FCATool/rest:syntax
+All Methods support Cross-Origin Resource Sharing to enable invocation from any location through AJAX, if an Origin header is set.
+All payload (request and response) is transmitted in JSON fromat.
+
+Queries
+All present FCA related data can be queried using the following REST methods.
+If multiple entities of a type are requested they are returned as JavaScript associative array.
+The indices of such an array correspond to the unique id number of the corresponding object.
+
+Listing Domains:
+REST URL (GET):
+/MEDoKyService/rest/FCATool/getDomainHeaders
+
+Example Request:
+
+Request URL: http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/getDomainHeaders
+Request Method: GET
+Origin: http://wespot.kmi.open.ac.uk
+
+
+Example Response:
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Origin: http://wespot.kmi.open.ac.uk
+Content-Type: application/json
+{
+    "-1125899906842606": {
+        "owner": {
+            "courses": [],
+            "externalUid": "33",
+            "id": -1125899906842623,
+            "name": "John Doe",
+            "description": "http://wespot.kmi.open.ac.uk/profile/JohnDoe"
+        },
+        "name": "Numbers",
+        "description": "Properties of integer numbers from one to ten",
+        "id": 0
+    }
+}
+
+Listing Object/Attributes
+
+REST URL (GET)
+/MEDoKyService/rest/FCATool/get{Objects, Attributes}
+The format of the response is the same regardless of whether objects or attributes are requested.
+
+Example Request:
+Request URL:http: //css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/getObjects
+Request Method: GET
+Origin: http://wespot.kmi.open.ac.uk
+
+Example Response:
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Origin: http://wespot.kmi.open.ac.uk
+Content-Type: application/json
+{
+    "-1125899906842612": {
+        "learningObjects": [],
+        "id": -1125899906842612,
+        "name": "composite",
+        "description": "product of numbers other than one and itself"
+    },
+    "-1125899906842611": {
+        "learningObjects": [],
+        "id": -1125899906842611,
+        "name": "even",
+        "description": "evenly divisible by two"
+    },
+    "-1125899906842610": {
+        "learningObjects": [],
+        "id": -1125899906842610,
+        "name": "odd",
+        "description": "not evenly divisible by two"
+    }
+}
+
+Listing Learning Objects:
+REST URL (GET):
+http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/getLearningObjects
+
+Example Request:
+Request URL: http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/getLearningObjects
+Request Method: GET
+Origin: http://wespot.kmi.open.ac.uk
+
+Example Response:
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Origin: http://wespot.kmi.open.ac.uk{
+    "-1125899906842535": {
+        "owner": {
+            "courses": [],
+            "externalUid": "33",
+            "id": -1125899906842623,
+            "name": "John Doe",
+            "description": "http://wespot.kmi.open.ac.uk/profile/JohnDoe"
+        },
+        "id": -1125899906842535,
+        "name": "Composite Number",
+        "description": "http://en.wikipedia.org/wiki/Composite_number"
+    }
+}
+
+
+Requesting a single Domain
+REST URL (GET): /MEDoKyService/rest/FCATool/getDomain?id={domain_id}
+The domain id can be obtained from the list of available domains (This is the intended way of using the service.)
+The returned data structure contains a mapping of objects to attributes as well as a lattice representation of the domain.
+
+TODO: remove redundant data from response
+
+
+Example Request:
+Request URL :http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/getDomain?id=-1125899906842515
+Request Method: GET
+Origin: http://wespot.kmi.open.ac.uk
+
+Example Response:
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Origin: http://wespot.kmi.open.ac.uk
+Content-Type: application/json
+{
+    "mapping": {
+        "objects": {
+            "{\"id\":-1125899906842518,\"name\":\"Object Example\",\"description\":\"\",\"learningObjects\":[]}": [
+                {
+                    "learningObjects": [],
+                    "id": -1125899906842516,
+                    "name": "Attribute Example",
+                    "description": ""
+                }
+            ]
+        },
+        "attributes": {
+            "{\"id\":-1125899906842517,\"name\":\"Sample Attribute\",\"description\":\"Just for demonstration purposes\",\"learningObjects\":[{\"id\":-1125899906842520,\"name\":\"Sample Learning Object\",\"description\":\"http://www.example.com\",\"owner\":null,\"data\":null}]}": [],
+            "{\"id\":-1125899906842516,\"name\":\"Attribute Example\",\"description\":\"\",\"learningObjects\":[]}": [
+                {
+                    "learningObjects": [],
+                    "id": -1125899906842518,
+                    "name": "Object Example",
+                    "description": ""
+                }
+            ]
+        },
+        "id": -1125899906842515,
+        "name": "Small Example",
+        "description": "Domain for demonstration purposes"
+    },
+    "formalContext": {
+        "concepts": [
+            {
+                "objects": [
+                    {
+                        "learningObjects": [],
+                        "id": -1125899906842518,
+                        "name": "Object Example",
+                        "description": ""
+                    }
+                ],
+                "attributes": [
+                    {
+                        "learningObjects": [
+                            {
+                                "id": -1125899906842520,
+                                "name": "Sample Learning Object",
+                                "description": "http://www.example.com"
+                            }
+                        ],
+                        "id": -1125899906842517,
+                        "name": "Sample Attribute",
+                        "description": "Just for demonstration purposes"
+                    },
+                    {
+                        "learningObjects": [],
+                        "id": -1125899906842516,
+                        "name": "Attribute Example",
+                        "description": ""
+                    }
+                ],
+                "uniqueObjects": [
+                    {
+                        "learningObjects": [],
+                        "id": -1125899906842518,
+                        "name": "Object Example",
+                        "description": ""
+                    }
+                ],
+                "uniqueAttributes": [
+                    {
+                        "learningObjects": [
+                            {
+                                "id": -1125899906842520,
+                                "name": "Sample Learning Object",
+                                "description": "http://www.example.com"
+                            }
+                        ],
+                        "id": -1125899906842517,
+                        "name": "Sample Attribute",
+                        "description": "Just for demonstration purposes"
+                    },
+                    {
+                        "learningObjects": [],
+                        "id": -1125899906842516,
+                        "name": "Attribute Example",
+                        "description": ""
+                    }
+                ],
+                "objectConcept": true,
+                "partOfTaxonomy": true,
+                "successors": [],
+                "taxonomySuccessors": [],
+                "id": -1125899906842511,
+                "name": "{ Object Example }",
+                "description": "{ Sample Attribute, Attribute Example }"
+            }
+        ],
+        "bottom": {
+            "objects": [
+                {
+                    "learningObjects": [],
+                    "id": -1125899906842518,
+                    "name": "Object Example",
+                    "description": ""
+                }
+            ],
+            "attributes": [
+                {
+                    "learningObjects": [
+                        {
+                            "id": -1125899906842520,
+                            "name": "Sample Learning Object",
+                            "description": "http://www.example.com"
+                        }
+                    ],
+                    "id": -1125899906842517,
+                    "name": "Sample Attribute",
+                    "description": "Just for demonstration purposes"
+                },
+                {
+                    "learningObjects": [],
+                    "id": -1125899906842516,
+                    "name": "Attribute Example",
+                    "description": ""
+                }
+            ],
+            "uniqueObjects": [
+                {
+                    "learningObjects": [],
+                    "id": -1125899906842518,
+                    "name": "Object Example",
+                    "description": ""
+                }
+            ],
+            "uniqueAttributes": [
+                {
+                    "learningObjects": [
+                        {
+                            "id": -1125899906842520,
+                            "name": "Sample Learning Object",
+                            "description": "http://www.example.com"
+                        }
+                    ],
+                    "id": -1125899906842517,
+                    "name": "Sample Attribute",
+                    "description": "Just for demonstration purposes"
+                },
+                {
+                    "learningObjects": [],
+                    "id": -1125899906842516,
+                    "name": "Attribute Example",
+                    "description": ""
+                }
+            ],
+            "objectConcept": true,
+            "partOfTaxonomy": true,
+            "successors": [],
+            "taxonomySuccessors": [],
+            "id": -1125899906842511,
+            "name": "{ Object Example }",
+            "description": "{ Sample Attribute, Attribute Example }"
+        },
+        "id": -1125899906842513,
+        "name": "Lattice for Small Example",
+        "description": "Domain for demonstration purposes"
+    },
+    "owner": {
+        "courses": [],
+        "externalUid": "33",
+        "id": -1125899906842623,
+        "name": "Admin",
+        "description": "http://wespot.kmi.open.ac.uk/profile/JohnDoe"
+    },
+    "id": -1125899906842514,
+    "name": "Small Example",
+    "description": "Domain for demonstration purposes"
+}
+
+Data Manipulation
+The service provides methods to create and/or modify the following entities:
+ * Objects
+ * Attributes
+ * Domains
+ * Concepts
+ * Learning Objects
+
+All methods creating multiple entities require the payload transmitted to be a JSON array.
+Upon creation all entities are assigned a unique ID, however the entities to be created must have a temporary ID set.
+This ID is also present in the response: In such cases the response is a JavaScript associative array, the indices being newly created valid
+IDs while the entities themselves still have the previously assigned temporary IDs set making it possible to map the temporary IDs to valid unique IDs.
+
+Identification
+
+Prior to creating any entities an identification needs to be performed. A JSON representation based on Elgg user entities is user for that purpose.
+The notification is done by invoking the following method:
+REST URL (POST):
+/MEDoKyService/rest/FCATool/identify
+
+Example Request:
+Request URL: http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/identify
+Request Method: POST
+Content-Type: application/json; charset=UTF-8
+Origin: http://wespot.kmi.open.ac.uk
+Request Payload:
+{
+    "name": "John Doe",
+    "description": "http://wespot.kmi.open.ac.uk/profile/JohnDoe",
+    "externalUID": "33",
+    "teacher": true
+}
+
+This method does not trigger any response.
+
+Learning Object Creation:
+
+REST URL(POST):
+/MEDoKyService/rest/FCATool/createLearningObjects
+
+Example Request:
+Request URL:http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/createLearningObjects
+Request Method:POST
+Content-Type:application/json; charset=UTF-8
+Origin: http://wespot.kmi.open.ac.uk
+Request Payload:
+[
+    {
+        "name": "Prime Numbers",
+        "description": "http://en.wikipedia.org/wiki/Prime_numbers",
+        "id": 1378807340273,
+        "externalUID": 33
+    }
+]
+
+Example Response:
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Origin: http://wespot.kmi.open.ac.uk{
+    "-1125899906842521": {
+        "externalUID": "33",
+        "name": "Prime Numbers",
+        "description": "http://en.wikipedia.org/wiki/Prime_numbers",
+        "id": 1378807340273
+    }
+}
+
+Object/Attribute Creation:
+Objects and Attributes are structured in the same way, therefore the requests and responses are identical, only the request URLs differ.
+Objects/Attributes can be assigned learning objects, in this case the said learning objects need to exist prior to object/attribute creation.
+
+REST URL(POST):
+/MEDoKyService/rest/FCATool/create{Objects,Attributes}
+
+Example Request:
+Request URL:http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/createAttributes
+Request Method:POST
+Content-Type:application/json; charset=UTF-8
+Origin: http://wespot.kmi.open.ac.uk
+Request Payload:
+[
+    {
+        "name": "Sample Attribute",
+        "description": "Just for demonstration purposes",
+        "id": 1378808395607,
+        "learningObjects": [
+            {
+                "name": "Sample Learning Object",
+                "description": "http://www.example.com",
+                "id": "-1125899906842520",
+                "externalUID": 33
+            }
+        ]
+    },
+    {
+        "name": "Attribute Example",
+        "description": "",
+        "id": 1378808481292,
+        "learningObjects": []
+    }
+]
+
+Example Response:
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Origin: http://wespot.kmi.open.ac.uk{
+    "-1125899906842517": {
+        "learningObjects": [
+            {
+                "id": -1125899906842520,
+                "name": "Sample Learning Object",
+                "description": "http://www.example.com"
+            }
+        ],
+        "id": 1378808395607,
+        "name": "Sample Attribute",
+        "description": "Just for demonstration purposes"
+    },
+    "-1125899906842516": {
+        "learningObjects": [],
+        "id": 1378808481292,
+        "name": "Attribute Example",
+        "description": ""
+    }
+}
+
+
+Domain Creation:
+Once all objects, attributes and learning objects a domain is composed of exist, the domain itself can be created.
+This is needed because the payload of the domain creation request consists solely of some meta data, a set of object- and attribute IDs and a mapping of these.
+The response is the same as for querying a domain.
+REST URL(POST):
+/MEDoKyService/rest/FCATool/createDomain
+
+Example Request:
+Request URL:http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/createDomain
+Request Method:POST
+Content-Type:application/json; charset=UTF-8
+Origin: http://wespot.kmi.open.ac.uk
+Request Payload:
+{
+    "name": "Small Example",
+    "description": "Domain for demonstration purposes",
+    "attributes": [
+        "-1125899906842517",
+        "-1125899906842516"
+    ],
+    "objects": [
+        "-1125899906842518"
+    ],
+    "mapping": {
+        "-1125899906842518": [
+            "-1125899906842516"
+        ]
+    },
+    "externalUID": "33"
+}
+
+Modifying existing Objects/Attributes:
+When assigning learning objects to an already existing object/attribute or changing its name or description the update method is called.
+The payload is simply the entity to update in JSON form. If no errors occurred the request is equal to the response.
+TODO: reduce unnecessary traffic.
+
+
+REST URL(POST):
+/MEDoKyService/rest/FCATool/update{Object,Attribute}
+
+Example Request:
+Request URL:http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/updateObject
+Request Method:POST
+Content-Type:application/json; charset=UTF-8
+Origin:http://wespot.kmi.open.ac.uk
+Request Payload:
+{
+    "learningObjects": [],
+    "id": "-1125899906842622",
+    "name": "1",
+    "description": "number one"
+}
+
+Example Response:
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Origin: http://wespot.kmi.open.ac.uk
+Content-Type: application/json
+{
+    "learningObjects": [],
+    "id": -1125899906842622,
+    "name": "1",
+    "description": "number one"
+}
+
+Updating Concepts:
+The name, description and the flag indicating whether a concept is part of the taxonomy of every concept can be altered.
+The request payload consists of the JSON representation of the concept to be updated extended by a domain ID attribute specifying the domain the concept belongs to.
+The response contains the full lattice. This is necessary since editing a single concept can have effects on the whole lattice.
+TODO: reduce traffic by stripping request and response
+
+REST URL(POST):
+/MEDoKyService/rest/FCATool/updateConcept
+
+Example Request:
+Request URL: http://css-kmi.tugraz.at:8080/MEDoKyService/rest/FCATool/updateConcept
+Request Method: POST
+Content-Type: application/json; charset=UTF-8
+Origin: http://wespot.kmi.open.ac.uk
+Request Payload:
+{
+    "domainId": -1125899906842514,
+    "partOfTaxonomy": true,
+    "objectConcept": true,
+    "attributes": [
+        {
+            "learningObjects": [
+                {
+                    "id": -1125899906842520,
+                    "name": "Sample Learning Object",
+                    "description": "http://www.example.com"
+                }
+            ],
+            "id": -1125899906842517,
+            "name": "Sample Attribute",
+            "description": "Just for demonstration purposes"
+        },
+        {
+            "learningObjects": [],
+            "id": -1125899906842516,
+            "name": "Attribute Example",
+            "description": ""
+        }
+    ],
+    "objects": [
+        {
+            "learningObjects": [],
+            "id": -1125899906842518,
+            "name": "Object Example",
+            "description": ""
+        }
+    ],
+    "uniqueObjects": [
+        {
+            "learningObjects": [
+                {
+                    "id": -1125899906842520,
+                    "name": "Sample Learning Object",
+                    "description": "http://www.example.com"
+                }
+            ],
+            "id": -1125899906842517,
+            "name": "Sample Attribute",
+            "description": "Just for demonstration purposes"
+        },
+        {
+            "learningObjects": [],
+            "id": -1125899906842516,
+            "name": "Attribute Example",
+            "description": ""
+        }
+    ],
+    "uniqueAttributes": [
+        {
+            "learningObjects": [
+                {
+                    "id": -1125899906842520,
+                    "name": "Sample Learning Object",
+                    "description": "http://www.example.com"
+                }
+            ],
+            "id": -1125899906842517,
+            "name": "Sample Attribute",
+            "description": "Just for demonstration purposes"
+        },
+        {
+            "learningObjects": [],
+            "id": -1125899906842516,
+            "name": "Attribute Example",
+            "description": ""
+        }
+    ],
+    "successors": [],
+    "taxonomySuccessors": [],
+    "name": "{ Object Example }",
+    "description": "{ Sample Attribute, Attribute Example }",
+    "id": -1125899906842511,
+    "index": 0
+}
+
+Example Response:
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Origin: http://wespot.kmi.open.ac.uk
+Content-Type: application/json
+{
+    "bottom": {
+        "domainId": 0,
+        "partOfTaxonomy": true,
+        "objectConcept": true,
+        "attributes": [
+            {
+                "learningObjects": [
+                    {
+                        "id": -1125899906842520,
+                        "name": "Sample Learning Object",
+                        "description": "http://www.example.com"
+                    }
+                ],
+                "id": -1125899906842517,
+                "name": "Sample Attribute",
+                "description": "Just for demonstration purposes"
+            },
+            {
+                "learningObjects": [],
+                "id": -1125899906842516,
+                "name": "Attribute Example",
+                "description": ""
+            }
+        ],
+        "objects": [
+            {
+                "learningObjects": [],
+                "id": -1125899906842518,
+                "name": "Object Example",
+                "description": ""
+            }
+        ],
+        "uniqueObjects": [
+            {
+                "learningObjects": [
+                    {
+                        "id": -1125899906842520,
+                        "name": "Sample Learning Object",
+                        "description": "http://www.example.com"
+                    }
+                ],
+                "id": -1125899906842517,
+                "name": "Sample Attribute",
+                "description": "Just for demonstration purposes"
+            },
+            {
+                "learningObjects": [],
+                "id": -1125899906842516,
+                "name": "Attribute Example",
+                "description": ""
+            }
+        ],
+        "uniqueAttributes": [
+            {
+                "learningObjects": [
+                    {
+                        "id": -1125899906842520,
+                        "name": "Sample Learning Object",
+                        "description": "http://www.example.com"
+                    }
+                ],
+                "id": -1125899906842517,
+                "name": "Sample Attribute",
+                "description": "Just for demonstration purposes"
+            },
+            {
+                "learningObjects": [],
+                "id": -1125899906842516,
+                "name": "Attribute Example",
+                "description": ""
+            }
+        ],
+        "successors": [],
+        "taxonomySuccessors": [],
+        "name": "{ Object Example }",
+        "description": "{ Sample Attribute, Attribute Example }",
+        "id": -1125899906842511
+    },
+    "top": {
+        "domainId": 0,
+        "partOfTaxonomy": true,
+        "objectConcept": true,
+        "attributes": [
+            {
+                "learningObjects": [
+                    {
+                        "id": -1125899906842520,
+                        "name": "Sample Learning Object",
+                        "description": "http://www.example.com"
+                    }
+                ],
+                "id": -1125899906842517,
+                "name": "Sample Attribute",
+                "description": "Just for demonstration purposes"
+            },
+            {
+                "learningObjects": [],
+                "id": -1125899906842516,
+                "name": "Attribute Example",
+                "description": ""
+            }
+        ],
+        "objects": [
+            {
+                "learningObjects": [],
+                "id": -1125899906842518,
+                "name": "Object Example",
+                "description": ""
+            }
+        ],
+        "uniqueObjects": [
+            {
+                "learningObjects": [
+                    {
+                        "id": -1125899906842520,
+                        "name": "Sample Learning Object",
+                        "description": "http://www.example.com"
+                    }
+                ],
+                "id": -1125899906842517,
+                "name": "Sample Attribute",
+                "description": "Just for demonstration purposes"
+            },
+            {
+                "learningObjects": [],
+                "id": -1125899906842516,
+                "name": "Attribute Example",
+                "description": ""
+            }
+        ],
+        "uniqueAttributes": [
+            {
+                "learningObjects": [
+                    {
+                        "id": -1125899906842520,
+                        "name": "Sample Learning Object",
+                        "description": "http://www.example.com"
+                    }
+                ],
+                "id": -1125899906842517,
+                "name": "Sample Attribute",
+                "description": "Just for demonstration purposes"
+            },
+            {
+                "learningObjects": [],
+                "id": -1125899906842516,
+                "name": "Attribute Example",
+                "description": ""
+            }
+        ],
+        "successors": [],
+        "taxonomySuccessors": [],
+        "name": "{ Object Example }",
+        "description": "{ Sample Attribute, Attribute Example }",
+        "id": -1125899906842511
+    },
+    "concepts": [
+        {
+            "domainId": 0,
+            "partOfTaxonomy": true,
+            "objectConcept": true,
+            "attributes": [
+                {
+                    "learningObjects": [
+                        {
+                            "id": -1125899906842520,
+                            "name": "Sample Learning Object",
+                            "description": "http://www.example.com"
+                        }
+                    ],
+                    "id": -1125899906842517,
+                    "name": "Sample Attribute",
+                    "description": "Just for demonstration purposes"
+                },
+                {
+                    "learningObjects": [],
+                    "id": -1125899906842516,
+                    "name": "Attribute Example",
+                    "description": ""
+                }
+            ],
+            "objects": [
+                {
+                    "learningObjects": [],
+                    "id": -1125899906842518,
+                    "name": "Object Example",
+                    "description": ""
+                }
+            ],
+            "uniqueObjects": [
+                {
+                    "learningObjects": [
+                        {
+                            "id": -1125899906842520,
+                            "name": "Sample Learning Object",
+                            "description": "http://www.example.com"
+                        }
+                    ],
+                    "id": -1125899906842517,
+                    "name": "Sample Attribute",
+                    "description": "Just for demonstration purposes"
+                },
+                {
+                    "learningObjects": [],
+                    "id": -1125899906842516,
+                    "name": "Attribute Example",
+                    "description": ""
+                }
+            ],
+            "uniqueAttributes": [
+                {
+                    "learningObjects": [
+                        {
+                            "id": -1125899906842520,
+                            "name": "Sample Learning Object",
+                            "description": "http://www.example.com"
+                        }
+                    ],
+                    "id": -1125899906842517,
+                    "name": "Sample Attribute",
+                    "description": "Just for demonstration purposes"
+                },
+                {
+                    "learningObjects": [],
+                    "id": -1125899906842516,
+                    "name": "Attribute Example",
+                    "description": ""
+                }
+            ],
+            "successors": [],
+            "taxonomySuccessors": [],
+            "name": "{ Object Example }",
+            "description": "{ Sample Attribute, Attribute Example }",
+            "id": -1125899906842511
+        }
+    ],
+    "name": "Lattice for Small Example",
+    "description": "Domain for demonstration purposes",
+    "id": -1125899906842513
+}

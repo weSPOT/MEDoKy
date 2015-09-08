@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="51cm" height="47cm" viewBox="38 18 1003 923" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="40" y="20" width="1000" height="920"/>
+  <g>
+    <rect style="fill: #ffffff" x="270" y="60" width="100.8" height="36"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="270" y="60" width="100.8" height="36"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="320.4" y="81.9">
+      <tspan x="320.4" y="81.9">:FCA Service</tspan>
+    </text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="280" y1="84.9" x2="360.8" y2="84.9"/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="50" y="60" width="100.3" height="36"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="50" y="60" width="100.3" height="36"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="100.15" y="81.9">
+      <tspan x="100.15" y="81.9">:Elgg Plug-In</tspan>
+    </text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="60" y1="84.9" x2="140.3" y2="84.9"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="100.15" y1="96" x2="100.15" y2="120"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="100.15" y1="920" x2="100.15" y2="940"/>
+    <rect style="fill: #ffffff" x="93.15" y="120" width="14" height="800"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="93.15" y="120" width="14" height="800"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="320.4" y1="96" x2="320.4" y2="120"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="320.4" y1="180" x2="320.4" y2="190"/>
+    <rect style="fill: #ffffff" x="313.4" y="120" width="14" height="60"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="313.4" y="120" width="14" height="60"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="296.4" y1="120" x2="107.15" y2="120"/>
+    <polygon style="fill: #000000" points="296.4,125 312.4,120 296.4,115 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="296.4,125 312.4,120 296.4,115 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="210.276" y="130">createObjects()</text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" x1="124.15" y1="180" x2="313.4" y2="180"/>
+    <polygon style="fill: #000000" points="124.15,175 108.15,180 124.15,185 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="124.15,175 108.15,180 124.15,185 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="210.276" y="190">Objects</text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="320.4" y1="180" x2="320.4" y2="280"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="320.4" y1="340" x2="320.4" y2="350"/>
+    <rect style="fill: #ffffff" x="313.4" y="280" width="14" height="60"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="313.4" y="280" width="14" height="60"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="296.4" y1="280" x2="107.15" y2="280"/>
+    <polygon style="fill: #000000" points="296.4,285 312.4,280 296.4,275 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="296.4,285 312.4,280 296.4,275 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="210.274" y="290">createAttributes()</text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" x1="124.15" y1="340" x2="313.4" y2="340"/>
+    <polygon style="fill: #000000" points="124.15,335 108.15,340 124.15,345 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="124.15,335 108.15,340 124.15,345 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="210.276" y="350">Attributes</text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="320.4" y1="340" x2="320.4" y2="440"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="320.4" y1="820" x2="320.4" y2="940"/>
+    <rect style="fill: #ffffff" x="313.4" y="440" width="14" height="380"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="313.4" y="440" width="14" height="380"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="296.4" y1="440" x2="107.15" y2="440"/>
+    <polygon style="fill: #000000" points="296.4,445 312.4,440 296.4,435 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="296.4,445 312.4,440 296.4,435 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="210.274" y="450">createDomain()</text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" x1="124.15" y1="820" x2="313.4" y2="820"/>
+    <polygon style="fill: #000000" points="124.15,815 108.15,820 124.15,825 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="124.15,815 108.15,820 124.15,825 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="210.274" y="830">Domain</text>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="107.15,200 150,200 150,230 125.15,230 "/>
+    <polygon style="fill: #000000" points="125.15,225 115.15,230 125.15,235 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="125.15,225 115.15,230 125.15,235 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="150" y="219.866">
+    <tspan x="150" y="219.866"> replaceObjects()</tspan>
+  </text>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="107.15,360 150,360 150,390 125.15,390 "/>
+    <polygon style="fill: #000000" points="125.15,385 115.15,390 125.15,395 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="125.15,385 115.15,390 125.15,395 "/>
+  </g>
+  <g>
+    <polygon style="fill: #ffffff" points="40,20 160,20 160,30 150,40 40,40 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="40,20 160,20 160,30 150,40 40,40 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="40" y="34.45">
+    <tspan x="40" y="34.45"> Domain Creation</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="107.15" y1="210" x2="107.15" y2="230"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="107.15" y1="270" x2="107.15" y2="280"/>
+    <rect style="fill: #ffffff" x="100.15" y="230" width="14" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="100.15" y="230" width="14" height="40"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="107.15" y1="320" x2="107.15" y2="390"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="107.15" y1="430" x2="107.15" y2="460"/>
+    <rect style="fill: #ffffff" x="100.15" y="390" width="14" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="100.15" y="390" width="14" height="40"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="150" y="379.866">
+    <tspan x="150" y="379.866"> replaceAttributes()</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="107.15" y1="850" x2="107.15" y2="870"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="107.15" y1="910" x2="107.15" y2="920"/>
+    <rect style="fill: #ffffff" x="100.15" y="870" width="14" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="100.15" y="870" width="14" height="40"/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="107.15,840 150,840 150,870 125.15,870 "/>
+    <polygon style="fill: #000000" points="125.15,865 115.15,870 125.15,875 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="125.15,865 115.15,870 125.15,875 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="150" y="858.998">
+    <tspan x="150" y="858.998"> displayLattice()</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="500" y="60" width="72.05" height="36"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="500" y="60" width="72.05" height="36"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="536.025" y="81.9">
+      <tspan x="536.025" y="81.9">:FCA DB</tspan>
+    </text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="510" y1="84.9" x2="562.05" y2="84.9"/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="720" y="60" width="69.35" height="36"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="720" y="60" width="69.35" height="36"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="754.675" y="81.9">
+      <tspan x="754.675" y="81.9">:FCA BL</tspan>
+    </text>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="730" y1="84.9" x2="779.35" y2="84.9"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="536.024" y1="96" x2="536.024" y2="130"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="536.024" y1="170" x2="536.024" y2="180"/>
+    <rect style="fill: #ffffff" x="529.024" y="130" width="14" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="529.024" y="130" width="14" height="40"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="512.024" y1="130" x2="327.4" y2="130"/>
+    <polygon style="fill: #000000" points="512.024,135 528.024,130 512.024,125 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="512.024,135 528.024,130 512.024,125 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="428.214" y="140">put()</text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="536.024" y1="170" x2="536.024" y2="290"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="536.024" y1="330" x2="536.024" y2="340"/>
+    <rect style="fill: #ffffff" x="529.024" y="290" width="14" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="529.024" y="290" width="14" height="40"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="512.024" y1="290" x2="327.4" y2="290"/>
+    <polygon style="fill: #000000" points="512.024,295 528.024,290 512.024,285 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="512.024,295 528.024,290 512.024,285 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="428.212" y="300">put()</text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="754.676" y1="96" x2="754.676" y2="450"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="754.676" y1="810" x2="754.676" y2="940"/>
+    <rect style="fill: #ffffff" x="747.676" y="450" width="14" height="360"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="747.676" y="450" width="14" height="360"/>
+  </g>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="460" width="320" height="180"/>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="730.674" y1="450" x2="327.4" y2="450"/>
+    <polygon style="fill: #000000" points="730.674,455 746.674,450 730.674,445 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="730.674,455 746.674,450 730.674,445 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="537.536" y="460">createDomain()</text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="761.676" y1="480" x2="761.676" y2="500"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="761.676" y1="540" x2="761.676" y2="540"/>
+    <rect style="fill: #ffffff" x="754.676" y="500" width="14" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="754.676" y="500" width="14" height="40"/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="761.676,470 800,470 800,500 779.676,500 "/>
+    <polygon style="fill: #000000" points="779.676,495 769.676,500 779.676,505 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="779.676,495 769.676,500 779.676,505 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="800" y="489.388">
+    <tspan x="800" y="489.388"> createConcept()</tspan>
+  </text>
+  <g>
+    <polygon style="fill: #ffffff" points="660,460 700,460 700,470 690,480 660,480 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="660,460 700,460 700,470 690,480 660,480 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="474.45">
+    <tspan x="660" y="474.45"> loop</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="761.676" y1="540" x2="761.676" y2="590"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="761.676" y1="630" x2="761.676" y2="640"/>
+    <rect style="fill: #ffffff" x="754.676" y="590" width="14" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="754.676" y="590" width="14" height="40"/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="761.676,560 800,560 800,590 779.676,590 "/>
+    <polygon style="fill: #000000" points="779.676,585 769.676,590 779.676,595 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="779.676,585 769.676,590 779.676,595 "/>
+  </g>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="660" width="320" height="90"/>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="800" y="580.246">
+    <tspan x="800" y="580.246"> relateConcepts()</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="761.676" y1="680" x2="761.676" y2="700"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="761.676" y1="740" x2="761.676" y2="810"/>
+    <rect style="fill: #ffffff" x="754.676" y="700" width="14" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="754.676" y="700" width="14" height="40"/>
+  </g>
+  <g>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="761.676,670 800,670 800,700 779.676,700 "/>
+    <polygon style="fill: #000000" points="779.676,695 769.676,700 779.676,705 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="779.676,695 769.676,700 779.676,705 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="800" y="689.45">
+    <tspan x="800" y="689.45"> relateTaxonomyConcepts()</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="536.024" y1="330" x2="536.024" y2="760"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 8; stroke: #000000" x1="536.024" y1="800" x2="536.024" y2="940"/>
+    <rect style="fill: #ffffff" x="529.024" y="760" width="14" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="529.024" y="760" width="14" height="40"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="560.026" y1="760" x2="747.674" y2="760"/>
+    <polygon style="fill: #000000" points="560.026,755 544.026,760 560.026,765 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="560.026,755 544.026,760 560.026,765 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="645.348" y="770">put()</text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 8; stroke: #000000" x1="344.4" y1="810" x2="747.674" y2="810"/>
+    <polygon style="fill: #000000" points="344.4,805 328.4,810 344.4,815 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="344.4,805 328.4,810 344.4,815 "/>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="537.536" y="820">Domain</text>
+  </g>
+  <g>
+    <polygon style="fill: #ffffff" points="660,660 700,660 700,670 690,680 660,680 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="660,660 700,660 700,670 690,680 660,680 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="674.45">
+    <tspan x="660" y="674.45"> loop</tspan>
+  </text>
+</svg>
