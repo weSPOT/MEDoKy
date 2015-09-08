@@ -1,14 +1,11 @@
 # weSpot_MEDoKy_FCA
-Encompasses a backend web-service component for learner modelling and learning recommendations as well as 3 
-complementary elgg plugins visualizing the services. 
-
 MEDoKy (Modeling Inquiry relevant facets and Domain Knowledge) is a java based webservice component. 
 It is used for modeling a learner's inquiry and domain relevant knowledge. 
 The backend service is complemented by an elgg-plugins that allows for modeling and visualising of 
 domain and learner models, recommending learning resources and recommending tags.
 
 Get a local copy by using the following command:
-git clone https://code.google.com/p/wespot-learning.fca/
+git clone https://github.com/weSPOT/weSpot_MEDoKy_FCA
 
 Three plugins are contained in the subfolder elgg-plugins. They are named wespot_fca, wespot_medoky and wespot_tags. 
 wespot_fca is the GUI component of the FCA tool that is used for domain and learner modelling. 
